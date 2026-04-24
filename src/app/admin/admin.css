@@ -1,0 +1,399 @@
+/* ===============================
+   GLOBAL LAYOUT
+================================ */
+
+.admin-layout {
+      display: flex;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+}
+
+/* ===============================
+   SIDEBAR
+================================ */
+
+.sidebar {
+      width: 260px;
+      background: var(--card);
+      color: var(--text);
+      padding: 28px 20px;
+      display: flex;
+      flex-direction: column;
+      border-right: 1px solid var(--border);
+      transition: 0.3s ease;
+}
+
+/* 🔥 sidebar header (mobile) */
+.sidebar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+}
+
+.close-btn {
+      display: none;
+      background: transparent;
+      border: none;
+      font-size: 22px;
+      cursor: pointer;
+      color: var(--text);
+}
+
+.logo {
+      font-size: 1.6rem;
+      font-weight: 700;
+}
+
+/* NAV */
+
+.sidebar nav {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+}
+
+.sidebar a {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+
+      color: var(--text);
+      opacity: 0.7;
+      padding: 12px 14px;
+      border-radius: 10px;
+      transition: 0.2s;
+      font-weight: 500;
+      cursor: pointer;
+}
+
+.sidebar a:hover {
+      opacity: 1;
+      background: var(--secondary);
+}
+
+.sidebar .active {
+      background: var(--primary);
+      color: white;
+      opacity: 1;
+}
+
+/* ===============================
+   MAIN AREA
+================================ */
+
+.admin-main {
+      flex: 1;
+      padding: 40px;
+      max-width: 1400px;
+      margin: 0 auto;
+      width: 100%;
+}
+
+/* ===============================
+   HEADER
+================================ */
+
+.admin-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 36px;
+      gap: 16px;
+}
+
+/* LEFT SIDE (menu + title) */
+.admin-header h1 {
+      font-size: 2rem;
+      font-weight: 700;
+}
+
+/* 🔥 mobile menu button */
+.menu-btn {
+      display: none;
+      background: transparent;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: var(--text);
+}
+
+/* RIGHT SIDE */
+.admin-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+}
+
+.admin-badge {
+      background: var(--primary);
+      color: white;
+      padding: 6px 16px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 600;
+}
+
+/* ===============================
+   STATS
+================================ */
+
+.stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 22px;
+      margin-bottom: 36px;
+}
+
+.stat-card {
+      background: var(--card);
+      padding: 22px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      transition: 0.2s;
+}
+
+.stat-card:hover {
+      border-color: var(--primary);
+}
+
+.stat-card p {
+      font-size: 0.9rem;
+      opacity: 0.7;
+}
+
+.stat-card h2 {
+      font-size: 2rem;
+      margin-top: 6px;
+      font-weight: 700;
+}
+
+.stat-card.pending {
+      border-left: 5px solid #f59e0b;
+}
+
+.stat-card.completed {
+      border-left: 5px solid #10b981;
+}
+
+/* ===============================
+   SECTION
+================================ */
+
+section h2 {
+      font-size: 1.5rem;
+      margin-bottom: 20px;
+      font-weight: 600;
+}
+
+/* ===============================
+   CONTROLS
+================================ */
+
+.controls {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+}
+
+.search-input {
+      flex: 1;
+      min-width: 220px;
+      padding: 12px 14px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text);
+}
+
+.search-input:focus {
+      border-color: var(--primary);
+}
+
+.filter-select {
+      padding: 12px 14px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--text);
+      cursor: pointer;
+}
+
+/* ===============================
+   CARDS
+================================ */
+
+.interview-card {
+      background: var(--card);
+      border-radius: 16px;
+      padding: 22px;
+      margin-bottom: 18px;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      transition: 0.25s;
+}
+
+.interview-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--primary);
+}
+
+.interview-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+}
+
+.interview-card h3 {
+      font-size: 1.2rem;
+      font-weight: 600;
+}
+
+.interview-card p {
+      opacity: 0.7;
+      font-size: 0.95rem;
+}
+
+/* ===============================
+   STATUS
+================================ */
+
+.status {
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 700;
+}
+
+.status.pending {
+      background: #facc15;
+      color: #000;
+}
+
+.status.completed {
+      background: #22c55e;
+      color: white;
+}
+
+.status.cancelled {
+      background: #ef4444;
+      color: white;
+}
+
+/* ===============================
+   BUTTON
+================================ */
+
+.complete-btn {
+      margin-top: 14px;
+      width: 100%;
+      padding: 12px;
+      border-radius: 10px;
+      border: none;
+      background: #10b981;
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+}
+
+.complete-btn:hover {
+      background: #059669;
+}
+
+.logout-btn {
+      background: var(--primary);
+      border: none;
+      padding: 8px 14px;
+      color: white;
+      border-radius: 6px;
+      cursor: pointer;
+}
+
+.logout-btn:hover {
+      background: #dc2626;
+}
+
+/* ===============================
+   EMPTY
+================================ */
+
+.empty-state {
+      text-align: center;
+      padding: 40px;
+      background: var(--card);
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      opacity: 0.7;
+}
+
+/* ===============================
+   ICON
+================================ */
+
+.nav-icon {
+      font-size: 18px;
+}
+
+/* ===============================
+   MOBILE SIDEBAR
+================================ */
+
+.sidebar-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.4);
+      z-index: 90;
+}
+
+/* MOBILE MODE */
+@media (max-width: 900px) {
+
+      .menu-btn {
+            display: block;
+      }
+
+      .sidebar {
+            position: fixed;
+            top: 0;
+            left: -100%;
+            height: 100%;
+            z-index: 100;
+            width: 260px;
+      }
+
+      .sidebar.open {
+            left: 0;
+      }
+
+      .close-btn {
+            display: block;
+      }
+
+      .admin-main {
+            padding: 24px 16px;
+      }
+}
+
+/* SMALL MOBILE */
+@media (max-width: 600px) {
+
+      .admin-header h1 {
+            font-size: 1.3rem;
+      }
+
+      .stats {
+            grid-template-columns: 1fr;
+      }
+
+      .controls {
+            flex-direction: column;
+      }
+
+      .search-input,
+      .filter-select {
+            width: 100%;
+      }
+}

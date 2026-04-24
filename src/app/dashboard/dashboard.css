@@ -1,0 +1,420 @@
+/* ================= NAVBAR ================= */
+
+.navbar {
+      height: 60px;
+      background: var(--card);
+      color: var(--text);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 20px;
+      border-bottom: 1px solid var(--border);
+}
+
+.nav-left {
+      font-size: 1.3rem;
+      font-weight: bold;
+}
+
+.nav-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+}
+
+.user-badge {
+      background: var(--primary);
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      color: white;
+}
+
+.logout-btn {
+      background: #ef4444;
+      border: none;
+      padding: 8px 14px;
+      color: white;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: 0.2s;
+}
+
+.logout-btn:hover {
+      background: #dc2626;
+}
+
+/* ================= CONTAINER ================= */
+
+.dashboard-container {
+      max-width: 1100px;
+      margin: auto;
+      padding: 20px;
+}
+
+/* ================= HEADER ================= */
+
+.dashboard-header {
+      margin-bottom: 25px;
+}
+
+.dashboard-header h1 {
+      font-size: 2rem;
+}
+
+.dashboard-header p {
+      opacity: 0.7;
+}
+
+/* ================= CARD ================= */
+
+.card {
+      background: var(--card);
+      padding: 20px;
+      margin-bottom: 25px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      transition: 0.2s;
+}
+
+.card:hover {
+      border-color: var(--primary);
+}
+
+.card-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+}
+
+.cancel-btn {
+      background: #ef4444;
+      color: white;
+      border: none;
+      padding: 6px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+}
+
+.reschedule-btn {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 6px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+}
+
+/* MODAL */
+.modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.4);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 100;
+}
+
+.modal {
+      background: var(--card);
+      padding: 20px;
+      border-radius: 12px;
+      width: 320px;
+}
+
+.modal-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+}
+
+/* ================= BOOKING LAYOUT ================= */
+
+.booking-layout {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+}
+
+.booking-layout.has-slots {
+      display: grid;
+      grid-template-columns: 1fr 300px;
+      align-items: start;
+}
+
+/* LEFT SIDE */
+.booking-left {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+}
+
+.booking-left input {
+      padding: 12px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text);
+}
+
+.booking-left input:focus {
+      outline: none;
+      border-color: var(--primary);
+}
+
+.booking-left button {
+      padding: 12px;
+      border: none;
+      background: var(--primary);
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.2s;
+}
+
+.booking-left button:hover {
+      background: var(--primary-hover);
+}
+
+.booking-right {
+      animation: fadeIn 0.2s ease;
+}
+
+.selected-slot {
+      font-size: 0.85rem;
+      margin-bottom: 10px;
+      color: var(--primary);
+      font-weight: 500;
+}
+
+.slots-info {
+      font-size: 0.8rem;
+      margin-bottom: 6px;
+      opacity: 0.7;
+}
+
+.slots-info.danger {
+      color: #ef4444;
+      font-weight: 500;
+}
+
+/* ================= VALIDATION ================= */
+
+.input-group {
+      display: flex;
+      flex-direction: column;
+}
+
+.error-text {
+      color: #ef4444;
+      font-size: 0.8rem;
+      margin-top: 4px;
+}
+
+.input-error {
+      border: 1px solid #ef4444 !important;
+}
+
+/* ================= SLOT PANEL ================= */
+
+.booking-right {
+      background: var(--secondary);
+      border: 1px solid var(--border);
+      padding: 14px;
+      border-radius: 12px;
+}
+
+.fully-booked {
+      text-align: center;
+      padding: 20px;
+      border-radius: 10px;
+      background: #fee2e2;
+      color: #b91c1c;
+      font-weight: 600;
+}
+
+.fully-booked p {
+      font-size: 0.85rem;
+      margin-top: 6px;
+      opacity: 0.8;
+}
+
+.slots-title {
+      font-size: 0.9rem;
+      margin-bottom: 10px;
+      opacity: 0.7;
+}
+
+/* GRID */
+.slots-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+}
+
+/* SLOT */
+.slot {
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      cursor: pointer;
+      transition: 0.2s;
+      font-size: 0.9rem;
+}
+
+.slot:hover {
+      border-color: var(--primary);
+      transform: translateY(-2px);
+}
+
+/* ACTIVE */
+.slot.active {
+      background: var(--primary);
+      color: white;
+}
+
+/* DISABLED */
+.slot.disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      background: #e5e7eb;
+}
+
+.dark .slot.disabled {
+      background: #334155;
+}
+
+/* ================= INTERVIEW GRID ================= */
+
+.interview-grid {
+      display: grid;
+      gap: 16px;
+      margin-top: 15px;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+/* CARD */
+.interview-card {
+      padding: 15px;
+      border-radius: 12px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      transition: 0.2s;
+}
+
+.interview-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--primary);
+}
+
+.interview-card h3 {
+      margin-bottom: 6px;
+}
+
+.interview-card p {
+      opacity: 0.7;
+      font-size: 0.95rem;
+}
+
+/* ================= STATUS ================= */
+
+.status {
+      display: inline-block;
+      margin-top: 8px;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+}
+
+.status.pending {
+      background: #facc15;
+      color: #000;
+}
+
+.status.completed {
+      background: #22c55e;
+      color: white;
+}
+
+/* ================= EMPTY ================= */
+
+.empty-state {
+      text-align: center;
+      padding: 30px;
+      opacity: 0.6;
+}
+
+/* ================= RESPONSIVE ================= */
+
+/* TABLET */
+@media (max-width: 900px) {
+      .booking-layout {
+            grid-template-columns: 1fr;
+      }
+
+      .booking-right {
+            margin-top: 10px;
+      }
+
+      .slots-grid {
+            grid-template-columns: repeat(4, 1fr);
+      }
+
+      .interview-grid {
+            grid-template-columns: repeat(2, 1fr);
+      }
+}
+
+/* MOBILE */
+@media (max-width: 600px) {
+
+      .dashboard-container {
+            padding: 16px;
+      }
+
+      .navbar {
+            padding: 0 12px;
+      }
+
+      .nav-right {
+            gap: 8px;
+      }
+
+      .user-badge {
+            display: none;
+      }
+
+      .booking-left input,
+      .booking-left button {
+            width: 100%;
+      }
+
+      .slots-grid {
+            grid-template-columns: repeat(2, 1fr);
+      }
+
+      .interview-grid {
+            grid-template-columns: 1fr;
+      }
+}
+
+/* ================= SKELETON ================= */
+
+.skeleton-title {
+      width: 60%;
+      height: 20px;
+      margin-bottom: 10px;
+}
+
+.skeleton-line {
+      width: 80%;
+      height: 14px;
+      margin-bottom: 8px;
+}
+
+.skeleton-line.short {
+      width: 50%;
+}

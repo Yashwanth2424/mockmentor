@@ -1,0 +1,25 @@
+.themeToggleBtn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      padding: 8px 12px;
+      border-radius: 10px;
+      border: none;
+      width: auto;
+
+      /* border: 1px solid var(--border); */
+      background: transparent;
+      /* background: var(--secondary); */
+      color: var(--text);
+
+      cursor: pointer;
+      transition: 0.25s;
+}
+
+.themeToggleBtn:hover {
+      transform: translateY(-2px);
+      background: transparent;
+      /* background: var(--primary); */
+      color: var(--text);
+}

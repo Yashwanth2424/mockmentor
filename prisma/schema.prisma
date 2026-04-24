@@ -1,0 +1,46 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       String   @id @default(cuid())
+  name     String
+  email    String   @unique
+  password String
+  role     Role     @default(STUDENT) 
+
+  interviews       Interview[] @relation("UserInterviews")
+  mentorInterviews Interview[] @relation("MentorInterviews")
+}
+
+model Interview {
+  id        String   @id @default(cuid())
+  topic     String
+  date      DateTime
+  status    Status   @default(PENDING)  
+
+  userId    String
+  mentorId  String?
+
+  user   User  @relation("UserInterviews", fields: [userId], references: [id])
+  mentor User? @relation("MentorInterviews", fields: [mentorId], references: [id])
+}
+
+enum Role {
+  SUPER_ADMIN
+  ADMIN
+  MODERATOR
+  STUDENT
+  MENTOR  
+}
+
+enum Status {
+  PENDING
+  COMPLETED
+  CANCELLED
+}
