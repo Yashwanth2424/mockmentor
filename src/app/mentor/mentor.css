@@ -1,0 +1,477 @@
+/* ================= PAGE ================= */
+
+.mentor-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 24px;
+      color: var(--text);
+}
+
+/* ================= HEADER ================= */
+
+.mentor-title {
+      font-size: 30px;
+      font-weight: 700;
+      margin-bottom: 24px;
+      letter-spacing: -0.5px;
+      color: var(--text);
+}
+
+/* ================= FILTERS ================= */
+
+.filter-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 20px;
+}
+
+.filter-tabs button {
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--text);
+
+      padding: 10px 16px;
+
+      border-radius: 10px;
+
+      cursor: pointer;
+
+      transition: 0.2s ease;
+
+      font-size: 14px;
+      font-weight: 500;
+}
+
+.filter-tabs button:hover {
+      background: var(--secondary);
+      border-color: var(--primary);
+}
+
+.filter-tabs button.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+}
+
+/* ================= AVAILABILITY ================= */
+
+.availability-box {
+      background: var(--card);
+      border: 1px solid var(--border);
+
+      border-radius: 18px;
+
+      padding: 22px;
+
+      margin-bottom: 28px;
+
+      transition: 0.2s ease;
+}
+
+.availability-box h3 {
+      margin-bottom: 20px;
+      font-size: 18px;
+      font-weight: 600;
+}
+
+.availability-row {
+      display: grid;
+      grid-template-columns: 110px 1fr 1fr;
+      gap: 12px;
+
+      align-items: center;
+
+      margin-bottom: 14px;
+}
+
+.availability-row span {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text);
+}
+
+.availability-row select {
+      width: 100%;
+
+      background: var(--secondary);
+      color: var(--text);
+
+      border: 1px solid var(--border);
+
+      border-radius: 10px;
+
+      padding: 10px 12px;
+
+      outline: none;
+
+      transition: 0.2s ease;
+}
+
+.availability-row select:focus {
+      border-color: var(--primary);
+}
+
+.availability-box button {
+      margin-top: 12px;
+}
+
+/* ================= GRID ================= */
+
+.mentor-grid {
+      display: grid;
+      gap: 18px;
+}
+
+/* ================= CARD ================= */
+
+.mentor-card {
+      background: var(--card);
+
+      border: 1px solid var(--border);
+
+      border-radius: 18px;
+
+      padding: 20px;
+
+      transition: 0.25s ease;
+
+      color: var(--text);
+}
+
+.mentor-card:hover {
+      transform: translateY(-2px);
+
+      border-color: var(--primary);
+
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
+}
+
+.mentor-topic {
+      font-size: 19px;
+      font-weight: 600;
+      margin-bottom: 14px;
+
+      color: var(--text);
+}
+
+.mentor-text {
+      font-size: 14px;
+      margin-bottom: 10px;
+
+      color: var(--text);
+      opacity: 0.92;
+
+      line-height: 1.5;
+}
+
+/* ================= STATUS ================= */
+
+.status-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+
+      padding: 5px 10px;
+
+      border-radius: 999px;
+
+      font-size: 12px;
+      font-weight: 600;
+
+      margin-left: 6px;
+}
+
+.status-pending {
+      background: rgba(250, 204, 21, 0.15);
+      color: #facc15;
+}
+
+.status-accepted {
+      background: rgba(34, 197, 94, 0.15);
+      color: #22c55e;
+}
+
+.status-rejected {
+      background: rgba(239, 68, 68, 0.15);
+      color: #ef4444;
+}
+
+.status-completed {
+      background: rgba(59, 130, 246, 0.15);
+      color: #3b82f6;
+}
+
+/* ================= ACTIONS ================= */
+
+.action-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+
+      margin-top: 16px;
+}
+
+.btn {
+      border: none;
+
+      padding: 10px 14px;
+
+      border-radius: 10px;
+
+      font-size: 14px;
+      font-weight: 500;
+
+      cursor: pointer;
+
+      transition: 0.2s ease;
+}
+
+.btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+}
+
+/* ACCEPT */
+
+.btn-accept {
+      background: var(--primary);
+      color: white;
+}
+
+.btn-accept:hover {
+      background: var(--primary-hover);
+}
+
+/* REJECT */
+
+.btn-reject {
+      background: #ef4444;
+      color: white;
+}
+
+.btn-reject:hover {
+      background: #dc2626;
+}
+
+/* COMPLETE */
+
+.btn-complete {
+      background: #22c55e;
+      color: white;
+}
+
+.btn-complete:hover {
+      background: #16a34a;
+}
+
+/* CANCEL */
+
+.btn-cancel {
+      background: #ef4444;
+      color: white;
+}
+
+.btn-cancel:hover {
+      background: #dc2626;
+}
+
+/* ================= MODAL ================= */
+
+.modal-overlay {
+      position: fixed;
+      inset: 0;
+
+      background: rgba(0, 0, 0, 0.5);
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      padding: 20px;
+
+      z-index: 3000;
+}
+
+.feedback-modal {
+      width: 100%;
+      max-width: 620px;
+
+      background: var(--card);
+      color: var(--text);
+
+      border: 1px solid var(--border);
+
+      border-radius: 20px;
+
+      padding: 24px;
+
+      animation: modalIn 0.2s ease;
+}
+
+@keyframes modalIn {
+      from {
+            opacity: 0;
+            transform: translateY(10px);
+      }
+
+      to {
+            opacity: 1;
+            transform: translateY(0);
+      }
+}
+
+.feedback-modal h2 {
+      margin-bottom: 22px;
+      font-size: 24px;
+      font-weight: 700;
+}
+
+/* ================= FORM ================= */
+
+.form-group {
+      display: flex;
+      flex-direction: column;
+
+      gap: 8px;
+
+      margin-bottom: 18px;
+}
+
+.form-group label {
+      font-size: 14px;
+      font-weight: 600;
+}
+
+.form-group textarea,
+.form-group select {
+      width: 100%;
+
+      background: var(--secondary);
+      color: var(--text);
+
+      border: 1px solid var(--border);
+
+      border-radius: 12px;
+
+      padding: 12px;
+
+      outline: none;
+
+      resize: vertical;
+
+      transition: 0.2s ease;
+}
+
+.form-group textarea:focus,
+.form-group select:focus {
+      border-color: var(--primary);
+}
+
+/* ================= MODAL ACTIONS ================= */
+
+.modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+
+      margin-top: 24px;
+}
+
+/* ================= STATES ================= */
+
+.loading-text,
+.empty-text,
+.error-text {
+      font-size: 15px;
+      margin-top: 12px;
+}
+
+.error-text {
+      color: #ef4444;
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media (min-width: 700px) {
+      .mentor-grid {
+            grid-template-columns: repeat(2, 1fr);
+      }
+}
+
+@media (min-width: 1100px) {
+      .mentor-grid {
+            grid-template-columns: repeat(3, 1fr);
+      }
+}
+
+/* ================= TABLET ================= */
+
+@media (max-width: 768px) {
+
+      .mentor-container {
+            padding: 18px;
+      }
+
+      .mentor-title {
+            font-size: 26px;
+      }
+
+      .availability-row {
+            grid-template-columns: 1fr;
+      }
+
+      .availability-row span {
+            margin-bottom: -2px;
+      }
+
+      .action-buttons {
+            flex-direction: column;
+      }
+
+      .action-buttons .btn {
+            width: 100%;
+      }
+}
+
+/* ================= MOBILE ================= */
+
+@media (max-width: 520px) {
+
+      .mentor-container {
+            padding: 14px;
+      }
+
+      .mentor-title {
+            font-size: 22px;
+      }
+
+      .availability-box {
+            padding: 16px;
+      }
+
+      .mentor-card {
+            padding: 16px;
+      }
+
+      .feedback-modal {
+            padding: 18px;
+      }
+
+      .modal-actions {
+            flex-direction: column;
+      }
+
+      .modal-actions button {
+            width: 100%;
+      }
+
+      .filter-tabs {
+            gap: 8px;
+      }
+
+      .filter-tabs button {
+            flex: 1;
+            text-align: center;
+      }
+}

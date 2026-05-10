@@ -49,10 +49,10 @@ export async function POST(req) {
                   name: "token",
                   value: token,
                   httpOnly: true,
-                  secure: false,      // true only on HTTPS
+                  secure: false,
                   sameSite: "lax",
                   path: "/",
-                  maxAge: 60 * 60 * 24, // 1 day
+                  maxAge: 60 * 60 * 24,
             });
 
             return response;

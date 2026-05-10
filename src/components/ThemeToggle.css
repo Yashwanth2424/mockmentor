@@ -5,21 +5,30 @@
 
       padding: 8px 12px;
       border-radius: 10px;
-      border: none;
-      width: auto;
 
-      /* border: 1px solid var(--border); */
-      background: transparent;
-      /* background: var(--secondary); */
+      border: 1px solid var(--border);
+      background: var(--card);
+      /* ✅ visible in both themes */
       color: var(--text);
 
       cursor: pointer;
-      transition: 0.25s;
+      transition: 0.2s;
 }
 
+/* Hover */
 .themeToggleBtn:hover {
-      transform: translateY(-2px);
-      background: transparent;
-      /* background: var(--primary); */
+      background: var(--secondary);
+      border-color: var(--primary);
+      transform: translateY(-1px);
+}
+
+/* Optional: active click feel */
+.themeToggleBtn:active {
+      transform: scale(0.95);
+}
+
+.themeToggleBtn svg {
+      width: 18px;
+      height: 18px;
       color: var(--text);
 }

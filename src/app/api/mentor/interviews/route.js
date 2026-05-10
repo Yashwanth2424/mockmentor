@@ -7,26 +7,30 @@ export async function GET(req) {
             const token = req.cookies.get("token")?.value;
 
             if (!token) {
-                  return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+                  return NextResponse.json(
+                        { error: "Unauthorized" },
+                        { status: 401 }
+                  );
             }
 
             const decoded = verifyToken(token);
 
             const interviews = await prisma.interview.findMany({
                   where: {
-                        userId: decoded.id,
+                        mentorId: decoded.id,
                   },
                   include: {
-                        mentor: true,
+                        user: true,
                   },
                   orderBy: {
-                        date: "asc",
+                        date: "desc",
                   },
             });
 
             return NextResponse.json(interviews);
+
       } catch (err) {
-            console.error("INTERVIEW ERROR:", err);
+            console.error(err);
             return NextResponse.json(
                   { error: "Server error" },
                   { status: 500 }

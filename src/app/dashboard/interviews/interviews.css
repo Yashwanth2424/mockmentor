@@ -1,0 +1,335 @@
+/* =========================================
+   FILTER BAR
+========================================= */
+
+.filter-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+}
+
+.filter-bar button {
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--text);
+
+      padding: 8px 14px;
+      border-radius: 8px;
+
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+
+      transition: all 0.2s ease;
+}
+
+.filter-bar button:hover {
+      background: var(--secondary);
+}
+
+.filter-bar button.active {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: white;
+}
+
+/* =========================================
+   INTERVIEW GRID
+========================================= */
+
+.interview-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      align-items: start;
+}
+
+/* =========================================
+   INTERVIEW CARD
+========================================= */
+
+.interview-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+
+      min-height: 230px;
+
+      border-radius: 14px;
+      padding: 18px;
+
+      cursor: pointer;
+
+      transition:
+            transform 0.2s ease,
+            border-color 0.2s ease,
+            box-shadow 0.2s ease;
+}
+
+/* HOVER */
+.interview-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--primary);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+}
+
+/* =========================================
+   CARD CONTENT
+========================================= */
+
+.card-title {
+      font-size: 17px;
+      font-weight: 600;
+      margin-bottom: 10px;
+      color: var(--text);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+}
+
+.card-text {
+      font-size: 14px;
+      line-height: 1.5;
+      color: var(--text-secondary, var(--text));
+
+      margin-bottom: 6px;
+
+      word-break: break-word;
+}
+
+/* =========================================
+   STATUS BADGES
+========================================= */
+
+.status-badge {
+      display: inline-flex;
+      align-items: center;
+
+      margin-top: 10px;
+      padding: 5px 10px;
+
+      border-radius: 999px;
+
+      font-size: 12px;
+      font-weight: 600;
+}
+
+/* STATUS COLORS */
+
+.status-pending {
+      background: rgba(250, 204, 21, 0.14);
+      color: #eab308;
+}
+
+.status-accepted {
+      background: rgba(34, 197, 94, 0.14);
+      color: #22c55e;
+}
+
+.status-rejected {
+      background: rgba(239, 68, 68, 0.14);
+      color: #ef4444;
+}
+
+.status-cancelled {
+      background: rgba(107, 114, 128, 0.14);
+      color: #9ca3af;
+}
+
+.status-completed {
+      background: #ecfdf5;
+      color: #047857;
+}
+
+/* =========================================
+   CARD ACTIONS
+========================================= */
+
+.card-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 16px;
+}
+
+.card-actions button {
+      flex: 1;
+
+      border: none;
+      border-radius: 8px;
+
+      padding: 10px 12px;
+
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+
+      transition: all 0.2s ease;
+}
+
+/* CANCEL */
+
+.cancel-btn {
+      background: rgba(239, 68, 68, 0.12);
+      color: #ef4444;
+}
+
+.cancel-btn:hover {
+      background: #ef4444;
+      color: white;
+}
+
+/* RESCHEDULE */
+
+.reschedule-btn {
+      background: rgba(79, 70, 229, 0.12);
+      color: var(--primary);
+}
+
+.reschedule-btn:hover {
+      background: var(--primary);
+      color: white;
+}
+
+/* =========================================
+   EMPTY STATE
+========================================= */
+
+.empty-state {
+      border: 1px dashed var(--border);
+      background: var(--card);
+
+      border-radius: 14px;
+
+      padding: 50px 20px;
+
+      text-align: center;
+}
+
+.empty-state h3 {
+      margin-bottom: 8px;
+      font-size: 18px;
+}
+
+.empty-state p {
+      opacity: 0.7;
+      font-size: 14px;
+}
+
+/* =========================================
+   TABLET
+========================================= */
+
+@media (max-width: 1024px) {
+
+      .interview-grid {
+            grid-template-columns: repeat(2, 1fr);
+      }
+}
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 768px) {
+
+      .interview-grid {
+            grid-template-columns: 1fr;
+      }
+
+      .card-actions {
+            flex-direction: column;
+      }
+
+      .filter-bar {
+            gap: 8px;
+      }
+
+      .filter-bar button {
+            flex: 1;
+            min-width: 100px;
+      }
+}
+
+/* =========================================
+   SMALL MOBILE
+========================================= */
+
+@media (max-width: 480px) {
+
+      .interview-card {
+            padding: 16px;
+      }
+
+      .card-title {
+            font-size: 16px;
+      }
+
+      .card-text {
+            font-size: 13px;
+      }
+
+      .card-actions button {
+            font-size: 12px;
+      }
+}
+
+/* =========================================
+   PAGE
+========================================= */
+
+.interviews-page {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+}
+
+/* =========================================
+   HEADER
+========================================= */
+
+.interviews-header h1 {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 6px;
+}
+
+.interviews-header p {
+      color: var(--text-secondary, var(--text));
+      opacity: 0.7;
+}
+
+/* =========================================
+   CARD TOP
+========================================= */
+
+.card-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+}
+
+/* =========================================
+   CARD BODY
+========================================= */
+
+.card-body {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+}
+
+/* =========================================
+   VIEW BUTTON
+========================================= */
+
+.view-btn {
+      background: var(--primary);
+      color: white;
+}
+
+.view-btn:hover {
+      opacity: 0.9;
+}

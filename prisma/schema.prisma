@@ -12,7 +12,10 @@ model User {
   name     String
   email    String   @unique
   password String
-  role     Role     @default(STUDENT) 
+  role     Role     @default(STUDENT)
+
+
+  availability MentorAvailability[]  
 
   interviews       Interview[] @relation("UserInterviews")
   mentorInterviews Interview[] @relation("MentorInterviews")
@@ -22,13 +25,34 @@ model Interview {
   id        String   @id @default(cuid())
   topic     String
   date      DateTime
-  status    Status   @default(PENDING)  
+  status    Status   @default(PENDING)
 
   userId    String
   mentorId  String?
 
+  rating       Int?
+  feedback     String?
+  strengths    String?
+  improvements String?
+  completedAt  DateTime?
+
   user   User  @relation("UserInterviews", fields: [userId], references: [id])
   mentor User? @relation("MentorInterviews", fields: [mentorId], references: [id])
+
+  createdAt DateTime @default(now())
+}
+
+model MentorAvailability {
+  id        String @id @default(cuid())
+  mentorId  String
+  dayOfWeek Int    // 0 = Sunday, 6 = Saturday
+
+  startHour Int
+  endHour   Int
+
+  mentor User @relation(fields: [mentorId], references: [id], onDelete: Cascade)
+
+  @@unique([mentorId, dayOfWeek])
 }
 
 enum Role {
@@ -36,11 +60,13 @@ enum Role {
   ADMIN
   MODERATOR
   STUDENT
-  MENTOR  
+  MENTOR
 }
 
 enum Status {
   PENDING
+  ACCEPTED
+  REJECTED
   COMPLETED
   CANCELLED
 }

@@ -1,0 +1,484 @@
+/* ================= NAVBAR ================= */
+
+.navbar {
+      height: 60px;
+      background: var(--card);
+      color: var(--text);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 20px;
+      border-bottom: 1px solid var(--border);
+}
+
+.nav-left {
+      font-size: 1.3rem;
+      font-weight: bold;
+}
+
+.nav-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+}
+
+.user-badge {
+      background: var(--primary);
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      color: white;
+}
+
+.logout-btn {
+      background: #ef4444;
+      border: none;
+      padding: 8px 14px;
+      color: white;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: 0.2s;
+}
+
+.logout-btn:hover {
+      background: #dc2626;
+}
+
+
+/* ================= CONTAINER ================= */
+
+.dashboard-container {
+      max-width: 1100px;
+      margin: auto;
+      padding: 20px;
+
+}
+
+/* ================= HEADER ================= */
+
+.dashboard-header {
+      margin-bottom: 25px;
+}
+
+.dashboard-header h1 {
+      font-size: 2rem;
+}
+
+.dashboard-header p {
+      opacity: 0.7;
+}
+
+/* ================= CARD ================= */
+
+.card {
+      background: var(--card);
+      padding: 20px;
+      margin-bottom: 25px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      transition: 0.2s;
+}
+
+.card:hover {
+      border-color: var(--primary);
+}
+
+.card h2 {
+      margin: 0 0 16px 0;
+}
+
+.card-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+}
+
+/* ================= BUTTONS ================= */
+
+.cancel-btn,
+.reschedule-btn,
+.primary-btn {
+      border: none;
+      padding: 8px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      transition: 0.2s;
+}
+
+.cancel-btn {
+      background: #ef4444;
+}
+
+.cancel-btn:hover {
+      background: #dc2626;
+}
+
+.reschedule-btn {
+      background: var(--primary);
+}
+
+.reschedule-btn:hover {
+      background: var(--primary-hover);
+}
+
+.primary-btn {
+      background: var(--primary);
+      margin-top: 15px;
+}
+
+.primary-btn:hover:not(:disabled) {
+      background: var(--primary-hover);
+}
+
+.primary-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+}
+
+/* ================= MODAL ================= */
+
+.modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.4);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 100;
+}
+
+.modal {
+      background: var(--card);
+      padding: 20px;
+      border-radius: 12px;
+      width: 320px;
+}
+
+.modal-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+}
+
+/* ================= BOOKING LAYOUT ================= */
+
+.booking-layout {
+      display: flex;
+      gap: 30px;
+      flex-wrap: wrap;
+}
+
+.booking-layout.has-slots {
+      display: grid;
+      grid-template-columns: 1fr 300px;
+      align-items: start;
+}
+
+.booking-left {
+      flex: 1;
+      min-width: 280px;
+}
+
+.booking-right {
+      flex: 2;
+      min-width: 300px;
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--secondary);
+}
+
+
+/* ================= INPUT ================= */
+
+.input-group {
+      margin-bottom: 15px;
+      display: flex;
+      flex-direction: column;
+      color: var(--text);
+}
+
+/* SELECT (FIXED FOR DARK MODE) */
+.mentor-select {
+      padding: 12px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--text);
+      transition: 0.2s;
+      outline: none;
+}
+
+.mentor-select:focus {
+      outline: none;
+      border-color: var(--primary);
+}
+
+.mentor-select:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+}
+
+select {
+      background: var(--card);
+      color: var(--text);
+      outline: var(--primary);
+
+}
+
+/* INPUT FIELD */
+.booking-left input {
+      padding: 12px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--text);
+}
+
+.booking-left input:focus {
+      outline: none;
+      border-color: var(--primary);
+}
+
+/* TEXT */
+
+.error-text {
+      color: #ef4444;
+      font-size: 0.85rem;
+      margin-top: 4px;
+}
+
+.hint-text {
+      color: #6b7280;
+      font-size: 0.85rem;
+}
+
+/* ================= SLOTS ================= */
+
+.slots-title {
+      font-weight: 600;
+      margin-bottom: 6px;
+}
+
+.slots-info {
+      font-size: 0.85rem;
+      color: #6b7280;
+      margin-bottom: 10px;
+}
+
+.selected-slot {
+      margin-bottom: 10px;
+      font-weight: 500;
+      color: var(--primary);
+}
+
+.slots-container,
+.slots-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+}
+
+/* SLOT */
+.slot {
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: 0.2s;
+      color: var(--text);
+}
+
+.slot:hover {
+      border-color: var(--primary);
+      background: var(--secondary);
+}
+
+.slot.active,
+.active-slot {
+      background: var(--primary);
+      color: white;
+      border: none;
+}
+
+.slot.disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      background: var(--border);
+}
+
+.group-title {
+      margin: 0 0 8px 0;
+      color: var(--text);
+}
+
+.dark .slot.disabled {
+      background: var(--border);
+}
+
+.fully-booked {
+      color: #ef4444;
+      font-weight: 600;
+      padding: 10px;
+}
+
+/* ================= INTERVIEW GRID ================= */
+
+.interview-grid {
+      display: grid;
+      gap: 16px;
+      background: var(--secondary);
+
+}
+
+@media (min-width: 600px) {
+      .interview-grid {
+            grid-template-columns: 1fr 1fr;
+      }
+}
+
+@media (min-width: 900px) {
+      .interview-grid {
+            grid-template-columns: 1fr 1fr 1fr;
+      }
+}
+
+.interview-card {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      background: var(--secondary);
+      cursor: pointer;
+      transition: 0.2s;
+}
+
+.interview-card:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      transform: translateY(-2px);
+}
+
+.card-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 8px;
+}
+
+.card-text {
+      font-size: 14px;
+      margin: 4px 0;
+      font-weight: 00;
+
+}
+
+/* STATUS */
+
+
+.status-badge {
+      display: inline-block;
+      margin-top: 8px;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      color: white;
+}
+
+/* STATUS COLORS */
+
+.status-pending {
+      background-color: #facc15;
+      color: #000;
+}
+
+.status-accepted {
+      background-color: #22c55e;
+}
+
+.status-rejected {
+      background-color: #ef4444;
+}
+
+.status-cancelled {
+      background-color: #6b7280;
+}
+
+/* ================= EMPTY ================= */
+
+.empty-state {
+      text-align: center;
+      padding: 30px;
+      opacity: 0.6;
+}
+
+/* ================= FILTER ================= */
+
+.filter-bar {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+}
+
+.filter-bar button {
+      padding: 6px 12px;
+      border: 1px solid #e5e7eb;
+      background: white;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+}
+
+.filter-bar button:hover {
+      background: #f3f4f6;
+}
+
+.filter-bar button.active {
+      background: #4f46e5;
+      color: white;
+      border-color: #4f46e5;
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media (max-width: 900px) {
+      .booking-layout {
+            flex-direction: column;
+      }
+
+      .booking-right {
+            margin-top: 10px;
+      }
+
+      .interview-grid {
+            grid-template-columns: repeat(2, 1fr);
+      }
+}
+
+@media (max-width: 600px) {
+      .dashboard-container {
+            padding: 16px;
+      }
+
+      .navbar {
+            padding: 0 12px;
+      }
+
+      .nav-right {
+            gap: 8px;
+      }
+
+      .user-badge {
+            display: none;
+      }
+
+      .booking-left input,
+      .primary-btn {
+            width: 100%;
+      }
+
+      .interview-grid {
+            grid-template-columns: 1fr;
+      }
+}

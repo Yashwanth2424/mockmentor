@@ -4,6 +4,9 @@ import { Inter } from "next/font/google";
 
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { Toaster } from "react-hot-toast";
+
+<Toaster />
 
 //  Load font OUTSIDE component
 const inter = Inter({ subsets: ["latin"] });
