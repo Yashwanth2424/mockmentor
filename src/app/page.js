@@ -19,7 +19,7 @@ export default function Home() {
   const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
 
-  // ✅ Close menu when resizing to desktop
+  // Close menu when resizing to desktop
   useEffect(() => {
     function handleResize() {
       if (window.innerWidth > 600) {
@@ -31,13 +31,13 @@ export default function Home() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // ✅ Safe navigation
+  //  Safe navigation
   const handleNavigate = (path) => {
     setMenuOpen(false);
     setTimeout(() => router.push(path), 100);
   };
 
-  // ✅ Prevent opening menu on desktop
+  //  Prevent opening menu on desktop
   const handleMenuOpen = () => {
     if (window.innerWidth <= 600) {
       setMenuOpen(true);
@@ -47,7 +47,7 @@ export default function Home() {
   return (
     <main className={styles.homeContainer}>
 
-      {/* ================= NAVBAR ================= */}
+      {/*  NAVBAR  */}
       <nav className={styles.navbar}>
         <h2 className={styles.logo}>MockMentor</h2>
 
@@ -74,7 +74,7 @@ export default function Home() {
         </button>
       </nav>
 
-      {/* ================= OVERLAY ================= */}
+      {/*  OVERLAY  */}
       {menuOpen && (
         <div
           className={styles.overlay}
@@ -82,7 +82,7 @@ export default function Home() {
         />
       )}
 
-      {/* ================= MOBILE SIDE MENU ================= */}
+      {/*  MOBILE SIDE MENU  */}
       <div className={`${styles.mobileMenu} ${menuOpen ? styles.open : ""}`}>
 
         <div className={styles.mobileHeader}>
@@ -104,7 +104,7 @@ export default function Home() {
           Signup
         </button>
 
-        {/* ✅ FIXED THEME BUTTON */}
+        {/*  FIXED THEME BUTTON */}
         <button className={styles.themeBtn}>
           <span>Theme</span>
           <ThemeToggle />
@@ -112,7 +112,7 @@ export default function Home() {
 
       </div>
 
-      {/* ================= HERO ================= */}
+      {/*  HERO  */}
       <section className={styles.hero}>
         <h1>
           Crack Your Next Interview <br />
@@ -137,7 +137,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ================= FEATURES ================= */}
+      {/*  FEATURES  */}
       <section className={styles.features}>
 
         <div className={styles.featureCard}>
@@ -160,7 +160,7 @@ export default function Home() {
 
       </section>
 
-      {/* ================= FOOTER ================= */}
+      {/*  FOOTER  */}
       <footer className={styles.footer}>
         © {new Date().getFullYear()} MockMentor • Built with{" "}
         <FiHeart className={styles.heartIcon} />

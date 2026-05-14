@@ -1,9 +1,9 @@
-/* ================= SIDEBAR BASE ================= */
+/*  SIDEBAR BASE  */
 
 .sidebar {
-      width: 240px;
+      width: 250px;
       flex-shrink: 0;
-      min-height: 100vh;
+      overflow-y: auto;
       background: var(--card);
       color: var(--text);
       display: flex;
@@ -15,14 +15,12 @@
       border-right: 1px solid var(--border);
 }
 
-/* LOGO */
 .logo {
       font-size: 18px;
       font-weight: 600;
       margin-bottom: 20px;
 }
 
-/* MENU */
 .menu {
       display: flex;
       flex-direction: column;
@@ -32,14 +30,19 @@
 
 .menu button {
       width: 100%;
+      min-height: 44px;
       background: transparent;
       border: none;
       color: var(--text);
       text-align: left;
-      padding: 10px 12px;
-      border-radius: 8px;
+      padding: 0 14px;
+      border-radius: 12px;
       cursor: pointer;
       transition: all 0.2s ease;
+      font-size: 14px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
 }
 
 .menu button:hover {
@@ -65,7 +68,6 @@
       border-radius: 2px;
 }
 
-/* FOOTER */
 .sidebar-footer {
       margin-top: auto;
       padding-top: 16px;
@@ -87,7 +89,6 @@
       color: white;
 }
 
-/* CLOSE BUTTON — hidden on desktop */
 .close-btn {
       display: none;
       position: absolute;
@@ -101,7 +102,7 @@
       border-color: var(--primary);
 }
 
-/* ================= MOBILE ================= */
+/*  MOBILE  */
 
 @media (max-width: 768px) {
 
@@ -119,6 +120,7 @@
 
       .sidebar.open {
             left: 0;
+            box-shadow: 0 0 0 9999px #00000059;
       }
 
       .close-btn {

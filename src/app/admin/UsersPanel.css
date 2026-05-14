@@ -2,7 +2,7 @@
       padding: 10px;
 }
 
-/* ================= HEADER ================= */
+/*  HEADER  */
 
 .users-header {
       display: flex;
@@ -28,7 +28,7 @@
       border-color: var(--primary);
 }
 
-/* ================= GRID ================= */
+/*  GRID  */
 
 .users-grid {
       display: grid;
@@ -36,7 +36,7 @@
       gap: 20px;
 }
 
-/* ================= CARD ================= */
+/*  CARD  */
 
 .user-card {
       background: var(--card);
@@ -53,7 +53,7 @@
       border-color: var(--primary);
 }
 
-/* ================= INFO ================= */
+/*  INFO  */
 
 .user-info h3 {
       margin-bottom: 4px;
@@ -66,7 +66,7 @@
       opacity: 0.7;
 }
 
-/* ================= ROLE BADGE ================= */
+/*  ROLE BADGE  */
 
 .role {
       display: inline-block;
@@ -88,7 +88,7 @@
       color: white;
 }
 
-/* ================= ACTIONS ================= */
+/*  ACTIONS  */
 
 .user-actions {
       display: flex;
@@ -107,7 +107,7 @@
       border: 1px solid var(--border);
 }
 
-/* 🔥 ROLE BUTTON (PRIMARY STYLE) */
+/*  ROLE BUTTON (PRIMARY STYLE) */
 .role-btn {
       background: var(--primary);
       color: white;
@@ -118,7 +118,7 @@
       transform: translateY(-1px);
 }
 
-/* 🔥 DELETE BUTTON (SOFT DESTRUCTIVE) */
+/*  DELETE BUTTON (SOFT DESTRUCTIVE) */
 .delete-btn {
       background: transparent;
       color: #ef4444;
@@ -131,7 +131,7 @@
       transform: translateY(-1px);
 }
 
-/* ================= JOINED ================= */
+/*  JOINED  */
 
 .joined {
       margin-top: 12px;
@@ -140,7 +140,7 @@
       opacity: 0.6;
 }
 
-/* ================= LOADER ================= */
+/*  LOADER  */
 
 .loader {
       margin: 40px auto;
@@ -158,7 +158,7 @@
       }
 }
 
-/* ================= RESPONSIVE ================= */
+/*  RESPONSIVE  */
 
 @media (max-width: 600px) {
       .users-header {
@@ -171,7 +171,7 @@
       }
 }
 
-/* ================= SKELETON ================= */
+/*  SKELETON  */
 
 .skeleton-role {
       width: 80px;

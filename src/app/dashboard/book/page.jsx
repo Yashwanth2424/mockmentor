@@ -19,13 +19,37 @@ export default function BookPage() {
       const [booking, setBooking] = useState(false);
       const [topicError, setTopicError] = useState("");
 
-      const fetcher = (url) =>
-            fetch(url).then((res) => res.json());
+      const fetcher = async (url) => {
 
+            const res = await fetch(url);
+
+            if (!res.ok) {
+
+                  const errorText =
+                        await res.text();
+
+                  console.error(
+                        `FETCH ERROR (${url}):`,
+                        errorText
+                  );
+
+                  throw new Error(
+                        `Failed to fetch ${url}`
+                  );
+            }
+
+            return res.json();
+      };
       const {
-            data: mentors,
+            data: mentors = [],
             isLoading: mentorsLoading,
-      } = useSWR("/api/mentor", fetcher);
+      } = useSWR(
+            "/api/mentor",
+            fetcher,
+            {
+                  revalidateOnFocus: false,
+            }
+      );
 
       const {
             data: interviews,
@@ -121,7 +145,7 @@ export default function BookPage() {
                   return [];
             }
 
-            const day = new Date(selectedDate).getDay();
+            const day = getSelectedDay(selectedDate);
 
             const dayAvailability =
                   mentor.availability?.find(
@@ -196,18 +220,43 @@ export default function BookPage() {
             );
       }
 
+      function getSelectedDay(dateString) {
+
+            const [
+                  year,
+                  month,
+                  day,
+            ] = dateString
+                  .split("-")
+                  .map(Number);
+
+            return new Date(
+                  year,
+                  month - 1,
+                  day
+            ).getDay();
+      }
+
       function getAvailableMentors() {
-            if (!selectedDate || !mentors) {
-                  return mentors || [];
+
+            if (!selectedDate) {
+                  return mentors;
             }
-            const day = new Date(selectedDate).getDay();
+
+            const selectedDay =
+                  new Date(
+                        `${selectedDate}T12:00:00`
+                  ).getDay();
+
             return mentors.filter((mentor) =>
                   mentor.availability?.some(
-                        (a) => a.dayOfWeek === day
+                        (availability) =>
+                              Number(
+                                    availability.dayOfWeek
+                              ) === selectedDay
                   )
             );
       }
-
       function groupSlots(slots) {
             const groups = {
                   Morning: [],
@@ -337,235 +386,234 @@ export default function BookPage() {
 
       return (
             <section>
-                  <div className="booking-page-title">
-                        <h1>
-                              Book Interview
-                        </h1>
-                        <p>
-                              Schedule your next mock
-                              interview session
-                        </p>
-                  </div>
+                  <div className="book-page">
+                        <div className="booking-page-title">
+                              <h1>
+                                    Book Interview
+                              </h1>
+                              <p>
+                                    Schedule your next mock
+                                    interview session
+                              </p>
+                        </div>
 
-                  <div className="booking-card">
-                        <div className="booking-layout">
-                              <div className="booking-left">
-                                    <div className="input-group">
-                                          <label>
-                                                Interview Topic
-                                          </label>
+                        <div className="booking-card">
+                              <div className="booking-layout">
+                                    <div className="booking-left">
+                                          <div className="input-group">
+                                                <label>
+                                                      Interview Topic
+                                                </label>
 
-                                          <input
-                                                type="text"
-                                                placeholder="Frontend Development, React, DSA..."
-                                                value={topic}
-                                                onChange={(e) => {
+                                                <input
+                                                      type="text"
+                                                      placeholder="Frontend Development, React, DSA..."
+                                                      value={topic}
+                                                      onChange={(e) => {
 
-                                                      setTopic(
-                                                            e.target.value
-                                                      );
+                                                            setTopic(
+                                                                  e.target.value
+                                                            );
 
-                                                      setTopicError("");
-                                                }}
-                                          />
-                                          {topicError && (
-                                                <p className="error-text">
-                                                      {topicError}
-                                                </p>
+                                                            setTopicError("");
+                                                      }}
+                                                />
+                                                {topicError && (
+                                                      <p className="error-text">
+                                                            {topicError}
+                                                      </p>
+                                                )}
+
+                                          </div>
+                                          <div className="input-group">
+                                                <label>
+                                                      Select Date
+                                                </label>
+                                                <input
+                                                      type="date"
+                                                      value={selectedDate}
+                                                      min={getMinDate()}
+                                                      onChange={(e) =>
+                                                            setSelectedDate(
+                                                                  e.target.value
+                                                            )
+                                                      }
+                                                />
+
+                                          </div>
+                                          <div className="input-group">
+                                                <label>
+                                                      Select Mentor
+                                                </label>
+                                                <select
+                                                      disabled={!selectedDate}
+                                                      value={
+                                                            selectedMentor
+                                                      }
+                                                      onChange={(e) => {
+
+                                                            setSelectedMentor(
+                                                                  e.target.value
+                                                            );
+
+                                                            setSelectedTime("");
+                                                      }}
+                                                >
+                                                      <option value="">
+                                                            {mentorsLoading
+                                                                  ? "Loading mentors..."
+                                                                  : "Select Mentor"}
+                                                      </option>
+
+                                                      {getAvailableMentors().map(
+                                                            (m) => (
+                                                                  <option
+                                                                        key={
+                                                                              m.id
+                                                                        }
+                                                                        value={
+                                                                              m.id
+                                                                        }
+                                                                  >
+                                                                        {m.name} (
+                                                                        {formatAvailability(
+                                                                              m.availability
+                                                                        )}
+                                                                        )
+                                                                  </option>
+                                                            )
+                                                      )}
+
+                                                </select>
+                                          </div>
+
+                                          {selectedTime && (
+                                                <div className="selected-slot">
+
+                                                      Selected:
+                                                      {" "}
+                                                      {new Date(
+                                                            selectedDate
+                                                      ).toLocaleDateString()}
+                                                      {" • "}
+                                                      {formatTime(
+                                                            selectedTime
+                                                      )}
+
+                                                </div>
+                                          )}
+                                          <button
+                                                onClick={bookInterview}
+                                                disabled={
+                                                      booking ||
+                                                      !topic.trim() ||
+                                                      !selectedDate ||
+                                                      !selectedMentor ||
+                                                      !selectedTime
+                                                }
+                                          >
+                                                {booking
+                                                      ? "Booking..."
+                                                      : "Book Interview"}
+
+                                          </button>
+                                    </div>
+
+                                    <div className="booking-right">
+                                          <h3 className="booking-right-title">
+                                                Available Time Slots
+                                          </h3>
+
+                                          {!selectedDate ? (
+
+                                                <div className="empty-slots">
+                                                      Select a date to
+                                                      view mentors and
+                                                      slots
+                                                </div>
+
+                                          ) : !selectedMentor ? (
+
+                                                <div className="empty-slots">
+                                                      Select a mentor to
+                                                      view available
+                                                      slots
+                                                </div>
+
+                                          ) : availableSlots.length === 0 ? (
+
+                                                <div className="empty-slots">
+                                                      No slots available
+                                                      for this mentor on
+                                                      selected date
+                                                </div>
+
+                                          ) : (
+
+                                                Object.entries(
+                                                      groupedSlots
+                                                ).map(
+                                                      ([label, slots]) => {
+
+                                                            if (
+                                                                  !slots.length
+                                                            ) {
+                                                                  return null;
+                                                            }
+
+                                                            return (
+                                                                  <div
+                                                                        key={
+                                                                              label
+                                                                        }
+                                                                        className="slot-group"
+                                                                  >
+                                                                        <p className="slot-group-title">
+                                                                              {
+                                                                                    label
+                                                                              }
+                                                                        </p>
+                                                                        <div className="slots-grid">
+
+                                                                              {slots.map(
+                                                                                    (
+                                                                                          time
+                                                                                    ) => (
+                                                                                          <button
+                                                                                                key={
+                                                                                                      time
+                                                                                                }
+                                                                                                type="button"
+                                                                                                className={`slot ${selectedTime === time
+                                                                                                      ? "active"
+                                                                                                      : ""
+                                                                                                      }`}
+                                                                                                onClick={() =>
+                                                                                                      setSelectedTime(
+                                                                                                            time
+                                                                                                      )
+                                                                                                }
+                                                                                          >
+                                                                                                {formatTime(
+                                                                                                      time
+                                                                                                )}
+                                                                                          </button>
+                                                                                    )
+                                                                              )}
+
+                                                                        </div>
+
+                                                                  </div>
+                                                            );
+                                                      }
+                                                )
                                           )}
 
                                     </div>
-                                    <div className="input-group">
-                                          <label>
-                                                Select Date
-                                          </label>
-                                          <input
-                                                type="date"
-                                                value={selectedDate}
-                                                min={getMinDate()}
-                                                onChange={(e) =>
-                                                      setSelectedDate(
-                                                            e.target.value
-                                                      )
-                                                }
-                                          />
-
-                                    </div>
-                                    <div className="input-group">
-                                          <label>
-                                                Select Mentor
-                                          </label>
-                                          <select
-                                                disabled={
-                                                      !selectedDate ||
-                                                      mentorsLoading
-                                                }
-                                                value={
-                                                      selectedMentor
-                                                }
-                                                onChange={(e) => {
-
-                                                      setSelectedMentor(
-                                                            e.target.value
-                                                      );
-
-                                                      setSelectedTime("");
-                                                }}
-                                          >
-                                                <option value="">
-                                                      {mentorsLoading
-                                                            ? "Loading mentors..."
-                                                            : "Select Mentor"}
-                                                </option>
-
-                                                {getAvailableMentors().map(
-                                                      (m) => (
-                                                            <option
-                                                                  key={
-                                                                        m.id
-                                                                  }
-                                                                  value={
-                                                                        m.id
-                                                                  }
-                                                            >
-                                                                  {m.name} (
-                                                                  {formatAvailability(
-                                                                        m.availability
-                                                                  )}
-                                                                  )
-                                                            </option>
-                                                      )
-                                                )}
-
-                                          </select>
-                                    </div>
-
-                                    {selectedTime && (
-                                          <div className="selected-slot">
-
-                                                Selected:
-                                                {" "}
-                                                {new Date(
-                                                      selectedDate
-                                                ).toLocaleDateString()}
-                                                {" • "}
-                                                {formatTime(
-                                                      selectedTime
-                                                )}
-
-                                          </div>
-                                    )}
-                                    <button
-                                          onClick={bookInterview}
-                                          disabled={
-                                                booking ||
-                                                !topic.trim() ||
-                                                !selectedDate ||
-                                                !selectedMentor ||
-                                                !selectedTime
-                                          }
-                                    >
-                                          {booking
-                                                ? "Booking..."
-                                                : "Book Interview"}
-
-                                    </button>
-                              </div>
-
-                              <div className="booking-right">
-                                    <h3 className="booking-right-title">
-                                          Available Time Slots
-                                    </h3>
-
-                                    {!selectedDate ? (
-
-                                          <div className="empty-slots">
-                                                Select a date to
-                                                view mentors and
-                                                slots
-                                          </div>
-
-                                    ) : !selectedMentor ? (
-
-                                          <div className="empty-slots">
-                                                Select a mentor to
-                                                view available
-                                                slots
-                                          </div>
-
-                                    ) : availableSlots.length === 0 ? (
-
-                                          <div className="empty-slots">
-                                                No slots available
-                                                for this mentor on
-                                                selected date
-                                          </div>
-
-                                    ) : (
-
-                                          Object.entries(
-                                                groupedSlots
-                                          ).map(
-                                                ([label, slots]) => {
-
-                                                      if (
-                                                            !slots.length
-                                                      ) {
-                                                            return null;
-                                                      }
-
-                                                      return (
-                                                            <div
-                                                                  key={
-                                                                        label
-                                                                  }
-                                                                  className="slot-group"
-                                                            >
-                                                                  <p className="slot-group-title">
-                                                                        {
-                                                                              label
-                                                                        }
-                                                                  </p>
-                                                                  <div className="slots-grid">
-
-                                                                        {slots.map(
-                                                                              (
-                                                                                    time
-                                                                              ) => (
-                                                                                    <button
-                                                                                          key={
-                                                                                                time
-                                                                                          }
-                                                                                          type="button"
-                                                                                          className={`slot ${selectedTime === time
-                                                                                                ? "active"
-                                                                                                : ""
-                                                                                                }`}
-                                                                                          onClick={() =>
-                                                                                                setSelectedTime(
-                                                                                                      time
-                                                                                                )
-                                                                                          }
-                                                                                    >
-                                                                                          {formatTime(
-                                                                                                time
-                                                                                          )}
-                                                                                    </button>
-                                                                              )
-                                                                        )}
-
-                                                                  </div>
-
-                                                            </div>
-                                                      );
-                                                }
-                                          )
-                                    )}
 
                               </div>
 
                         </div>
-
                   </div>
 
             </section>

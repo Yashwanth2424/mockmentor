@@ -8,21 +8,18 @@
 
       border: 1px solid var(--border);
       background: var(--card);
-      /* ✅ visible in both themes */
       color: var(--text);
 
       cursor: pointer;
       transition: 0.2s;
 }
 
-/* Hover */
 .themeToggleBtn:hover {
       background: var(--secondary);
       border-color: var(--primary);
       transform: translateY(-1px);
 }
 
-/* Optional: active click feel */
 .themeToggleBtn:active {
       transform: scale(0.95);
 }

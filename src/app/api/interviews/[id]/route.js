@@ -17,12 +17,15 @@ export async function GET(req, { params }) {
             //  Decode token
             const decoded = verifyToken(token);
 
-            //  IMPORTANT (Next.js fix)
             const { id } = await params;
 
             //  Get interview
             const interview = await prisma.interview.findUnique({
                   where: { id },
+                  include: {
+                        user: true,
+                        mentor: true,
+                  },
             });
 
             if (!interview) {

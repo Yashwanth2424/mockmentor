@@ -40,6 +40,11 @@ model Interview {
   mentor User? @relation("MentorInterviews", fields: [mentorId], references: [id])
 
   createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  @@index([mentorId, date])
+  @@index([userId, date])
+  @@index([status])
 }
 
 model MentorAvailability {

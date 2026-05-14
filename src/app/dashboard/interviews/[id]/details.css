@@ -1,14 +1,13 @@
-/* ================= PAGE ================= */
+/*  PAGE  */
 
 .details-container {
       max-width: 920px;
-      margin: 36px auto;
+      margin: 15px auto;
       padding: 20px;
-
       animation: fadeIn 0.25s ease;
 }
 
-/* ================= ANIMATION ================= */
+/*  ANIMATION  */
 
 @keyframes fadeIn {
       from {
@@ -22,29 +21,21 @@
       }
 }
 
-/* ================= BACK BUTTON ================= */
+/*  BACK BUTTON  */
 
 .back-btn {
       display: inline-flex;
       align-items: center;
       gap: 8px;
-
       border: none;
-
       background: transparent;
       color: var(--primary);
-
       padding: 10px 14px;
-
       border-radius: 12px;
-
       cursor: pointer;
-
       font-size: 14px;
       font-weight: 600;
-
       margin-bottom: 20px;
-
       transition: all 0.2s ease;
 }
 
@@ -53,66 +44,56 @@
       transform: translateX(-2px);
 }
 
-/* ================= CARD ================= */
+/*  CARD  */
 
 .details-card {
       background: var(--card);
-
       border: 1px solid var(--border);
-
       border-radius: 24px;
-
       padding: 30px;
-
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.06);
-
-      transition: 0.25s ease;
+      box-shadow: 0 12px 30px #0000000f;
+      transition:
+            transform 0.2s ease,
+            border-color 0.2s ease,
+            box-shadow 0.2s ease;
 }
 
 .hover-card:hover {
       transform: translateY(-2px);
+      box-shadow: 0 12px 30px #00000014;
 }
 
-/* ================= HEADER ================= */
+/*  HEADER  */
 
 .details-header {
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
       gap: 16px;
-
       margin-bottom: 26px;
 }
 
 .title {
       font-size: 32px;
       font-weight: 700;
-
       color: var(--text);
-
       letter-spacing: -0.6px;
-
       line-height: 1.2;
-
+      margin-bottom: 24px;
       word-break: break-word;
 }
 
-/* ================= STATUS ================= */
+/*  STATUS  */
 
 .status {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-
       padding: 7px 14px;
-
       border-radius: 999px;
-
       font-size: 12px;
       font-weight: 700;
-
       white-space: nowrap;
-
       text-transform: capitalize;
 }
 
@@ -151,7 +132,7 @@
       color: #ef4444;
 }
 
-/* ================= INFO GRID ================= */
+/*  INFO GRID  */
 
 .info-grid {
       display: grid;
@@ -204,7 +185,7 @@
       word-break: break-word;
 }
 
-/* ================= FEEDBACK ================= */
+/*  FEEDBACK  */
 
 .feedback-box {
       background: var(--secondary);
@@ -223,15 +204,13 @@
 }
 
 .feedback-box h3 {
-      font-size: 20px;
-      font-weight: 700;
-
-      margin-bottom: 20px;
-
+      font-size: 18px;
+      font-weight: 600;
       color: var(--text);
+      margin-bottom: 18px;
 }
 
-/* ================= FEEDBACK CONTENT ================= */
+/*  FEEDBACK CONTENT  */
 
 .feedback-content {
       display: flex;
@@ -239,7 +218,7 @@
       gap: 18px;
 }
 
-/* ================= RATING ================= */
+/*  RATING  */
 
 .feedback-rating {
       display: flex;
@@ -260,16 +239,15 @@
       letter-spacing: 2px;
 }
 
-/* ================= FEEDBACK SECTIONS ================= */
+/*  FEEDBACK SECTIONS  */
 
 .feedback-section {
       background: var(--card);
-
       border: 1px solid var(--border);
-
       border-radius: 16px;
-
       padding: 18px;
+      overflow-wrap: break-word;
+      word-break: break-word;
 }
 
 .feedback-section h4 {
@@ -291,7 +269,7 @@
       word-break: break-word;
 }
 
-/* ================= NO FEEDBACK ================= */
+/*  NO FEEDBACK  */
 
 .no-feedback {
       color: var(--text);
@@ -303,7 +281,7 @@
       line-height: 1.6;
 }
 
-/* ================= SKELETON ================= */
+/*  SKELETON  */
 
 .skeleton {
       border-radius: 10px;
@@ -329,7 +307,7 @@
       }
 }
 
-/* ================= SKELETON SIZES ================= */
+/*  SKELETON SIZES  */
 
 .skeleton-back {
       width: 180px;
@@ -370,8 +348,8 @@
       width: 70%;
 }
 
-/* ================= RESPONSIVE ================= */
-/* ================= LARGE TABLET ================= */
+/*  RESPONSIVE  */
+/*  LARGE TABLET  */
 
 @media (max-width: 900px) {
 
@@ -403,7 +381,7 @@
       }
 }
 
-/* ================= TABLET ================= */
+/*  TABLET  */
 
 @media (max-width: 768px) {
 
@@ -433,9 +411,16 @@
       .feedback-rating {
             flex-wrap: wrap;
       }
+
+      .book-page h1,
+      .interviews-header h1,
+      .mentor-title,
+      .title {
+            font-size: 26px;
+      }
 }
 
-/* ================= MOBILE ================= */
+/*  MOBILE  */
 
 @media (max-width: 480px) {
 
@@ -485,5 +470,12 @@
 
       .stars {
             font-size: 18px;
+      }
+
+      .book-page h1,
+      .interviews-header h1,
+      .mentor-title,
+      .title {
+            font-size: 22px;
       }
 }

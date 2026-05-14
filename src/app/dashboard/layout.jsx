@@ -16,7 +16,7 @@ export default function DashboardLayout({ children }) {
                         <Sidebar open={open} setOpen={setOpen} />
                   </div>
 
-                  {/* OVERLAY (must be AFTER sidebar) */}
+                  {/* OVERLAY  */}
                   {open && (
                         <div
                               className="sidebar-overlay"

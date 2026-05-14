@@ -20,7 +20,6 @@ export default function Sidebar({ open, setOpen }) {
       return (
             <aside className={`sidebar ${open ? "open" : ""}`}>
 
-                  {/* CLOSE BUTTON */}
                   <button className="close-btn" onClick={() => setOpen(false)}>
                         ✕
                   </button>

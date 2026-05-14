@@ -53,7 +53,7 @@ export default function UsersPanel() {
 
                   toast.success("Role updated");
 
-                  // 🔥 Refresh users list
+                  //  Refresh users list
                   mutate();
 
             } catch (err) {
@@ -63,7 +63,7 @@ export default function UsersPanel() {
             }
       };
 
-      // 🗑 Delete user
+      //  Delete user
       const deleteUser = async (id) => {
             if (!confirm("Delete this user permanently?")) return;
 
@@ -84,7 +84,7 @@ export default function UsersPanel() {
 
                   toast.success("User deleted");
 
-                  // 🔥 Refresh users list
+                  //  Refresh users list
                   mutate();
 
             } catch (err) {

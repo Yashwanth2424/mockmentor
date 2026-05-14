@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { useEffect, useState } from "react";
 import useSWR from "swr";
-import Header from "@/components/Header/page";
+import Header from "@/components/Header";
 import "./mentor.css";
 
 export default function MentorPage() {
@@ -33,19 +33,40 @@ export default function MentorPage() {
             6: { start: "", end: "" },
       });
 
+      const hasValidAvailability = Object.values(availability).some(
+            (slot) =>
+                  slot.start !== "" &&
+                  slot.end !== "" &&
+                  Number(slot.start) < Number(slot.end)
+      );
+
       async function saveAvailability() {
+
             const formatted = Object.entries(availability)
-                  .filter(([_, v]) => v.start !== "" && v.end !== "")
+                  .filter(([_, v]) =>
+                        v.start !== "" &&
+                        v.end !== "" &&
+                        Number(v.start) < Number(v.end)
+                  )
                   .map(([day, v]) => ({
                         dayOfWeek: parseInt(day),
                         startHour: parseInt(v.start),
                         endHour: parseInt(v.end),
                   }));
 
+            if (formatted.length === 0) {
+                  toast.error("Please select valid availability");
+                  return;
+            }
+
             const res = await fetch("/api/mentor/availability", {
                   method: "PATCH",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({ availability: formatted }),
+                  headers: {
+                        "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({
+                        availability: formatted,
+                  }),
             });
 
             if (res.ok) {
@@ -234,7 +255,11 @@ export default function MentorPage() {
                                                 </div>
                                           ))}
 
-                                          <button onClick={saveAvailability} style={{ marginTop: "10px" }}>
+                                          <button
+                                                onClick={saveAvailability}
+                                                className="save-availability-button"
+                                                disabled={!hasValidAvailability}
+                                          >
                                                 Save Availability
                                           </button>
                                     </div>
@@ -271,20 +296,16 @@ export default function MentorPage() {
                                           {filteredInterviews.map((i) => (
                                                 <div key={i.id} className="mentor-card">
                                                       <h3 className="mentor-topic">{i.topic}</h3>
-
                                                       <p className="mentor-text">
                                                             <strong>Student:</strong> {i.user?.name || "N/A"}
                                                       </p>
-
                                                       <p className="mentor-text">
                                                             <strong>Email:</strong> {i.user?.email || "N/A"}
                                                       </p>
-
                                                       <p className="mentor-text">
                                                             <strong>Date:</strong>{" "}
                                                             {new Date(i.date).toLocaleString()}
                                                       </p>
-
                                                       <p className="mentor-text">
                                                             <strong>Status:</strong>{" "}
                                                             <span
@@ -308,7 +329,6 @@ export default function MentorPage() {
                                                                   >
                                                                         {loadingId === i.id ? "Accepting..." : "Accept"}
                                                                   </button>
-
                                                                   <button
                                                                         className="btn btn-reject"
                                                                         onClick={() => handleReject(i.id)}
@@ -318,17 +338,14 @@ export default function MentorPage() {
                                                                   </button>
                                                             </div>
                                                       )}
-
                                                       {i.status === "ACCEPTED" && (
                                                             <div className="action-buttons">
-
                                                                   <button
                                                                         className="btn btn-complete"
                                                                         onClick={() => setFeedbackModal(i)}
                                                                   >
                                                                         Complete Interview
                                                                   </button>
-
                                                             </div>
                                                       )}
                                                 </div>
@@ -339,14 +356,10 @@ export default function MentorPage() {
                   </div>
                   {feedbackModal && (
                         <div className="modal-overlay">
-
                               <div className="feedback-modal">
-
                                     <h2>Interview Feedback</h2>
-
                                     <div className="form-group">
                                           <label>Rating</label>
-
                                           <select
                                                 value={feedbackForm.rating}
                                                 onChange={(e) =>
@@ -366,7 +379,6 @@ export default function MentorPage() {
 
                                     <div className="form-group">
                                           <label>Strengths</label>
-
                                           <textarea
                                                 rows={3}
                                                 value={feedbackForm.strengths}
@@ -381,7 +393,6 @@ export default function MentorPage() {
 
                                     <div className="form-group">
                                           <label>Improvements</label>
-
                                           <textarea
                                                 rows={3}
                                                 value={feedbackForm.improvements}
@@ -396,7 +407,6 @@ export default function MentorPage() {
 
                                     <div className="form-group">
                                           <label>Overall Feedback</label>
-
                                           <textarea
                                                 rows={4}
                                                 value={feedbackForm.feedback}
@@ -408,9 +418,7 @@ export default function MentorPage() {
                                                 }
                                           />
                                     </div>
-
                                     <div className="modal-actions">
-
                                           <button
                                                 className="btn btn-complete"
                                                 onClick={handleCompleteInterview}
@@ -420,18 +428,14 @@ export default function MentorPage() {
                                                       ? "Submitting..."
                                                       : "Submit Feedback"}
                                           </button>
-
                                           <button
                                                 className="btn btn-cancel"
                                                 onClick={() => setFeedbackModal(null)}
                                           >
                                                 Cancel
                                           </button>
-
                                     </div>
-
                               </div>
-
                         </div>
                   )}
             </>

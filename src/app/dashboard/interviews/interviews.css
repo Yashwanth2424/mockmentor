@@ -1,6 +1,4 @@
-/* =========================================
-   FILTER BAR
-========================================= */
+/* FILTER BAR */
 
 .filter-bar {
       display: flex;
@@ -14,14 +12,11 @@
       border: 1px solid var(--border);
       background: var(--card);
       color: var(--text);
-
       padding: 8px 14px;
       border-radius: 8px;
-
       cursor: pointer;
       font-size: 13px;
       font-weight: 500;
-
       transition: all 0.2s ease;
 }
 
@@ -35,10 +30,7 @@
       color: white;
 }
 
-/* =========================================
-   INTERVIEW GRID
-========================================= */
-
+/*  INTERVIEW CARD  */
 .interview-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -46,37 +38,34 @@
       align-items: start;
 }
 
-/* =========================================
-   INTERVIEW CARD
-========================================= */
 
 .interview-card {
+      width: 100%;
+      min-width: 0;
+      height: 100%;
       background: var(--card);
       border: 1px solid var(--border);
-
-      min-height: 230px;
-
-      border-radius: 14px;
-      padding: 18px;
-
+      border-radius: 20px;
+      padding: 22px;
       cursor: pointer;
-
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
       transition:
             transform 0.2s ease,
             border-color 0.2s ease,
             box-shadow 0.2s ease;
+
+      overflow: hidden;
 }
 
-/* HOVER */
 .interview-card:hover {
       transform: translateY(-2px);
       border-color: var(--primary);
-      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+      box-shadow: 0 10px 30px #00000014;
 }
 
-/* =========================================
-   CARD CONTENT
-========================================= */
+/* CARD CONTENT */
 
 .card-title {
       font-size: 17px;
@@ -92,30 +81,21 @@
       font-size: 14px;
       line-height: 1.5;
       color: var(--text-secondary, var(--text));
-
       margin-bottom: 6px;
-
       word-break: break-word;
 }
 
-/* =========================================
-   STATUS BADGES
-========================================= */
+/*  STATUS BADGES  */
 
 .status-badge {
       display: inline-flex;
       align-items: center;
-
       margin-top: 10px;
       padding: 5px 10px;
-
       border-radius: 999px;
-
       font-size: 12px;
       font-weight: 600;
 }
-
-/* STATUS COLORS */
 
 .status-pending {
       background: rgba(250, 204, 21, 0.14);
@@ -142,44 +122,41 @@
       color: #047857;
 }
 
-/* =========================================
-   CARD ACTIONS
-========================================= */
+/* CARD ACTIONS  */
 
 .card-actions {
       display: flex;
+      flex-wrap: wrap;
       gap: 10px;
-      margin-top: 16px;
+      margin-top: 18px;
 }
 
 .card-actions button {
       flex: 1;
-
+      min-width: 120px;
+      height: 44px;
       border: none;
-      border-radius: 8px;
-
-      padding: 10px 12px;
-
-      cursor: pointer;
-      font-size: 13px;
+      border-radius: 12px;
+      padding: 10px;
+      font-size: 14px;
       font-weight: 500;
-
+      cursor: pointer;
       transition: all 0.2s ease;
 }
 
-/* CANCEL */
+/*  BUTTONS */
 
 .cancel-btn {
       background: rgba(239, 68, 68, 0.12);
       color: #ef4444;
+      border: none;
+      height: 44px;
 }
 
 .cancel-btn:hover {
       background: #ef4444;
       color: white;
 }
-
-/* RESCHEDULE */
 
 .reschedule-btn {
       background: rgba(79, 70, 229, 0.12);
@@ -191,18 +168,23 @@
       color: white;
 }
 
-/* =========================================
-   EMPTY STATE
-========================================= */
+.view-btn {
+      background: var(--primary);
+      color: white;
+      border: none;
+}
+
+.view-btn:hover {
+      opacity: 0.9;
+}
+
+/* EMPTY STATE  */
 
 .empty-state {
       border: 1px dashed var(--border);
       background: var(--card);
-
       border-radius: 14px;
-
       padding: 50px 20px;
-
       text-align: center;
 }
 
@@ -216,29 +198,198 @@
       font-size: 14px;
 }
 
-/* =========================================
-   TABLET
-========================================= */
+/* PAGE */
+
+.interviews-page {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      width: 100%;
+      max-width: 1400px;
+      margin: 0 auto;
+}
+
+/* HEADER  */
+
+.interviews-header h1 {
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 8px;
+      line-height: 1.2;
+}
+
+.interviews-header p {
+      color: var(--text-secondary, var(--text));
+      opacity: 0.7;
+      font-size: 15px;
+      line-height: 1.6;
+}
+
+/* CARD TOP  */
+
+.card-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+}
+
+/* CARD BODY */
+
+.card-body {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+}
+
+/* MODAL */
+
+.modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.45);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 999;
+}
+
+.reschedule-modal {
+      width: 100%;
+      max-width: 520px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+}
+
+.reschedule-modal h2 {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--text);
+}
+
+/*  MODAL FORM  */
+
+.modal-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+}
+
+.modal-group label {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+}
+
+.modal-group input,
+.modal-group select {
+      width: 100%;
+      height: 48px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--background);
+      color: var(--text);
+      padding: 0 14px;
+      font-size: 14px;
+}
+
+/* SLOT GRID  */
+
+.slots-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+      gap: 10px;
+}
+
+.slot-btn {
+      height: 42px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--background);
+      color: var(--text);
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+      transition: all 0.2s ease;
+}
+
+.slot-btn:hover {
+      border-color: var(--primary);
+}
+
+.active-slot {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+}
+
+/*  MODAL ACTIONS  */
+
+.modal-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 10px;
+}
+
+.modal-actions button {
+      flex: 1;
+      height: 46px;
+      border: none;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+}
+
+.modal-cancel {
+      background: rgba(239, 68, 68, 0.12);
+      color: #ef4444;
+}
+
+.modal-cancel:hover {
+      background: #ef4444;
+      color: white;
+}
+
+.modal-save {
+      background: var(--primary);
+      color: white;
+}
+
+.modal-save:hover {
+      opacity: 0.92;
+}
+
+/*  TABLET  */
 
 @media (max-width: 1024px) {
-
       .interview-grid {
             grid-template-columns: repeat(2, 1fr);
       }
 }
 
-/* =========================================
-   MOBILE
-========================================= */
+/* MOBILE  */
 
 @media (max-width: 768px) {
-
       .interview-grid {
             grid-template-columns: 1fr;
       }
 
       .card-actions {
             flex-direction: column;
+      }
+
+      .card-actions button {
+            width: 100%;
       }
 
       .filter-bar {
@@ -249,14 +400,32 @@
             flex: 1;
             min-width: 100px;
       }
+
+      .book-page h1,
+      .interviews-header h1,
+      .mentor-title,
+      .title {
+            font-size: 26px;
+      }
 }
 
-/* =========================================
-   SMALL MOBILE
-========================================= */
+@media (max-width: 640px) {
+      .reschedule-modal {
+            padding: 18px;
+      }
+
+      .modal-actions {
+            flex-direction: column;
+      }
+
+      .slots-grid {
+            grid-template-columns: repeat(2, 1fr);
+      }
+}
+
+/* SMALL MOBILE  */
 
 @media (max-width: 480px) {
-
       .interview-card {
             padding: 16px;
       }
@@ -272,64 +441,11 @@
       .card-actions button {
             font-size: 12px;
       }
-}
 
-/* =========================================
-   PAGE
-========================================= */
-
-.interviews-page {
-      display: flex;
-      flex-direction: column;
-      gap: 24px;
-}
-
-/* =========================================
-   HEADER
-========================================= */
-
-.interviews-header h1 {
-      font-size: 28px;
-      font-weight: 700;
-      margin-bottom: 6px;
-}
-
-.interviews-header p {
-      color: var(--text-secondary, var(--text));
-      opacity: 0.7;
-}
-
-/* =========================================
-   CARD TOP
-========================================= */
-
-.card-top {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 12px;
-      margin-bottom: 14px;
-}
-
-/* =========================================
-   CARD BODY
-========================================= */
-
-.card-body {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-}
-
-/* =========================================
-   VIEW BUTTON
-========================================= */
-
-.view-btn {
-      background: var(--primary);
-      color: white;
-}
-
-.view-btn:hover {
-      opacity: 0.9;
+      .book-page h1,
+      .interviews-header h1,
+      .mentor-title,
+      .title {
+            font-size: 22px;
+      }
 }

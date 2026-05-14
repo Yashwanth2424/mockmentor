@@ -1,56 +1,78 @@
 import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
+
 import { cookies } from "next/headers";
 
+import { verifyToken }
+      from "@/lib/jwt";
 
-// ============================
-// 🔐 PASSWORD UTILS
-// ============================
-
-// Hash password (signup)
 export async function hashPassword(password) {
-      return bcrypt.hash(password, 10);
+
+      return bcrypt.hash(
+            password,
+            10
+      );
 }
 
-// Compare password (login)
-export async function comparePassword(password, hash) {
-      return bcrypt.compare(password, hash);
+
+export async function comparePassword(
+      password,
+      hash
+) {
+
+      return bcrypt.compare(
+            password,
+            hash
+      );
 }
 
 
-// ============================
-// 🔑 JWT AUTH UTILS
-// ============================
+export async function getUserFromToken() {
 
-// Get logged-in user from cookie
-export function getUserFromToken() {
       try {
-            const token = cookies().get("token")?.value;
 
-            if (!token) return null;
+            const cookieStore =
+                  await cookies();
 
-            const decoded = jwt.verify(token, process.env.JWT_SECRET);
+            const token =
+                  cookieStore.get("token")?.value;
 
-            return decoded; // { id, role }
+            if (!token) {
+                  return null;
+            }
+
+            return verifyToken(token);
+
       } catch {
+
             return null;
       }
 }
 
 
-// ============================
-// 🛡️ ADMIN PROTECTION
-// ============================
+export async function requireAdmin() {
 
-export function requireAdmin() {
-      const user = getUserFromToken();
+      const user =
+            await getUserFromToken();
 
       if (!user) {
-            return { error: "Unauthorized", status: 401 };
+
+            return {
+                  error: "Unauthorized",
+                  status: 401,
+            };
       }
 
-      if (!["ADMIN", "SUPER_ADMIN"].includes(user.role)) {
-            return { error: "Forbidden", status: 403 };
+      if (
+            ![
+                  "ADMIN",
+                  "SUPER_ADMIN",
+            ].includes(user.role)
+      ) {
+
+            return {
+                  error: "Forbidden",
+                  status: 403,
+            };
       }
 
       return { user };

@@ -1,66 +1,44 @@
 "use client";
 
-import "./login.css";
-
+import "./signup.css";
+import ThemeToggle from "@/components/ThemeToggle";
+import Header from "@/components/Header";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import {
       Home,
       Mail,
       Lock,
+      User,
       Eye,
       EyeOff,
 } from "lucide-react";
 
 import { toast } from "react-toastify";
 
-export default function LoginPage() {
+export default function SignupPage() {
 
       const router = useRouter();
 
-      const [email, setEmail] = useState("");
-      const [password, setPassword] = useState("");
+      const [form, setForm] = useState({
+            name: "",
+            email: "",
+            password: "",
+      });
+
       const [showPassword, setShowPassword] = useState(false);
       const [loading, setLoading] = useState(false);
 
-      //  CHECK AUTH 
+      function handleChange(e) {
 
-      useEffect(() => {
-
-            async function checkUser() {
-
-                  try {
-
-                        const res = await fetch("/api/me");
-
-                        const data = await res.json();
-
-                        if (data?.error) return;
-
-                        if (
-                              data.role === "ADMIN" ||
-                              data.role === "SUPER_ADMIN"
-                        ) {
-                              router.replace("/admin");
-                        } else {
-                              router.replace("/dashboard");
-                        }
-
-                  } catch (error) {
-
-                        console.error("Auth check failed");
-
-                  }
-            }
-
-            checkUser();
-
-      }, [router]);
-
-      //  LOGIN 
+            setForm({
+                  ...form,
+                  [e.target.name]: e.target.value,
+            });
+      }
 
       async function handleSubmit(e) {
 
@@ -68,8 +46,12 @@ export default function LoginPage() {
 
             if (loading) return;
 
-            if (!email.trim() || !password.trim()) {
-                  toast.error("Please enter email and password");
+            if (
+                  !form.name.trim() ||
+                  !form.email.trim() ||
+                  !form.password.trim()
+            ) {
+                  toast.error("All fields are required");
                   return;
             }
 
@@ -77,40 +59,29 @@ export default function LoginPage() {
 
             try {
 
-                  const res = await fetch("/api/auth/login", {
+                  const res = await fetch("/api/auth/signup", {
                         method: "POST",
                         headers: {
                               "Content-Type": "application/json",
                         },
-                        credentials: "include",
                         body: JSON.stringify({
-                              email: email.trim(),
-                              password,
+                              name: form.name.trim(),
+                              email: form.email.trim(),
+                              password: form.password,
                         }),
                   });
 
                   const data = await res.json();
 
                   if (!res.ok) {
-                        toast.error(
-                              data.error || "Invalid credentials"
-                        );
+                        toast.error(data.error || "Signup failed");
                         return;
                   }
 
-                  toast.success("Login successful");
+                  toast.success("Account created successfully");
 
                   setTimeout(() => {
-
-                        if (
-                              data.role === "ADMIN" ||
-                              data.role === "SUPER_ADMIN"
-                        ) {
-                              router.push("/admin");
-                        } else {
-                              router.push("/dashboard");
-                        }
-
+                        router.push("/login");
                   }, 500);
 
             } catch (error) {
@@ -124,72 +95,60 @@ export default function LoginPage() {
       }
 
       return (
-            <div className="login-page">
-
-                  {/* LEFT */}
-                  <div className="login-left">
-
-                        <Image
-                              src="/login_page_img_mock_mentor.webp"
-                              alt="Login Illustration"
-                              width={420}
-                              height={420}
-                              className="login-image"
-                        />
-
-                  </div>
-
+            <div className="signup-page">
                   {/* RIGHT */}
-                  <div className="login-right">
-
+                  <div className="signup-right">
                         <form
-                              className="login-card"
+                              className="signup-card"
                               onSubmit={handleSubmit}
                         >
-
                               <Link href="/" className="home-link">
                                     <Home size={16} />
                                     Home
                               </Link>
+                              <h1>Create Account</h1>
 
-                              <h1>Login</h1>
-
-                              {/* EMAIL */}
+                              {/* NAME */}
                               <div className="input-group">
 
-                                    <Mail size={18} className="input-icon" />
+                                    <User size={18} className="input-icon" />
 
                                     <input
+                                          type="text"
+                                          name="name"
+                                          placeholder="Full Name"
+                                          value={form.name}
+                                          onChange={handleChange}
+                                    />
+
+                              </div>
+                              {/* EMAIL */}
+                              <div className="input-group">
+                                    <Mail size={18} className="input-icon" />
+                                    <input
                                           type="email"
+                                          name="email"
                                           placeholder="Email"
-                                          autoComplete="email"
-                                          value={email}
-                                          onChange={(e) =>
-                                                setEmail(e.target.value)
-                                          }
+                                          value={form.email}
+                                          onChange={handleChange}
                                     />
 
                               </div>
 
                               {/* PASSWORD */}
                               <div className="input-group">
-
                                     <Lock size={18} className="input-icon" />
-
                                     <input
                                           type={
                                                 showPassword
                                                       ? "text"
                                                       : "password"
                                           }
+                                          name="password"
                                           placeholder="Password"
-                                          autoComplete="current-password"
-                                          value={password}
-                                          onChange={(e) =>
-                                                setPassword(e.target.value)
-                                          }
+                                          value={form.password}
+                                          onChange={handleChange}
                                     />
-
                                     <button
                                           type="button"
                                           className="eye-btn"
@@ -202,30 +161,37 @@ export default function LoginPage() {
                                                 : <Eye size={18} />
                                           }
                                     </button>
-
                               </div>
-
                               <button
                                     type="submit"
-                                    className="login-btn"
+                                    className="signup-btn"
                                     disabled={loading}
                               >
                                     {loading
-                                          ? "Logging in..."
-                                          : "Log In"}
+                                          ? "Creating Account..."
+                                          : "Sign Up"}
                               </button>
 
                               <p className="bottom-text">
-                                    Don&apos;t have an account?{" "}
-                                    <Link href="/signup">
-                                          Register Here
+                                    Already have an account?{" "}
+                                    <Link href="/login">
+                                          Login Here
                                     </Link>
                               </p>
-
                         </form>
-
                   </div>
 
+
+                  {/* LEFT */}
+                  <div className="signup-left">
+                        <Image
+                              src="/sign_page_image.webp"
+                              alt="Signup Illustration"
+                              width={420}
+                              height={420}
+                              className="signup-image"
+                        />
+                  </div>
             </div>
       );
 }

@@ -1,6 +1,7 @@
 "use client";
 
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter }
+      from "next/navigation";
 import {
       ArrowLeft,
       Calendar,
@@ -10,21 +11,34 @@ import {
       Mail,
       XCircle,
 } from "lucide-react";
-
 import useSWR from "swr";
 import "./details.css";
 
 export default function InterviewDetailsPage() {
       const { id } = useParams();
       const router = useRouter();
+      //  FETCHER 
 
-      const fetcher = (url) =>
-            fetch(url).then((res) => res.json());
+      const fetcher = async (url) => {
+            const res = await fetch(url);
+            if (!res.ok) {
+                  throw new Error(
+                        "Failed to fetch interview"
+                  );
+            }
+            return res.json();
+      };
 
-      /* ================= SWR ================= */
+      //  SWR 
 
-      const { data, isLoading } = useSWR(
-            id ? `/api/interviews/${id}` : null,
+      const {
+            data,
+            isLoading,
+            error,
+      } = useSWR(
+            id
+                  ? `/api/interviews/${id}`
+                  : null,
             fetcher,
             {
                   revalidateOnFocus: false,
@@ -32,9 +46,11 @@ export default function InterviewDetailsPage() {
       );
 
       const interview =
-            data && !data.error ? data : null;
+            data && !data.error
+                  ? data
+                  : null;
 
-      /* ================= LOADING ================= */
+      //  LOADING 
 
       if (isLoading) {
             return (
@@ -54,9 +70,10 @@ export default function InterviewDetailsPage() {
             );
       }
 
-      /* ================= ERROR ================= */
+      //  ERROR 
 
-      if (!interview) {
+      if (error || !interview) {
+
             return (
                   <div className="details-container">
                         <button
@@ -70,8 +87,8 @@ export default function InterviewDetailsPage() {
                               <ArrowLeft size={18} />
                               Back
                         </button>
-
                         <div className="details-card">
+
                               <h2 className="title">
                                     Interview not found
                               </h2>
@@ -80,31 +97,77 @@ export default function InterviewDetailsPage() {
             );
       }
 
-      /* ================= STATUS ICON ================= */
+      //  STATUS ICON 
 
       function renderStatusIcon() {
-            if (
-                  interview.status === "COMPLETED"
-            ) {
-                  return <CheckCircle size={18} />;
-            }
+            switch (interview.status) {
+                  case "COMPLETED":
+                        return (
+                              <CheckCircle size={18} />
+                        );
 
+                  case "ACCEPTED":
+                        return (
+                              <CheckCircle size={18} />
+                        );
+
+                  case "REJECTED":
+                        return (
+                              <XCircle size={18} />
+                        );
+
+                  case "CANCELLED":
+                        return (
+                              <XCircle size={18} />
+                        );
+
+                  default:
+                        return (
+                              <Clock size={18} />
+                        );
+            }
+      }
+
+      //  FEEDBACK MESSAGE 
+
+      function renderFeedbackMessage() {
             if (
                   interview.status === "PENDING"
             ) {
-                  return <Clock size={18} />;
+                  return (
+                        "Interview feedback will appear after completion."
+                  );
+            }
+
+            if (
+                  interview.status === "ACCEPTED"
+            ) {
+                  return (
+                        "Feedback will be added after the interview is completed."
+                  );
+            }
+
+            if (
+                  interview.status === "REJECTED"
+            ) {
+                  return (
+                        "This interview was rejected by the mentor."
+                  );
             }
 
             if (
                   interview.status === "CANCELLED"
             ) {
-                  return <XCircle size={18} />;
+                  return (
+                        "This interview was cancelled."
+                  );
             }
-
-            return <Clock size={18} />;
+            return (
+                  "No feedback has been added yet."
+            );
       }
 
-      /* ================= UI ================= */
+      //  UI 
 
       return (
             <div className="details-container fade-in">
@@ -118,6 +181,7 @@ export default function InterviewDetailsPage() {
                               )
                         }
                   >
+
                         <ArrowLeft size={18} />
                         Back to Interviews
                   </button>
@@ -125,13 +189,13 @@ export default function InterviewDetailsPage() {
                   {/* CARD */}
 
                   <div className="details-card hover-card">
+
                         {/* HEADER */}
 
                         <div className="details-header">
                               <h1 className="title">
                                     {interview.topic}
                               </h1>
-
                               <span
                                     className={`status ${interview.status?.toLowerCase()}`}
                               >
@@ -166,12 +230,11 @@ export default function InterviewDetailsPage() {
                                           {renderStatusIcon()}
                                           Current Status
                                     </div>
-
                                     <div className="info-value">
+
                                           {interview.status}
                                     </div>
                               </div>
-
                               {/* MENTOR */}
 
                               <div className="info-card">
@@ -179,7 +242,6 @@ export default function InterviewDetailsPage() {
                                           <User size={16} />
                                           Mentor
                                     </div>
-
                                     <div className="info-value">
                                           {interview.mentor?.name ||
                                                 "Not Assigned"}
@@ -193,7 +255,6 @@ export default function InterviewDetailsPage() {
                                           <Mail size={16} />
                                           Mentor Email
                                     </div>
-
                                     <div className="info-value">
                                           {interview.mentor?.email ||
                                                 "N/A"}
@@ -207,19 +268,19 @@ export default function InterviewDetailsPage() {
                               <h3>
                                     Mentor Feedback
                               </h3>
-
                               {interview.feedback ? (
                                     <div className="feedback-content">
-                                          {/* RATING */}
 
+                                          {/* RATING */}
                                           <div className="feedback-rating">
                                                 <span>
                                                       Rating:
                                                 </span>
-
                                                 <div className="stars">
                                                       {"★".repeat(
-                                                            interview.rating || 0
+                                                            Number(
+                                                                  interview.rating
+                                                            ) || 0
                                                       )}
                                                 </div>
                                           </div>
@@ -231,7 +292,6 @@ export default function InterviewDetailsPage() {
                                                       <h4>
                                                             Strengths
                                                       </h4>
-
                                                       <p>
                                                             {
                                                                   interview.strengths
@@ -247,7 +307,6 @@ export default function InterviewDetailsPage() {
                                                       <h4>
                                                             Areas to Improve
                                                       </h4>
-
                                                       <p>
                                                             {
                                                                   interview.improvements
@@ -257,12 +316,10 @@ export default function InterviewDetailsPage() {
                                           )}
 
                                           {/* OVERALL */}
-
                                           <div className="feedback-section">
                                                 <h4>
                                                       Overall Feedback
                                                 </h4>
-
                                                 <p>
                                                       {
                                                             interview.feedback
@@ -272,7 +329,9 @@ export default function InterviewDetailsPage() {
                                     </div>
                               ) : (
                                     <p className="no-feedback">
-                                          No feedback has been added yet.
+                                          {
+                                                renderFeedbackMessage()
+                                          }
                                     </p>
                               )}
                         </div>

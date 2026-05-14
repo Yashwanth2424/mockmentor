@@ -1,4 +1,4 @@
-/* ================= PAGE ================= */
+/*  PAGE  */
 
 .mentor-container {
       max-width: 1200px;
@@ -7,17 +7,17 @@
       color: var(--text);
 }
 
-/* ================= HEADER ================= */
+/*  HEADER  */
 
 .mentor-title {
-      font-size: 30px;
+      font-size: 32px;
       font-weight: 700;
-      margin-bottom: 24px;
-      letter-spacing: -0.5px;
       color: var(--text);
+      margin-bottom: 24px;
+      line-height: 1.2;
 }
 
-/* ================= FILTERS ================= */
+/*  FILTERS  */
 
 .filter-tabs {
       display: flex;
@@ -30,15 +30,10 @@
       border: 1px solid var(--border);
       background: var(--card);
       color: var(--text);
-
       padding: 10px 16px;
-
       border-radius: 10px;
-
       cursor: pointer;
-
       transition: 0.2s ease;
-
       font-size: 14px;
       font-weight: 500;
 }
@@ -54,7 +49,7 @@
       border-color: var(--primary);
 }
 
-/* ================= AVAILABILITY ================= */
+/*  AVAILABILITY  */
 
 .availability-box {
       background: var(--card);
@@ -79,9 +74,7 @@
       display: grid;
       grid-template-columns: 110px 1fr 1fr;
       gap: 12px;
-
       align-items: center;
-
       margin-bottom: 14px;
 }
 
@@ -93,18 +86,12 @@
 
 .availability-row select {
       width: 100%;
-
       background: var(--secondary);
       color: var(--text);
-
       border: 1px solid var(--border);
-
       border-radius: 10px;
-
       padding: 10px 12px;
-
       outline: none;
-
       transition: 0.2s ease;
 }
 
@@ -114,58 +101,74 @@
 
 .availability-box button {
       margin-top: 12px;
+      height: 44px;
+      padding: 0 18px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: 0.2s ease;
+      background: var(--secondary);
+      color: var(--text);
+      border: 1px solid var(--border);
 }
 
-/* ================= GRID ================= */
+.availability-box button:hover {
+      background: var(--primary-hover);
+      transform: translateY(-1px);
+      color: white;
+}
+
+.availability-box button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+}
+
+
+/*  GRID  */
 
 .mentor-grid {
       display: grid;
       gap: 18px;
 }
 
-/* ================= CARD ================= */
+/*  CARD  */
 
 .mentor-card {
       background: var(--card);
-
       border: 1px solid var(--border);
-
-      border-radius: 18px;
-
-      padding: 20px;
-
+      border-radius: 20px;
+      padding: 22px;
       transition: 0.25s ease;
-
       color: var(--text);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
 }
 
 .mentor-card:hover {
       transform: translateY(-2px);
-
       border-color: var(--primary);
-
-      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
+      box-shadow: 0 10px 30px #00000014;
 }
 
 .mentor-topic {
       font-size: 19px;
       font-weight: 600;
       margin-bottom: 14px;
-
       color: var(--text);
 }
 
 .mentor-text {
       font-size: 14px;
       margin-bottom: 10px;
-
+      overflow-wrap: break-word;
       color: var(--text);
       opacity: 0.92;
-
-      line-height: 1.5;
+      line-height: 1.6;
 }
 
-/* ================= STATUS ================= */
+/*  STATUS  */
 
 .status-badge {
       display: inline-flex;
@@ -202,28 +205,24 @@
       color: #3b82f6;
 }
 
-/* ================= ACTIONS ================= */
+/*  ACTIONS  */
 
 .action-buttons {
       display: flex;
       flex-wrap: wrap;
       gap: 10px;
-
       margin-top: 16px;
 }
 
+
 .btn {
+      height: 44px;
+      padding: 0 18px;
       border: none;
-
-      padding: 10px 14px;
-
-      border-radius: 10px;
-
+      border-radius: 12px;
       font-size: 14px;
       font-weight: 500;
-
       cursor: pointer;
-
       transition: 0.2s ease;
 }
 
@@ -241,6 +240,7 @@
 
 .btn-accept:hover {
       background: var(--primary-hover);
+      transform: translateY(-1px);
 }
 
 /* REJECT */
@@ -251,7 +251,8 @@
 }
 
 .btn-reject:hover {
-      background: #dc2626;
+      background: #b91c1c;
+      transform: translateY(-1px);
 }
 
 /* COMPLETE */
@@ -276,37 +277,30 @@
       background: #dc2626;
 }
 
-/* ================= MODAL ================= */
+/*  MODAL  */
 
 .modal-overlay {
       position: fixed;
       inset: 0;
-
+      overflow-y: auto;
       background: rgba(0, 0, 0, 0.5);
-
       display: flex;
       justify-content: center;
       align-items: center;
-
       padding: 20px;
-
       z-index: 3000;
 }
 
 .feedback-modal {
       width: 100%;
       max-width: 620px;
-
+      max-height: 90vh;
+      overflow-y: auto;
       background: var(--card);
-      color: var(--text);
-
       border: 1px solid var(--border);
-
-      border-radius: 20px;
-
-      padding: 24px;
-
-      animation: modalIn 0.2s ease;
+      border-radius: 24px;
+      padding: 26px;
+      color: var(--text);
 }
 
 @keyframes modalIn {
@@ -327,7 +321,7 @@
       font-weight: 700;
 }
 
-/* ================= FORM ================= */
+/*  FORM  */
 
 .form-group {
       display: flex;
@@ -368,7 +362,7 @@
       border-color: var(--primary);
 }
 
-/* ================= MODAL ACTIONS ================= */
+/*  MODAL ACTIONS  */
 
 .modal-actions {
       display: flex;
@@ -378,7 +372,7 @@
       margin-top: 24px;
 }
 
-/* ================= STATES ================= */
+/*  STATES  */
 
 .loading-text,
 .empty-text,
@@ -391,7 +385,7 @@
       color: #ef4444;
 }
 
-/* ================= RESPONSIVE ================= */
+/*  RESPONSIVE  */
 
 @media (min-width: 700px) {
       .mentor-grid {
@@ -405,7 +399,7 @@
       }
 }
 
-/* ================= TABLET ================= */
+/*  TABLET  */
 
 @media (max-width: 768px) {
 
@@ -432,9 +426,16 @@
       .action-buttons .btn {
             width: 100%;
       }
+
+      .book-page h1,
+      .interviews-header h1,
+      .mentor-title,
+      .title {
+            font-size: 26px;
+      }
 }
 
-/* ================= MOBILE ================= */
+/*  MOBILE  */
 
 @media (max-width: 520px) {
 
@@ -473,5 +474,15 @@
       .filter-tabs button {
             flex: 1;
             text-align: center;
+      }
+}
+
+@media (max-width: 480px) {
+
+      .book-page h1,
+      .interviews-header h1,
+      .mentor-title,
+      .title {
+            font-size: 22px;
       }
 }

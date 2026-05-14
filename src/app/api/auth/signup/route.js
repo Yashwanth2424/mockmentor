@@ -4,10 +4,15 @@ import { NextResponse } from "next/server";
 
 export async function POST(req) {
       try {
-            // 1. Get data from request
-            const { name, email, password } = await req.json();
 
-            // 2. Validate fields
+            const body = await req.json();
+
+            const name = body.name?.trim();
+            const email = body.email?.trim().toLowerCase();
+            const password = body.password?.trim();
+
+            //  VALIDATION 
+
             if (!name || !email || !password) {
                   return NextResponse.json(
                         { error: "All fields are required" },
@@ -15,9 +20,36 @@ export async function POST(req) {
                   );
             }
 
-            // 3. Check if user already exists
+            if (name.length < 2) {
+                  return NextResponse.json(
+                        { error: "Name is too short" },
+                        { status: 400 }
+                  );
+            }
+
+            const emailRegex =
+                  /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+            if (!emailRegex.test(email)) {
+                  return NextResponse.json(
+                        { error: "Invalid email address" },
+                        { status: 400 }
+                  );
+            }
+
+            if (password.length < 6) {
+                  return NextResponse.json(
+                        { error: "Password must be at least 6 characters" },
+                        { status: 400 }
+                  );
+            }
+
+            //  EXISTING USER 
+
             const existingUser = await prisma.user.findUnique({
-                  where: { email },
+                  where: {
+                        email,
+                  },
             });
 
             if (existingUser) {
@@ -27,10 +59,13 @@ export async function POST(req) {
                   );
             }
 
-            // 4. Hash password
-            const hashedPassword = await hashPassword(password);
+            //  HASH PASSWORD 
 
-            // 5. Create user
+            const hashedPassword =
+                  await hashPassword(password);
+
+            //  CREATE USER 
+
             const user = await prisma.user.create({
                   data: {
                         name,
@@ -39,15 +74,20 @@ export async function POST(req) {
                   },
             });
 
-            // 6. Send success response
-            return NextResponse.json({
-                  message: "User created successfully",
-                  userId: user.id,
-            });
+            return NextResponse.json(
+                  {
+                        message: "User created successfully",
+                        userId: user.id,
+                  },
+                  { status: 201 }
+            );
 
       } catch (error) {
+
+            console.error("Signup Error:", error);
+
             return NextResponse.json(
-                  { error: "Server error" },
+                  { error: "Internal server error" },
                   { status: 500 }
             );
       }

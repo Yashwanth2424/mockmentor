@@ -1,16 +1,14 @@
+import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { verifyToken } from "@/lib/jwt";
-import { NextResponse } from "next/server";
 
 export async function PATCH(req, context) {
 
+      const params = await context.params;
+
       try {
 
-            const params = await context.params;
-
             const token = req.cookies.get("token")?.value;
-
-            //  AUTH 
 
             if (!token) {
                   return NextResponse.json(
@@ -21,32 +19,13 @@ export async function PATCH(req, context) {
 
             const decoded = verifyToken(token);
 
-            if (decoded.role !== "MENTOR") {
-                  return NextResponse.json(
-                        { error: "Forbidden" },
-                        { status: 403 }
-                  );
-            }
+            const interview = await prisma.interview.findUnique({
+                  where: {
+                        id: params.id,
+                  },
+            });
 
-            //  ID 
-
-            const { id } = params;
-
-            if (!id) {
-                  return NextResponse.json(
-                        { error: "Missing interview ID" },
-                        { status: 400 }
-                  );
-            }
-
-            //  FIND 
-
-            const interview =
-                  await prisma.interview.findUnique({
-                        where: {
-                              id,
-                        },
-                  });
+            //  NOT FOUND 
 
             if (!interview) {
                   return NextResponse.json(
@@ -57,62 +36,44 @@ export async function PATCH(req, context) {
 
             //  OWNERSHIP 
 
-            if (interview.mentorId !== decoded.id) {
+            if (interview.userId !== decoded.id) {
                   return NextResponse.json(
                         { error: "Forbidden" },
                         { status: 403 }
                   );
             }
 
-            //  STATUS VALIDATION 
+            //  INVALID STATES 
+
+            if (interview.status === "CANCELLED") {
+                  return NextResponse.json(
+                        {
+                              error:
+                                    "Interview already cancelled",
+                        },
+                        {
+                              status: 400,
+                        }
+                  );
+            }
+
+            if (interview.status === "COMPLETED") {
+                  return NextResponse.json(
+                        {
+                              error:
+                                    "Completed interviews cannot be cancelled",
+                        },
+                        {
+                              status: 400,
+                        }
+                  );
+            }
 
             if (interview.status === "REJECTED") {
                   return NextResponse.json(
                         {
                               error:
-                                    "Interview already rejected",
-                        },
-                        {
-                              status: 400,
-                        }
-                  );
-            }
-
-            if (
-                  interview.status === "COMPLETED"
-            ) {
-                  return NextResponse.json(
-                        {
-                              error:
-                                    "Completed interviews cannot be rejected",
-                        },
-                        {
-                              status: 400,
-                        }
-                  );
-            }
-
-            if (
-                  interview.status === "CANCELLED"
-            ) {
-                  return NextResponse.json(
-                        {
-                              error:
-                                    "Cancelled interviews cannot be rejected",
-                        },
-                        {
-                              status: 400,
-                        }
-                  );
-            }
-
-            if (
-                  interview.status === "ACCEPTED"
-            ) {
-                  return NextResponse.json(
-                        {
-                              error:
-                                    "Accepted interviews cannot be rejected",
+                                    "Rejected interviews cannot be cancelled",
                         },
                         {
                               status: 400,
@@ -125,21 +86,21 @@ export async function PATCH(req, context) {
             const updated =
                   await prisma.interview.update({
                         where: {
-                              id,
+                              id: params.id,
                         },
                         data: {
-                              status: "REJECTED",
+                              status: "CANCELLED",
                         },
                   });
 
             return NextResponse.json(updated);
 
-      } catch (err) {
+      } catch (error) {
 
-            console.error("REJECT ERROR:", err);
+            console.error(error);
 
             return NextResponse.json(
-                  { error: "Failed to reject" },
+                  { error: "Server error" },
                   { status: 500 }
             );
       }

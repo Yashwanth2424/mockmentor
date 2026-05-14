@@ -18,18 +18,14 @@ export async function PATCH(req) {
                   return NextResponse.json({ error: "Invalid data" }, { status: 400 });
             }
 
-            // if (a.startHour >= a.endHour) {
-            //       throw new Error("Invalid time range");
-            // }
 
-            // 🔥 Transaction to avoid partial updates
+
+            //  Transaction to avoid partial updates
             await prisma.$transaction([
-                  // 1. Delete old availability
                   prisma.mentorAvailability.deleteMany({
                         where: { mentorId: decoded.id },
                   }),
 
-                  // 2. Create new availability
                   prisma.mentorAvailability.createMany({
                         data: availability.map((a) => ({
                               mentorId: decoded.id,

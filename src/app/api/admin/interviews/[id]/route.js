@@ -2,9 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/adminAuth";
 
-// ==========================
 // GET — Fetch interview
-// ==========================
 
 export async function GET(req, { params }) {
       const auth = await requireAdmin();
@@ -42,9 +40,7 @@ export async function GET(req, { params }) {
 }
 
 
-// ==========================
 // PATCH — Update interview
-// ==========================
 
 export async function PATCH(req, { params }) {
       const auth = await requireAdmin();

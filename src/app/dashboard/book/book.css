@@ -1,4 +1,24 @@
-/* ================= PAGE ================= */
+/*  PAGE  */
+
+.book-page {
+      width: 100%;
+      max-width: 1400px;
+      margin: 0 auto;
+}
+
+.book-page h1 {
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--text);
+
+      margin-bottom: 8px;
+}
+
+.book-page p {
+      color: var(--text-secondary, #94a3b8);
+
+      line-height: 1.6;
+}
 
 .booking-page-title {
       margin-bottom: 20px;
@@ -18,7 +38,7 @@
       font-size: 14px;
 }
 
-/* ================= CARD ================= */
+/*  CARD  */
 
 .booking-card {
       background: var(--card);
@@ -28,17 +48,16 @@
       overflow: hidden;
 }
 
-/* ================= LAYOUT ================= */
+/*  LAYOUT  */
 
 .booking-layout {
       display: grid;
-      grid-template-columns: 340px 1fr;
+      grid-template-columns: 3s40px 1fr;
       gap: 24px;
       align-items: flex-start;
-      /* border: 2px solid green; */
 }
 
-/* ================= LEFT ================= */
+/*  LEFT  */
 
 .booking-left {
       display: flex;
@@ -46,25 +65,21 @@
       gap: 16px;
 }
 
-/* ================= RIGHT ================= */
+/*  RIGHT  */
 
 .booking-right {
-      background: var(--secondary);
-
+      flex: 2;
+      min-width: 280px;
+      padding: 22px;
+      border-radius: 20px;
       border: 1px solid var(--border);
-
-      border-radius: 18px;
-
-      padding: 20px;
-
-      min-height: 320px;
-
+      background: var(--card);
       display: flex;
       flex-direction: column;
-      gap: 22px;
+      gap: 18px;
 }
 
-/* ================= INPUT GROUP ================= */
+/*  INPUT GROUP  */
 
 .input-group {
       display: flex;
@@ -78,20 +93,23 @@
       color: var(--text);
 }
 
-/* ================= INPUTS ================= */
+/*  INPUTS  */
 
 .booking-left input,
 .booking-left select {
       width: 100%;
+      height: 46px;
+      padding: 0 14px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
       background: var(--card);
       color: var(--text);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 13px 14px;
+      font-size: 14px;
       outline: none;
       transition: all 0.2s ease;
-      font-size: 14px;
+      appearance: none;
 }
+
 
 .booking-left input:focus,
 .booking-left select:focus {
@@ -99,15 +117,15 @@
       box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.08);
 }
 
-/* ================= DISABLED ================= */
+/*  DISABLED  */
 
 .booking-left select:disabled,
 .booking-left button:disabled {
-      opacity: 0.6;
+      opacity: 0.55;
       cursor: not-allowed;
 }
 
-/* ================= BUTTON ================= */
+/*  BUTTON  */
 
 .booking-left button {
       height: 48px;
@@ -127,7 +145,7 @@
       transform: translateY(-1px);
 }
 
-/* ================= ERROR ================= */
+/*  ERROR  */
 
 .error-text {
       color: #ef4444;
@@ -135,7 +153,7 @@
       margin-top: -2px;
 }
 
-/* ================= SLOT HEADINGS ================= */
+/*  SLOT HEADINGS  */
 
 .slot-group {
       display: flex;
@@ -150,7 +168,7 @@
       opacity: 0.9;
 }
 
-/* ================= SLOT GRID ================= */
+/*  SLOT GRID  */
 
 .slots-grid {
       display: grid;
@@ -158,7 +176,7 @@
       gap: 12px;
 }
 
-/* ================= SLOT ================= */
+/*  SLOT  */
 
 .slot {
       border: 1px solid var(--border);
@@ -188,7 +206,7 @@
       box-shadow: 0 8px 18px rgba(99, 102, 241, 0.2);
 }
 
-/* ================= EMPTY ================= */
+/*  EMPTY  */
 
 .empty-slots {
       display: flex;
@@ -202,7 +220,7 @@
       font-size: 14px;
 }
 
-/* ================= SELECTED ================= */
+/*  SELECTED  */
 
 .selected-slot {
       padding: 0 0 0 3px;
@@ -212,7 +230,7 @@
       font-weight: 600;
 }
 
-/* ================= SECTION TITLE ================= */
+/*  SECTION TITLE  */
 
 .booking-right-title {
       font-size: 16px;
@@ -220,7 +238,7 @@
       color: var(--text);
 }
 
-/* ================= LOADING ================= */
+/*  LOADING  */
 
 .loading-text {
       color: var(--text);
@@ -228,7 +246,7 @@
       font-size: 14px;
 }
 
-/* ================= TABLET ================= */
+/*  TABLET  */
 
 @media (max-width: 1024px) {
 
@@ -241,7 +259,7 @@
       }
 }
 
-/* ================= MOBILE ================= */
+/*  MOBILE  */
 
 @media (max-width: 768px) {
 
@@ -260,9 +278,16 @@
       .slot {
             width: 100%;
       }
+
+      .book-page h1,
+      .interviews-header h1,
+      .mentor-title,
+      .title {
+            font-size: 26px;
+      }
 }
 
-/* ================= SMALL MOBILE ================= */
+/*  SMALL MOBILE  */
 
 @media (max-width: 480px) {
 
@@ -293,5 +318,12 @@
 
       .selected-slot {
             font-size: 13px;
+      }
+
+      .book-page h1,
+      .interviews-header h1,
+      .mentor-title,
+      .title {
+            font-size: 22px;
       }
 }

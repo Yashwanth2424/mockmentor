@@ -4,7 +4,7 @@ const prisma = new PrismaClient();
 
 async function main() {
 
-      // 👨‍🏫 Mentors
+      //  Mentors
       await prisma.user.createMany({
             data: [
                   {
@@ -29,7 +29,7 @@ async function main() {
             skipDuplicates: true,
       });
 
-      // 👨‍🎓 Students
+      //  Students
       await prisma.user.createMany({
             data: [
                   {
@@ -54,7 +54,7 @@ async function main() {
             skipDuplicates: true,
       });
 
-      console.log("✅ Seed data inserted");
+      console.log(" Seed data inserted");
 }
 
 main()

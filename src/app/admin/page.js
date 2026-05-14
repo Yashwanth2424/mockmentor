@@ -28,7 +28,7 @@ export default function AdminPage() {
       const [activeTab, setActiveTab] = useState("dashboard");
       const [isReady, setIsReady] = useState(false);
 
-      // 🔥 NEW: mobile menu state
+      //  NEW: mobile menu state
       const [menuOpen, setMenuOpen] = useState(false);
 
       useEffect(() => {
@@ -43,7 +43,7 @@ export default function AdminPage() {
             }
       }, [activeTab, isReady]);
 
-      // 🔐 Auth
+      //  Auth
       useEffect(() => {
             async function fetchUser() {
                   const res = await fetch("/api/me");
@@ -62,7 +62,7 @@ export default function AdminPage() {
             fetchUser();
       }, [router]);
 
-      // 🔥 SWR
+      //  SWR
       const {
             data: interviews,
             isLoading: loadingInterviews,
@@ -134,7 +134,7 @@ export default function AdminPage() {
                         <div className="sidebar-overlay" onClick={() => setMenuOpen(false)} />
                   )}
 
-                  {/* ===== Sidebar ===== */}
+                  {/*  Sidebar */}
                   <aside className={`sidebar ${menuOpen ? "open" : ""}`}>
 
                         <div className="sidebar-header">
@@ -173,7 +173,7 @@ export default function AdminPage() {
                         </nav>
                   </aside>
 
-                  {/* ===== Main Content ===== */}
+                  {/*  Main Content  */}
                   <main className="admin-main">
 
                         {/*  TOP BAR  */}
@@ -204,7 +204,7 @@ export default function AdminPage() {
 
                         </header>
 
-                        {/* ================= DASHBOARD TAB ================= */}
+                        {/*  DASHBOARD TAB  */}
                         {activeTab === "dashboard" && (
                               <>
                                     <div className="stats">

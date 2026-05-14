@@ -1,6 +1,4 @@
-/* =========================
-   🌞 LIGHT THEME (DEFAULT)
-========================= */
+/*  LIGHT THEME  */
 :root {
   --bg: #ffffff;
   --text: #111827;
@@ -14,9 +12,7 @@
   --secondary: #f3f4f6;
 }
 
-/* =========================
-   🌙 DARK THEME
-========================= */
+/* DARK THEME */
 .dark {
   --bg: #0f172a;
   --text: #f1f5f9;
@@ -30,9 +26,7 @@
   --secondary: #1e293b;
 }
 
-/* =========================
-   GLOBAL RESET
-========================= */
+/* GLOBAL RESET */
 * {
   box-sizing: border-box;
   padding: 0;
@@ -46,18 +40,14 @@ body {
   cursor: default;
 }
 
-/* =========================
-   BODY STYLING (IMPORTANT)
-========================= */
+/*  BODY STYLING */
 body {
   background: var(--bg);
   color: var(--text);
   font-family: Arial, Helvetica, sans-serif;
-
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-
-  transition: background 0.3s ease, color 0.3s ease;
+  transition: 0.2s ease;
 }
 
 /* LINKS */
@@ -66,9 +56,7 @@ a {
   text-decoration: none;
 }
 
-/* =========================
-   SKELETON (KEEP THIS)
-========================= */
+/* SKELETON  */
 .skeleton {
   background: linear-gradient(90deg,
       #f3f4f6 25%,
