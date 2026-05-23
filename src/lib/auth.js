@@ -1,11 +1,12 @@
 import bcrypt from "bcryptjs";
 
-import { cookies } from "next/headers";
+import { verifyToken } from "@/lib/jwt";
 
-import { verifyToken }
-      from "@/lib/jwt";
+/* PASSWORD HELPERS */
 
-export async function hashPassword(password) {
+export async function hashPassword(
+      password
+) {
 
       return bcrypt.hash(
             password,
@@ -13,34 +14,41 @@ export async function hashPassword(password) {
       );
 }
 
-
 export async function comparePassword(
       password,
-      hash
+      hashedPassword
 ) {
 
       return bcrypt.compare(
             password,
-            hash
+            hashedPassword
       );
 }
 
+/* GET TOKEN */
 
-export async function getUserFromToken() {
+export function getToken(req) {
+
+      return req.cookies.get("token")
+            ?.value;
+}
+
+/* GET CURRENT USER */
+
+export function getCurrentUser(req) {
 
       try {
 
-            const cookieStore =
-                  await cookies();
-
             const token =
-                  cookieStore.get("token")?.value;
+                  getToken(req);
 
             if (!token) {
                   return null;
             }
 
-            return verifyToken(token);
+            return verifyToken(
+                  token
+            );
 
       } catch {
 
@@ -48,32 +56,43 @@ export async function getUserFromToken() {
       }
 }
 
+/* REQUIRE AUTH */
 
-export async function requireAdmin() {
+export function requireAuth(req) {
 
       const user =
-            await getUserFromToken();
+            getCurrentUser(req);
 
       if (!user) {
 
-            return {
-                  error: "Unauthorized",
-                  status: 401,
-            };
+            throw new Error(
+                  "Unauthorized"
+            );
       }
+
+      return user;
+}
+
+/* REQUIRE ROLE */
+
+export function requireRole(
+      req,
+      allowedRoles = []
+) {
+
+      const user =
+            requireAuth(req);
 
       if (
-            ![
-                  "ADMIN",
-                  "SUPER_ADMIN",
-            ].includes(user.role)
+            !allowedRoles.includes(
+                  user.role
+            )
       ) {
 
-            return {
-                  error: "Forbidden",
-                  status: 403,
-            };
+            throw new Error(
+                  "Forbidden"
+            );
       }
 
-      return { user };
+      return user;
 }

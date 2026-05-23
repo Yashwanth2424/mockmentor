@@ -1,66 +1,104 @@
 import { prisma } from "@/lib/prisma";
-import { NextResponse } from "next/server";
-import { verifyToken } from "@/lib/jwt";
 
-export async function PATCH(req, context) {
+import { verifyToken }
+      from "@/lib/jwt";
+
+import {
+      successResponse,
+      errorResponse,
+} from "@/lib/apiResponse";
+
+export async function PATCH(
+      req,
+      context
+) {
+
       try {
 
-            const { id } = await context.params;
+            const { id } =
+                  await context.params;
+
+            // TOKEN
 
             const token =
-                  req.cookies.get("token")?.value;
+                  req.cookies.get(
+                        "token"
+                  )?.value;
 
             if (!token) {
-                  return NextResponse.json(
-                        { error: "Unauthorized" },
-                        { status: 401 }
+
+                  return errorResponse(
+                        "Unauthorized",
+                        401
                   );
             }
 
             const decoded =
                   verifyToken(token);
 
+            // BODY
+
             const {
                   date,
                   mentorId,
             } = await req.json();
 
-            if (!date || !mentorId) {
-                  return NextResponse.json(
-                        {
-                              error:
-                                    "Missing required fields",
-                        },
-                        { status: 400 }
+            if (
+                  !date ||
+                  !mentorId
+            ) {
+
+                  return errorResponse(
+                        "Missing required fields",
+                        400
                   );
             }
+
+            // DATE
 
             const selectedDate =
                   new Date(date);
 
             if (
-                  isNaN(selectedDate.getTime())
+                  isNaN(
+                        selectedDate.getTime()
+                  )
             ) {
-                  return NextResponse.json(
-                        {
-                              error:
-                                    "Invalid date",
-                        },
-                        { status: 400 }
+
+                  return errorResponse(
+                        "Invalid date",
+                        400
                   );
             }
 
             // FUTURE DATE ONLY
 
-            const now = new Date();
+            const now =
+                  new Date();
 
-            if (selectedDate <= now) {
-                  return NextResponse.json(
-                        {
-                              error:
-                                    "Please select a future time",
-                        },
-                        { status: 400 }
+            if (
+                  selectedDate <= now
+            ) {
+
+                  return errorResponse(
+                        "Please select a future time",
+                        400
+                  );
+            }
+
+            // SLOT VALIDATION
+
+            const minutes =
+                  selectedDate.getMinutes();
+
+            if (
+                  minutes !== 0 &&
+                  minutes !== 30
+            ) {
+
+                  return errorResponse(
+                        "Only 30-minute slots allowed",
+                        400
                   );
             }
 
@@ -69,17 +107,17 @@ export async function PATCH(req, context) {
             const interview =
                   await prisma.interview.findUnique(
                         {
-                              where: { id },
+                              where: {
+                                    id,
+                              },
                         }
                   );
 
             if (!interview) {
-                  return NextResponse.json(
-                        {
-                              error:
-                                    "Interview not found",
-                        },
-                        { status: 404 }
+
+                  return errorResponse(
+                        "Interview not found",
+                        404
                   );
             }
 
@@ -89,16 +127,14 @@ export async function PATCH(req, context) {
                   interview.userId !==
                   decoded.id
             ) {
-                  return NextResponse.json(
-                        {
-                              error:
-                                    "Forbidden",
-                        },
-                        { status: 403 }
+
+                  return errorResponse(
+                        "Forbidden",
+                        403
                   );
             }
 
-            // ONLY PENDING/ACCEPTED
+            // STATUS CHECK
 
             if (
                   ![
@@ -108,12 +144,10 @@ export async function PATCH(req, context) {
                         interview.status
                   )
             ) {
-                  return NextResponse.json(
-                        {
-                              error:
-                                    "Cannot reschedule this interview",
-                        },
-                        { status: 400 }
+
+                  return errorResponse(
+                        "Cannot reschedule this interview",
+                        400
                   );
             }
 
@@ -125,6 +159,7 @@ export async function PATCH(req, context) {
                               where: {
                                     id: mentorId,
                               },
+
                               include: {
                                     availability: true,
                               },
@@ -133,14 +168,13 @@ export async function PATCH(req, context) {
 
             if (
                   !mentor ||
-                  mentor.role !== "MENTOR"
+                  mentor.role !==
+                  "MENTOR"
             ) {
-                  return NextResponse.json(
-                        {
-                              error:
-                                    "Invalid mentor",
-                        },
-                        { status: 400 }
+
+                  return errorResponse(
+                        "Invalid mentor",
+                        400
                   );
             }
 
@@ -154,18 +188,20 @@ export async function PATCH(req, context) {
 
             const availability =
                   mentor.availability.find(
-                        (a) =>
-                              a.dayOfWeek ===
+                        (availability) =>
+                              Number(
+                                    availability.dayOfWeek
+                              ) ===
                               selectedDay
                   );
 
-            if (!availability) {
-                  return NextResponse.json(
-                        {
-                              error:
-                                    "Mentor unavailable on selected day",
-                        },
-                        { status: 400 }
+            if (
+                  !availability
+            ) {
+
+                  return errorResponse(
+                        "Mentor unavailable on selected day",
+                        400
                   );
             }
 
@@ -175,12 +211,10 @@ export async function PATCH(req, context) {
                   selectedHour >=
                   availability.endHour
             ) {
-                  return NextResponse.json(
-                        {
-                              error:
-                                    "Selected time outside mentor availability",
-                        },
-                        { status: 400 }
+
+                  return errorResponse(
+                        "Selected time outside mentor availability",
+                        400
                   );
             }
 
@@ -191,23 +225,31 @@ export async function PATCH(req, context) {
                         {
                               where: {
                                     mentorId,
+
                                     date:
                                           selectedDate,
+
                                     id: {
-                                          not:
-                                                id,
+                                          not: id,
+                                    },
+
+                                    status: {
+                                          in: [
+                                                "PENDING",
+                                                "ACCEPTED",
+                                          ],
                                     },
                               },
                         }
                   );
 
-            if (mentorConflict) {
-                  return NextResponse.json(
-                        {
-                              error:
-                                    "Mentor already booked",
-                        },
-                        { status: 400 }
+            if (
+                  mentorConflict
+            ) {
+
+                  return errorResponse(
+                        "Mentor already booked",
+                        400
                   );
             }
 
@@ -219,37 +261,49 @@ export async function PATCH(req, context) {
                               where: {
                                     userId:
                                           decoded.id,
+
                                     date:
                                           selectedDate,
+
                                     id: {
-                                          not:
-                                                id,
+                                          not: id,
+                                    },
+
+                                    status: {
+                                          in: [
+                                                "PENDING",
+                                                "ACCEPTED",
+                                          ],
                                     },
                               },
                         }
                   );
 
-            if (studentConflict) {
-                  return NextResponse.json(
-                        {
-                              error:
-                                    "You already have another interview at this time",
-                        },
-                        { status: 400 }
+            if (
+                  studentConflict
+            ) {
+
+                  return errorResponse(
+                        "You already have another interview at this time",
+                        400
                   );
             }
 
             // UPDATE
 
-            const updated =
+            const updatedInterview =
                   await prisma.interview.update(
                         {
-                              where: { id },
+                              where: {
+                                    id,
+                              },
 
                               data: {
                                     date:
                                           selectedDate,
+
                                     mentorId,
+
                                     status:
                                           "PENDING",
                               },
@@ -260,8 +314,8 @@ export async function PATCH(req, context) {
                         }
                   );
 
-            return NextResponse.json(
-                  updated
+            return successResponse(
+                  updatedInterview
             );
 
       } catch (err) {
@@ -271,12 +325,9 @@ export async function PATCH(req, context) {
                   err
             );
 
-            return NextResponse.json(
-                  {
-                        error:
-                              "Failed to reschedule interview",
-                  },
-                  { status: 500 }
+            return errorResponse(
+                  "Failed to reschedule interview",
+                  500
             );
       }
 }

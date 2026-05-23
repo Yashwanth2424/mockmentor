@@ -1,5 +1,9 @@
 import { prisma } from "@/lib/prisma";
-import { NextResponse } from "next/server";
+
+import {
+      successResponse,
+      errorResponse,
+} from "@/lib/apiResponse";
 
 export async function GET() {
 
@@ -16,30 +20,31 @@ export async function GET() {
                               name: true,
                               email: true,
 
-                              availability: true,
+                              availability: {
+                                    select: {
+                                          id: true,
+                                          dayOfWeek: true,
+                                          startHour: true,
+                                          endHour: true,
+                                    },
+                              },
                         },
                   });
 
-            console.log(
-                  "MENTORS API HIT"
-            );
-
-            return NextResponse.json(
+            return successResponse(
                   mentors
             );
 
-      } catch (error) {
+      } catch (err) {
 
-            console.error(error);
+            console.error(
+                  "MENTOR FETCH ERROR:",
+                  err
+            );
 
-            return NextResponse.json(
-                  {
-                        error:
-                              "Failed to fetch mentors",
-                  },
-                  {
-                        status: 500,
-                  }
+            return errorResponse(
+                  "Failed to fetch mentors",
+                  500
             );
       }
 }

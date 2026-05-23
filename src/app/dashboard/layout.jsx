@@ -3,10 +3,17 @@
 import { useState } from "react";
 import ThemeToggle from "@/components/ThemeToggle";
 import Sidebar from "@/components/Sidebar";
+import useSWR from "swr";
 import "./layout.css";
+
+const fetcher = (url) => fetch(url).then(res => res.json());
 
 export default function DashboardLayout({ children }) {
       const [open, setOpen] = useState(false);
+
+      // Pre-warm SWR cache so child pages don't hit loading gaps
+      useSWR("/api/me", fetcher, { revalidateOnFocus: false });
+      useSWR("/api/mentor", fetcher, { revalidateOnFocus: false });
 
       return (
             <div className="layout">
@@ -16,7 +23,7 @@ export default function DashboardLayout({ children }) {
                         <Sidebar open={open} setOpen={setOpen} />
                   </div>
 
-                  {/* OVERLAY  */}
+                  {/* OVERLAY */}
                   {open && (
                         <div
                               className="sidebar-overlay"

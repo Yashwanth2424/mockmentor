@@ -21,24 +21,24 @@ export default function BookPage() {
 
       const fetcher = async (url) => {
 
-            const res = await fetch(url);
+            const res =
+                  await fetch(url);
 
-            if (!res.ok) {
+            const json =
+                  await res.json();
 
-                  const errorText =
-                        await res.text();
-
-                  console.error(
-                        `FETCH ERROR (${url}):`,
-                        errorText
-                  );
+            if (
+                  !res.ok ||
+                  !json.success
+            ) {
 
                   throw new Error(
-                        `Failed to fetch ${url}`
+                        json.error ||
+                        "Request failed"
                   );
             }
 
-            return res.json();
+            return json.data;
       };
       const {
             data: mentors = [],
@@ -57,23 +57,41 @@ export default function BookPage() {
       } = useSWR("/api/interviews", fetcher);
 
       const {
-            data: user,
+            data: userData,
             isLoading: userLoading,
-      } = useSWR("/api/me", fetcher);
+      } = useSWR(
+            "/api/me",
+            fetcher
+      );
+
+      const user =
+            userData || null;
 
       const safeInterviews = Array.isArray(interviews)
             ? interviews
             : [];
 
+      const safeMentors = Array.isArray(mentors)
+            ? mentors
+            : [];
+
       useEffect(() => {
 
-            if (userLoading) return;
-            if (!user) {
-                  router.push("/login");
+            if (userLoading) {
                   return;
             }
+
+            if (!user) {
+
+                  router.replace("/login");
+
+                  return;
+            }
+
             if (user.role === "MENTOR") {
-                  router.push("/mentor");
+
+                  router.replace("/mentor");
+
                   return;
             }
 
@@ -81,10 +99,17 @@ export default function BookPage() {
                   user.role === "ADMIN" ||
                   user.role === "SUPER_ADMIN"
             ) {
-                  router.push("/admin");
+
+                  router.replace("/admin");
+
+                  return;
             }
 
-      }, [user, userLoading, router]);
+      }, [
+            user,
+            userLoading,
+            router,
+      ]);
 
       useEffect(() => {
             setSelectedMentor("");
@@ -137,7 +162,7 @@ export default function BookPage() {
       }
 
       function generateTimeSlots() {
-            const mentor = mentors?.find(
+            const mentor = safeMentors.find(
                   (m) => m.id === selectedMentor
             );
 
@@ -238,22 +263,16 @@ export default function BookPage() {
       }
 
       function getAvailableMentors() {
-
             if (!selectedDate) {
-                  return mentors;
+                  return safeMentors;
             }
 
-            const selectedDay =
-                  new Date(
-                        `${selectedDate}T12:00:00`
-                  ).getDay();
+            const selectedDay = new Date(`${selectedDate}T12:00:00`).getDay();
 
-            return mentors.filter((mentor) =>
+            return safeMentors.filter((mentor) =>
                   mentor.availability?.some(
                         (availability) =>
-                              Number(
-                                    availability.dayOfWeek
-                              ) === selectedDay
+                              Number(availability.dayOfWeek) === selectedDay
                   )
             );
       }
@@ -372,10 +391,7 @@ export default function BookPage() {
             }
       }
 
-      if (
-            userLoading ||
-            interviewsLoading
-      ) {
+      if (userLoading || interviewsLoading) {
             return <SkeletonInterviewCard />;
       }
 

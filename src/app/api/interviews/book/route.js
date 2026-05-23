@@ -1,22 +1,28 @@
 import { prisma } from "@/lib/prisma";
-import { NextResponse } from "next/server";
-import { verifyToken } from "@/lib/jwt";
-import { sendEmail } from "@/lib/email";
+
+import {
+      requireAuth,
+} from "@/lib/auth";
+
+import {
+      successResponse,
+      errorResponse,
+} from "@/lib/apiResponse";
+
+import {
+      sendEmail,
+} from "@/lib/email";
 
 export async function POST(req) {
 
       try {
 
-            const token = req.cookies.get("token")?.value;
+            // AUTH
 
-            if (!token) {
-                  return NextResponse.json(
-                        { error: "Unauthorized" },
-                        { status: 401 }
-                  );
-            }
+            const user =
+                  requireAuth(req);
 
-            const decoded = verifyToken(token);
+            // BODY
 
             const {
                   topic,
@@ -24,90 +30,115 @@ export async function POST(req) {
                   mentorId,
             } = await req.json();
 
-            //  CLEAN INPUT 
+            // CLEAN INPUT
 
-            const cleanTopic = topic?.trim();
+            const cleanTopic =
+                  topic?.trim();
 
-            //  VALIDATION 
+            // VALIDATION
 
-            if (!cleanTopic || !date || !mentorId) {
-                  return NextResponse.json(
-                        { error: "Missing fields" },
-                        { status: 400 }
+            if (
+                  !cleanTopic ||
+                  !date ||
+                  !mentorId
+            ) {
+
+                  return errorResponse(
+                        "Missing fields",
+                        400
                   );
             }
+
+            // TOPIC LENGTH
 
             if (
                   cleanTopic.length < 3 ||
                   cleanTopic.length > 100
             ) {
-                  return NextResponse.json(
-                        {
-                              error:
-                                    "Topic must be between 3 and 100 characters",
-                        },
-                        {
-                              status: 400,
-                        }
+
+                  return errorResponse(
+                        "Topic must be between 3 and 100 characters",
+                        400
                   );
             }
 
-            //  DATE 
+            // DATE
 
-            const selectedDate = new Date(date);
+            const selectedDate =
+                  new Date(date);
 
-            selectedDate.setSeconds(0, 0);
+            selectedDate.setSeconds(
+                  0,
+                  0
+            );
 
-            if (isNaN(selectedDate)) {
-                  return NextResponse.json(
-                        { error: "Invalid date format" },
-                        { status: 400 }
+            if (
+                  isNaN(selectedDate)
+            ) {
+
+                  return errorResponse(
+                        "Invalid date format",
+                        400
                   );
             }
 
-            const now = new Date();
+            // TOMORROW ONLY
 
-            const tomorrow = new Date();
+            const now =
+                  new Date();
 
-            tomorrow.setDate(now.getDate() + 1);
+            const tomorrow =
+                  new Date();
 
-            tomorrow.setHours(0, 0, 0, 0);
+            tomorrow.setDate(
+                  now.getDate() + 1
+            );
 
-            if (selectedDate < tomorrow) {
-                  return NextResponse.json(
-                        {
-                              error:
-                                    "Booking allowed only from tomorrow",
-                        },
-                        {
-                              status: 400,
-                        }
+            tomorrow.setHours(
+                  0,
+                  0,
+                  0,
+                  0
+            );
+
+            if (
+                  selectedDate <
+                  tomorrow
+            ) {
+
+                  return errorResponse(
+                        "Booking allowed only from tomorrow",
+                        400
                   );
             }
 
-            //  SLOT VALIDATION 
+            // SLOT VALIDATION
 
-            const minutes = selectedDate.getMinutes();
+            const minutes =
+                  selectedDate.getMinutes();
 
-            if (minutes !== 0 && minutes !== 30) {
-                  return NextResponse.json(
-                        {
-                              error:
-                                    "Only 30-minute slots allowed (00 or 30)",
-                        },
-                        {
-                              status: 400,
-                        }
+            if (
+                  minutes !== 0 &&
+                  minutes !== 30
+            ) {
+
+                  return errorResponse(
+                        "Only 30-minute slots allowed",
+                        400
                   );
             }
 
-            //  STUDENT CONFLICT 
+            // STUDENT CONFLICT
 
-            const existingStudent =
+            const existingStudentInterview =
                   await prisma.interview.findFirst({
                         where: {
-                              userId: decoded.id,
-                              date: selectedDate,
+                              userId:
+                                    user.id,
+
+                              date:
+                                    selectedDate,
+
                               status: {
                                     in: [
                                           "PENDING",
@@ -117,43 +148,51 @@ export async function POST(req) {
                         },
                   });
 
-            if (existingStudent) {
-                  return NextResponse.json(
-                        {
-                              error:
-                                    "You already have an interview at this time",
+            if (
+                  existingStudentInterview
+            ) {
+
+                  return errorResponse(
+                        "You already have an interview at this time",
+                        400
+                  );
+            }
+
+            // MENTOR
+
+            const mentor =
+                  await prisma.user.findUnique({
+                        where: {
+                              id: mentorId,
                         },
-                        {
-                              status: 400,
-                        }
+
+                        include: {
+                              availability: true,
+                        },
+                  });
+
+            if (
+                  !mentor ||
+                  mentor.role !==
+                  "MENTOR"
+            ) {
+
+                  return errorResponse(
+                        "Invalid mentor",
+                        400
                   );
             }
 
-            //  MENTOR 
+            // MENTOR CONFLICT
 
-            const mentor = await prisma.user.findUnique({
-                  where: {
-                        id: mentorId,
-                  },
-                  include: {
-                        availability: true,
-                  },
-            });
-
-            if (!mentor || mentor.role !== "MENTOR") {
-                  return NextResponse.json(
-                        { error: "Invalid mentor" },
-                        { status: 400 }
-                  );
-            }
-
-            //  MENTOR CONFLICT 
-
-            const existing =
+            const existingMentorInterview =
                   await prisma.interview.findFirst({
                         where: {
                               mentorId,
-                              date: selectedDate,
+
+                              date:
+                                    selectedDate,
+
                               status: {
                                     in: [
                                           "PENDING",
@@ -163,19 +202,17 @@ export async function POST(req) {
                         },
                   });
 
-            if (existing) {
-                  return NextResponse.json(
-                        {
-                              error:
-                                    "Mentor already booked for this time",
-                        },
-                        {
-                              status: 400,
-                        }
+            if (
+                  existingMentorInterview
+            ) {
+
+                  return errorResponse(
+                        "Mentor already booked for this time",
+                        400
                   );
             }
 
-            //  AVAILABILITY 
+            // AVAILABILITY
 
             const selectedHour =
                   selectedDate.getHours();
@@ -185,19 +222,18 @@ export async function POST(req) {
 
             const dayAvailability =
                   mentor.availability.find(
-                        (a) =>
-                              a.dayOfWeek === selectedDay
+                        (availability) =>
+                              availability.dayOfWeek ===
+                              selectedDay
                   );
 
-            if (!dayAvailability) {
-                  return NextResponse.json(
-                        {
-                              error:
-                                    "Mentor not available on this day",
-                        },
-                        {
-                              status: 400,
-                        }
+            if (
+                  !dayAvailability
+            ) {
+
+                  return errorResponse(
+                        "Mentor not available on this day",
+                        400
                   );
             }
 
@@ -207,117 +243,169 @@ export async function POST(req) {
                   selectedHour >=
                   dayAvailability.endHour
             ) {
-                  return NextResponse.json(
-                        {
-                              error:
-                                    "Time outside mentor availability",
-                        },
-                        {
-                              status: 400,
-                        }
+
+                  return errorResponse(
+                        "Time outside mentor availability",
+                        400
                   );
             }
 
-            //  CREATE 
+            // CREATE INTERVIEW
 
             const interview =
                   await prisma.interview.create({
                         data: {
-                              topic: cleanTopic,
-                              date: selectedDate,
-                              status: "PENDING",
+                              topic:
+                                    cleanTopic,
+
+                              date:
+                                    selectedDate,
+
+                              status:
+                                    "PENDING",
 
                               user: {
                                     connect: {
-                                          id: decoded.id,
+                                          id:
+                                                user.id,
                                     },
                               },
 
                               mentor: {
                                     connect: {
-                                          id: mentorId,
+                                          id:
+                                                mentorId,
                                     },
                               },
                         },
+
+                        include: {
+                              mentor: true,
+                        },
                   });
 
-            //  USER 
+            // USER EMAIL
 
-            const user = await prisma.user.findUnique({
-                  where: {
-                        id: decoded.id,
-                  },
-            });
+            const currentUser =
+                  await prisma.user.findUnique({
+                        where: {
+                              id: user.id,
+                        },
+                  });
 
-            //  EMAIL 
+            // EMAIL
 
             try {
 
                   await sendEmail({
-                        to: user.email,
+                        to:
+                              currentUser.email,
+
                         subject:
                               "Interview Scheduled - MockMentor",
 
                         html: `
                               <div style="font-family: Arial, sans-serif; background:#f9fafb; padding:20px;">
-                              <div style="max-width:600px; margin:auto; background:white; border-radius:12px; overflow:hidden; border:1px solid #e5e7eb;">
-                                    <div style="background:linear-gradient(135deg,#4f46e5,#7c3aed); padding:20px; text-align:center; color:white;">
-                                          <h1 style="margin:0;">MockMentor</h1>
+                                    <div style="max-width:600px; margin:auto; background:white; border-radius:12px; overflow:hidden; border:1px solid #e5e7eb;">
 
-                                          <p style="margin:5px 0 0; font-size:14px;">
-                                                Interview Practice Platform
-                                          </p>
-                                    </div>
-                                    <div style="padding:24px;">
-                                          <h2 style="margin-top:0;">
-                                                🎉 Interview Confirmed
-                                          </h2>
-                                          <p style="color:#374151;">
-                                                Your interview has been successfully scheduled.
-                                          </p>
-                                          <div style="background:#f3f4f6; padding:16px; border-radius:8px; margin:20px 0;">
-                                                <p>
-                                                      <strong>📌 Topic:</strong>
-                                                      ${interview.topic}
-                                                </p>
-                                                <p>
-                                                      <strong>📅 Date:</strong>
-                                                      ${new Date(interview.date).toLocaleString()}
-                                                </p>
-                                                <p>
-                                                      <strong>👨‍🏫 Mentor:</strong>
-                                                      ${mentor.name}
+                                          <div style="background:linear-gradient(135deg,#4f46e5,#7c3aed); padding:20px; text-align:center; color:white;">
+
+                                                <h1 style="margin:0;">
+                                                      MockMentor
+                                                </h1>
+
+                                                <p style="margin:5px 0 0; font-size:14px;">
+                                                      Interview Practice Platform
                                                 </p>
                                           </div>
-                                          <p style="color:#374151;">
-                                                Make sure to prepare well.
-                                          </p>
-                                          <div style="text-align:center; margin-top:20px;">
-                                                <a
-                                                      href="${process.env.NEXT_PUBLIC_APP_URL}/dashboard"
-                                                      style="display:inline-block; padding:12px 20px; background:#4f46e5; color:white; border-radius:8px; text-decoration:none;"
-                                                >
-                                                      Go to Dashboard
-                                                </a>
+
+                                          <div style="padding:24px;">
+
+                                                <h2 style="margin-top:0;">
+                                                      Interview Confirmed
+                                                </h2>
+
+                                                <p style="color:#374151;">
+                                                      Your interview has been successfully scheduled.
+                                                </p>
+
+                                                <div style="background:#f3f4f6; padding:16px; border-radius:8px; margin:20px 0;">
+
+                                                      <p>
+                                                            <strong>Topic:</strong>
+                                                            ${interview.topic}
+                                                      </p>
+
+                                                      <p>
+                                                            <strong>Date:</strong>
+                                                            ${new Date(interview.date).toLocaleString()}
+                                                      </p>
+
+                                                      <p>
+                                                            <strong>Mentor:</strong>
+                                                            ${mentor.name}
+                                                      </p>
+                                                </div>
+
+                                                <div style="text-align:center; margin-top:20px;">
+
+                                                      <a
+                                                            href="${process.env.NEXT_PUBLIC_APP_URL}/dashboard"
+                                                            style="display:inline-block; padding:12px 20px; background:#4f46e5; color:white; border-radius:8px; text-decoration:none;"
+                                                      >
+                                                            Go to Dashboard
+                                                      </a>
+                                                </div>
+                                          </div>
+
+                                          <div style="padding:16px; text-align:center; font-size:12px; color:#9ca3af;">
+                                                © ${new Date().getFullYear()} MockMentor
                                           </div>
                                     </div>
-                                    <div style="padding:16px; text-align:center; font-size:12px; color:#9ca3af;">
-                                          © ${new Date().getFullYear()} MockMentor
-                                    </div>
-                              </div>
                               </div>
                         `,
                   });
-            } catch (err) {
-                  console.error("Email failed:", err);
+
+            } catch (emailError) {
+
+                  console.error(
+                        "EMAIL ERROR:",
+                        emailError
+                  );
             }
-            return NextResponse.json(interview);
+
+            // SUCCESS
+
+            return successResponse(
+                  interview,
+                  201
+            );
 
       } catch (err) {
-            console.error("BOOKING ERROR:", err);
-            return NextResponse.json(
-                  { error: "Booking failed" },
-                  { status: 500 }
+
+            console.error(
+                  "BOOKING ERROR:",
+                  err
+            );
+
+            // AUTH
+
+            if (
+                  err.message ===
+                  "Unauthorized"
+            ) {
+
+                  return errorResponse(
+                        "Unauthorized",
+                        401
+                  );
+            }
+
+            // SERVER
+
+            return errorResponse(
+                  "Booking failed",
+                  500
             );
       }
 }

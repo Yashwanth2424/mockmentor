@@ -1,0 +1,128 @@
+/* =========================================
+   BASE
+========================================= */
+
+.skeleton {
+      position: relative;
+
+      overflow: hidden;
+
+      border-radius: 12px;
+
+      background:
+            linear-gradient(90deg,
+                  rgba(255, 255, 255, 0.04) 25%,
+                  rgba(255, 255, 255, 0.08) 50%,
+                  rgba(255, 255, 255, 0.04) 75%);
+
+      background-size: 200% 100%;
+
+      animation:
+            skeletonShimmer 1.4s infinite linear;
+}
+
+@keyframes skeletonShimmer {
+
+      0% {
+            background-position: 200% 0;
+      }
+
+      100% {
+            background-position: -200% 0;
+      }
+}
+
+/* =========================================
+   DASHBOARD
+========================================= */
+
+.skeleton-title {
+      width: 220px;
+      height: 38px;
+
+      margin-bottom: 10px;
+}
+
+.skeleton-subtitle {
+      width: 260px;
+      height: 16px;
+}
+
+.skeleton-button {
+      width: 170px;
+      height: 48px;
+}
+
+.skeleton-icon {
+      width: 54px;
+      height: 54px;
+
+      border-radius: 14px;
+}
+
+.skeleton-stats-content {
+      flex: 1;
+}
+
+.skeleton-label {
+      width: 110px;
+      height: 14px;
+
+      margin-bottom: 10px;
+}
+
+.skeleton-number {
+      width: 70px;
+      height: 32px;
+}
+
+.skeleton-section-title {
+      width: 180px;
+      height: 28px;
+}
+
+.skeleton-link {
+      width: 90px;
+      height: 18px;
+}
+
+.skeleton-card-title {
+      width: 180px;
+      height: 18px;
+
+      margin-bottom: 10px;
+}
+
+.skeleton-card-text {
+      width: 240px;
+      height: 14px;
+
+      margin-bottom: 12px;
+}
+
+.skeleton-status {
+      width: 90px;
+      height: 26px;
+
+      border-radius: 999px;
+}
+
+.skeleton-details {
+      width: 70px;
+      height: 16px;
+}
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 768px) {
+
+      .skeleton-button {
+            width: 100%;
+      }
+
+      .skeleton-card-text {
+            width: 180px;
+      }
+}

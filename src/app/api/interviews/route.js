@@ -1,35 +1,71 @@
 import { prisma } from "@/lib/prisma";
-import { NextResponse } from "next/server";
-import { verifyToken } from "@/lib/jwt";
+
+import {
+      requireAuth,
+} from "@/lib/auth";
+
+import {
+      successResponse,
+      errorResponse,
+} from "@/lib/apiResponse";
 
 export async function GET(req) {
-      try {
-            const token = req.cookies.get("token")?.value;
 
-            if (!token) {
-                  return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      try {
+
+            // AUTH
+
+            const user =
+                  requireAuth(req);
+
+            // INTERVIEWS
+
+            const interviews =
+                  await prisma.interview.findMany({
+                        where: {
+                              userId: user.id,
+                        },
+
+                        include: {
+                              mentor: true,
+                        },
+
+                        orderBy: {
+                              date: "asc",
+                        },
+                  });
+
+            // SUCCESS
+
+            return successResponse(
+                  interviews
+            );
+
+      } catch (err) {
+
+            console.error(
+                  "INTERVIEWS ERROR:",
+                  err
+            );
+
+            // AUTH ERRORS
+
+            if (
+                  err.message ===
+                  "Unauthorized"
+            ) {
+
+                  return errorResponse(
+                        "Unauthorized",
+                        401
+                  );
             }
 
-            const decoded = verifyToken(token);
+            // SERVER ERROR
 
-            const interviews = await prisma.interview.findMany({
-                  where: {
-                        userId: decoded.id,
-                  },
-                  include: {
-                        mentor: true,
-                  },
-                  orderBy: {
-                        date: "asc",
-                  },
-            });
-
-            return NextResponse.json(interviews);
-      } catch (err) {
-            console.error("INTERVIEW ERROR:", err);
-            return NextResponse.json(
-                  { error: "Server error" },
-                  { status: 500 }
+            return errorResponse(
+                  "Server error",
+                  500
             );
       }
 }

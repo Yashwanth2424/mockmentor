@@ -20,45 +20,63 @@ export default function InterviewsPage() {
       const [showModal, setShowModal] =
             useState(false);
 
-      const [selectedInterview,
-            setSelectedInterview] =
-            useState(null);
+      const [
+            selectedInterview,
+            setSelectedInterview,
+      ] = useState(null);
 
-      const [selectedDate,
-            setSelectedDate] =
-            useState("");
+      const [
+            selectedDate,
+            setSelectedDate,
+      ] = useState("");
 
-      const [selectedMentor,
-            setSelectedMentor] =
-            useState("");
+      const [
+            selectedMentor,
+            setSelectedMentor,
+      ] = useState("");
 
-      const [selectedTime,
-            setSelectedTime] =
-            useState("");
+      const [
+            selectedTime,
+            setSelectedTime,
+      ] = useState("");
 
-      const [rescheduling,
-            setRescheduling] =
-            useState(false);
+      const [
+            rescheduling,
+            setRescheduling,
+      ] = useState(false);
 
       // FETCHER
 
       const fetcher = async (url) => {
 
-            const res = await fetch(url);
+            const res =
+                  await fetch(url);
 
-            if (!res.ok) {
+            const json =
+                  await res.json();
+
+            if (
+                  !res.ok ||
+                  !json.success
+            ) {
+
                   throw new Error(
-                        "Failed to fetch"
+                        json.error ||
+                        "Request failed"
                   );
             }
 
-            return res.json();
+            return Array.isArray(
+                  json.data
+            )
+                  ? json.data
+                  : [];
       };
 
       // INTERVIEWS
 
       const {
-            data: interviews,
+            data: interviews = [],
             isLoading,
             error,
             mutate,
@@ -76,40 +94,49 @@ export default function InterviewsPage() {
             fetcher
       );
 
+      // SAFE INTERVIEWS
+
       const safeInterviews =
             Array.isArray(interviews)
                   ? interviews
                   : [];
 
-      // CANCEL
+      // CANCEL INTERVIEW
 
       async function handleCancel(id) {
 
-            const confirmCancel = confirm(
-                  "Are you sure you want to cancel this interview?"
-            );
+            const confirmCancel =
+                  confirm(
+                        "Are you sure you want to cancel this interview?"
+                  );
 
-            if (!confirmCancel) return;
+            if (!confirmCancel) {
+                  return;
+            }
 
             try {
 
                   setLoadingId(id);
 
-                  const res = await fetch(
-                        `/api/interviews/${id}/cancel`,
-                        {
-                              method: "PATCH",
-                        }
-                  );
+                  const res =
+                        await fetch(
+                              `/api/interviews/${id}/cancel`,
+                              {
+                                    method: "PATCH",
+                              }
+                        );
 
-                  const data =
+                  const json =
                         await res.json();
 
-                  if (!res.ok) {
+                  if (
+                        !res.ok ||
+                        !json.success
+                  ) {
 
                         toast.error(
-                              data.error ||
-                              "Failed to cancel"
+                              json.error ||
+                              "Failed to cancel interview"
                         );
 
                         return;
@@ -133,7 +160,7 @@ export default function InterviewsPage() {
             }
       }
 
-      // OPEN RESCHEDULE
+      // OPEN RESCHEDULE MODAL
 
       function openRescheduleModal(
             interview
@@ -193,16 +220,16 @@ export default function InterviewsPage() {
             return mentors.filter(
                   (mentor) =>
                         mentor.availability?.some(
-                              (a) =>
+                              (availability) =>
                                     Number(
-                                          a.dayOfWeek
+                                          availability.dayOfWeek
                                     ) ===
                                     selectedDay
                         )
             );
       }
 
-      // TIME SLOTS
+      // BOOKED SLOTS
 
       function getBookedSlots() {
 
@@ -210,55 +237,62 @@ export default function InterviewsPage() {
                   !selectedDate ||
                   !selectedMentor
             ) {
+
                   return [];
             }
 
             return safeInterviews
-                  .filter((interview) => {
+                  .filter(
+                        (interview) => {
 
-                        // exclude current interview
-                        if (
-                              interview.id ===
-                              selectedInterview?.id
-                        ) {
-                              return false;
+                              if (
+                                    interview.id ===
+                                    selectedInterview?.id
+                              ) {
+
+                                    return false;
+                              }
+
+                              const interviewDate =
+                                    new Date(
+                                          interview.date
+                                    );
+
+                              return (
+                                    interviewDate
+                                          .toISOString()
+                                          .split("T")[0] ===
+                                    selectedDate &&
+                                    interview.mentorId ===
+                                    selectedMentor &&
+                                    interview.status !==
+                                    "CANCELLED"
+                              );
                         }
+                  )
+                  .map(
+                        (interview) => {
 
-                        const interviewDate =
-                              new Date(
-                                    interview.date
-                              );
+                              const date =
+                                    new Date(
+                                          interview.date
+                                    );
 
-                        return (
-                              interviewDate
-                                    .toISOString()
-                                    .split("T")[0] ===
-                              selectedDate &&
-                              interview.mentorId ===
-                              selectedMentor &&
-                              interview.status !==
-                              "CANCELLED"
-                        );
-                  })
-                  .map((interview) => {
-
-                        const date =
-                              new Date(
-                                    interview.date
-                              );
-
-                        return date
-                              .toTimeString()
-                              .slice(0, 5);
-                  });
+                              return date
+                                    .toTimeString()
+                                    .slice(0, 5);
+                        }
+                  );
       }
+
+      // GENERATE TIME SLOTS
 
       function generateTimeSlots() {
 
             const mentor =
                   mentors.find(
-                        (m) =>
-                              m.id ===
+                        (mentor) =>
+                              mentor.id ===
                               selectedMentor
                   );
 
@@ -266,6 +300,7 @@ export default function InterviewsPage() {
                   !mentor ||
                   !selectedDate
             ) {
+
                   return [];
             }
 
@@ -276,9 +311,9 @@ export default function InterviewsPage() {
 
             const availability =
                   mentor.availability?.find(
-                        (a) =>
+                        (availability) =>
                               Number(
-                                    a.dayOfWeek
+                                    availability.dayOfWeek
                               ) ===
                               selectedDay
                   );
@@ -353,32 +388,33 @@ export default function InterviewsPage() {
                         await fetch(
                               `/api/interviews/${selectedInterview.id}/reschedule`,
                               {
-                                    method:
-                                          "PATCH",
+                                    method: "PATCH",
 
                                     headers: {
                                           "Content-Type":
                                                 "application/json",
                                     },
 
-                                    body: JSON.stringify(
-                                          {
-                                                date:
-                                                      fullDate,
-                                                mentorId:
-                                                      selectedMentor,
-                                          }
-                                    ),
+                                    body: JSON.stringify({
+                                          date:
+                                                fullDate,
+
+                                          mentorId:
+                                                selectedMentor,
+                                    }),
                               }
                         );
 
-                  const data =
+                  const json =
                         await res.json();
 
-                  if (!res.ok) {
+                  if (
+                        !res.ok ||
+                        !json.success
+                  ) {
 
                         toast.error(
-                              data.error ||
+                              json.error ||
                               "Failed to reschedule"
                         );
 
@@ -449,7 +485,8 @@ export default function InterviewsPage() {
                               </p>
                         </div>
 
-                  ) : safeInterviews.length === 0 ? (
+                  ) : !isLoading &&
+                        safeInterviews.length === 0 ? (
 
                         <div className="empty-state">
                               <h3>
@@ -457,7 +494,8 @@ export default function InterviewsPage() {
                               </h3>
 
                               <p>
-                                    Start by booking your first mock interview
+                                    Start by booking your
+                                    first mock interview
                               </p>
                         </div>
 
@@ -493,7 +531,9 @@ export default function InterviewsPage() {
                                           <div className="card-body">
 
                                                 <p className="card-text">
-                                                      <strong>Date:</strong>{" "}
+                                                      <strong>
+                                                            Date:
+                                                      </strong>{" "}
 
                                                       {new Date(
                                                             i.date
@@ -501,14 +541,18 @@ export default function InterviewsPage() {
                                                 </p>
 
                                                 <p className="card-text">
-                                                      <strong>Mentor:</strong>{" "}
+                                                      <strong>
+                                                            Mentor:
+                                                      </strong>{" "}
 
                                                       {i.mentor?.name ||
                                                             "Not assigned"}
                                                 </p>
 
                                                 <p className="card-text">
-                                                      <strong>Email:</strong>{" "}
+                                                      <strong>
+                                                            Email:
+                                                      </strong>{" "}
 
                                                       {i.mentor?.email ||
                                                             "N/A"}
@@ -661,27 +705,33 @@ export default function InterviewsPage() {
 
                                           <div className="slots-grid">
 
-                                                {generateTimeSlots().map(
-                                                      (slot) => (
-                                                            <button
-                                                                  key={
-                                                                        slot
-                                                                  }
-                                                                  type="button"
-                                                                  className={`slot-btn ${selectedTime === slot
-                                                                        ? "active-slot"
-                                                                        : ""
-                                                                        }`}
-                                                                  onClick={() =>
-                                                                        setSelectedTime(
+                                                {generateTimeSlots().length === 0 ? (
+                                                      <p className="no-slots">
+                                                            No slots available
+                                                      </p>
+                                                ) : (
+                                                      generateTimeSlots().map(
+                                                            (slot) => (
+                                                                  <button
+                                                                        key={
                                                                               slot
-                                                                        )
-                                                                  }
-                                                            >
-                                                                  {
-                                                                        slot
-                                                                  }
-                                                            </button>
+                                                                        }
+                                                                        type="button"
+                                                                        className={`slot-btn ${selectedTime === slot
+                                                                              ? "active-slot"
+                                                                              : ""
+                                                                              }`}
+                                                                        onClick={() =>
+                                                                              setSelectedTime(
+                                                                                    slot
+                                                                              )
+                                                                        }
+                                                                  >
+                                                                        {
+                                                                              slot
+                                                                        }
+                                                                  </button>
+                                                            )
                                                       )
                                                 )}
                                           </div>

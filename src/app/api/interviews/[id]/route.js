@@ -1,54 +1,99 @@
 import { prisma } from "@/lib/prisma";
-import { NextResponse } from "next/server";
-import { verifyToken } from "@/lib/jwt";
 
-export async function GET(req, { params }) {
+import {
+      requireAuth,
+} from "@/lib/auth";
+
+import {
+      successResponse,
+      errorResponse,
+} from "@/lib/apiResponse";
+
+export async function GET(
+      req,
+      { params }
+) {
+
       try {
-            //  Get token
-            const token = req.cookies.get("token")?.value;
 
-            if (!token) {
-                  return NextResponse.json(
-                        { error: "Unauthorized" },
-                        { status: 401 }
-                  );
-            }
+            // AUTH
 
-            //  Decode token
-            const decoded = verifyToken(token);
+            const user =
+                  requireAuth(req);
 
-            const { id } = await params;
+            // PARAMS
 
-            //  Get interview
-            const interview = await prisma.interview.findUnique({
-                  where: { id },
-                  include: {
-                        user: true,
-                        mentor: true,
-                  },
-            });
+            const { id } =
+                  await params;
+
+            // INTERVIEW
+
+            const interview =
+                  await prisma.interview.findUnique({
+                        where: {
+                              id,
+                        },
+
+                        include: {
+                              user: true,
+                              mentor: true,
+                        },
+                  });
+
+            // NOT FOUND
 
             if (!interview) {
-                  return NextResponse.json(
-                        { error: "Interview not found" },
-                        { status: 404 }
+
+                  return errorResponse(
+                        "Interview not found",
+                        404
                   );
             }
 
-            //  SECURITY CHECK
-            if (interview.userId !== decoded.id) {
-                  return NextResponse.json(
-                        { error: "Forbidden" },
-                        { status: 403 }
+            // OWNERSHIP CHECK
+
+            if (
+                  interview.userId !==
+                  user.id
+            ) {
+
+                  return errorResponse(
+                        "Forbidden",
+                        403
                   );
             }
 
-            return NextResponse.json(interview);
+            // SUCCESS
+
+            return successResponse(
+                  interview
+            );
 
       } catch (err) {
-            return NextResponse.json(
-                  { error: "Server error" },
-                  { status: 500 }
+
+            console.error(
+                  "INTERVIEW DETAILS ERROR:",
+                  err
+            );
+
+            // AUTH
+
+            if (
+                  err.message ===
+                  "Unauthorized"
+            ) {
+
+                  return errorResponse(
+                        "Unauthorized",
+                        401
+                  );
+            }
+
+            // SERVER
+
+            return errorResponse(
+                  "Server error",
+                  500
             );
       }
 }
