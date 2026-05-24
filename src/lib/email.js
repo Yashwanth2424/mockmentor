@@ -1,19 +1,27 @@
 import { Resend } from "resend";
+import { env } from "@/lib/env";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const resend = new Resend(env.RESEND_API_KEY);
+
+const FROM_ADDRESS = "MockMentor <onboarding@resend.dev>";
 
 export async function sendEmail({ to, subject, html }) {
+      if (!to || !subject || !html) {
+            throw new Error("Missing required email fields: to, subject, html");
+      }
+
       try {
             const data = await resend.emails.send({
-                  from: "MockMentor <onboarding@resend.dev>",
+                  from: FROM_ADDRESS,
                   to,
                   subject,
                   html,
             });
 
             return data;
-      } catch (error) {
-            console.error("Email error:", error);
-            throw error;
+
+      } catch (err) {
+            console.error("EMAIL ERROR:", err);
+            throw err;
       }
 }

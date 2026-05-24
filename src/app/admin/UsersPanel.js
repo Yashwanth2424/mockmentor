@@ -1,40 +1,37 @@
 "use client";
 
 import SkeletonUserCard from "@/components/skeletons/SkeletonUserCard";
-
 import { FiUserCheck, FiTrash2 } from "react-icons/fi";
-
 import { useState } from "react";
 import useSWR from "swr";
 import { toast } from "react-toastify";
 import "./UsersPanel.css";
 
+const fetcher = async (url) => {
+      const res = await fetch(url);
+      const json = await res.json();
+      if (!res.ok || !json.success) throw new Error(json.error || "Failed");
+      return json.data;
+};
+
 export default function UsersPanel() {
 
-      const fetcher = (url) => fetch(url).then(res => res.json());
-
-      const {
-            data: users,
-            isLoading: loading,
-            mutate
-      } = useSWR("/api/admin/users", fetcher);
+      const { data: users, isLoading: loading, mutate } = useSWR("/api/admin/users", fetcher);
 
       const [search, setSearch] = useState("");
       const [actionLoading, setActionLoading] = useState(false);
 
-      //  Filter users
       const filtered = (users || []).filter(u =>
             u.name.toLowerCase().includes(search.toLowerCase()) ||
             u.email.toLowerCase().includes(search.toLowerCase())
       );
 
-      //  Change role
       const toggleRole = async (user) => {
             const newRole = user.role === "ADMIN" ? "STUDENT" : "ADMIN";
 
             if (!confirm(`Change role to ${newRole}?`)) return;
-
             if (actionLoading) return;
+
             setActionLoading(true);
 
             try {
@@ -44,30 +41,27 @@ export default function UsersPanel() {
                         body: JSON.stringify({ role: newRole }),
                   });
 
-                  const data = await res.json();
+                  const json = await res.json();
 
-                  if (!res.ok) {
-                        toast.error(data.error || "Failed to update role");
+                  if (!res.ok || !json.success) {
+                        toast.error(json.error || "Failed to update role");
                         return;
                   }
 
                   toast.success("Role updated");
-
-                  //  Refresh users list
                   mutate();
 
-            } catch (err) {
+            } catch {
                   toast.error("Server error");
             } finally {
                   setActionLoading(false);
             }
       };
 
-      //  Delete user
       const deleteUser = async (id) => {
             if (!confirm("Delete this user permanently?")) return;
-
             if (actionLoading) return;
+
             setActionLoading(true);
 
             try {
@@ -75,19 +69,17 @@ export default function UsersPanel() {
                         method: "DELETE",
                   });
 
-                  const data = await res.json();
+                  const json = await res.json();
 
-                  if (!res.ok) {
-                        toast.error(data.error || "Delete failed");
+                  if (!res.ok || !json.success) {
+                        toast.error(json.error || "Delete failed");
                         return;
                   }
 
                   toast.success("User deleted");
-
-                  //  Refresh users list
                   mutate();
 
-            } catch (err) {
+            } catch {
                   toast.error("Server error");
             } finally {
                   setActionLoading(false);
@@ -109,7 +101,6 @@ export default function UsersPanel() {
 
                   <div className="users-header">
                         <h2>Users Management</h2>
-
                         <input
                               placeholder="Search users..."
                               value={search}
@@ -118,7 +109,6 @@ export default function UsersPanel() {
                   </div>
 
                   <div className="users-grid">
-
                         {filtered.length === 0 ? (
                               <div className="empty-state">
                                     <h3>No users found</h3>
@@ -138,12 +128,21 @@ export default function UsersPanel() {
                                           </span>
 
                                           <div className="user-actions">
-                                                <button className="role-btn">
+                                                {/* FIX: onClick handlers added */}
+                                                <button
+                                                      className="role-btn"
+                                                      disabled={actionLoading}
+                                                      onClick={() => toggleRole(u)}
+                                                >
                                                       <FiUserCheck style={{ marginRight: 6 }} />
                                                       Toggle Role
                                                 </button>
 
-                                                <button className="delete-btn">
+                                                <button
+                                                      className="delete-btn"
+                                                      disabled={actionLoading}
+                                                      onClick={() => deleteUser(u.id)}
+                                                >
                                                       <FiTrash2 style={{ marginRight: 6 }} />
                                                       Delete
                                                 </button>
@@ -156,7 +155,6 @@ export default function UsersPanel() {
                                     </div>
                               ))
                         )}
-
                   </div>
             </div>
       );

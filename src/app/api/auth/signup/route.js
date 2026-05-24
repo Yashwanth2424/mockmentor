@@ -1,71 +1,70 @@
 import { prisma } from "@/lib/prisma";
 import { hashPassword } from "@/lib/auth";
+import { successResponse, errorResponse } from "@/lib/apiResponse";
+import { rateLimit } from "@/lib/rateLimit";
 import { NextResponse } from "next/server";
 
 export async function POST(req) {
+
+      // RATE LIMIT — 3 attempts per 60 seconds
+      const limited = rateLimit(req, {
+            key: "signup",
+            limit: 3,
+            windowMs: 60 * 1000,
+      });
+
+      if (limited) {
+            return NextResponse.json(
+                  {
+                        success: false,
+                        error: `Too many signup attempts. Try again in ${limited.retryAfter} seconds.`,
+                  },
+                  {
+                        status: 429,
+                        headers: {
+                              "Retry-After": String(limited.retryAfter),
+                        },
+                  }
+            );
+      }
+
       try {
-
             const body = await req.json();
-
             const name = body.name?.trim();
             const email = body.email?.trim().toLowerCase();
             const password = body.password?.trim();
 
-            //  VALIDATION 
-
+            // VALIDATION
             if (!name || !email || !password) {
-                  return NextResponse.json(
-                        { error: "All fields are required" },
-                        { status: 400 }
-                  );
+                  return errorResponse("All fields are required", 400);
             }
 
             if (name.length < 2) {
-                  return NextResponse.json(
-                        { error: "Name is too short" },
-                        { status: 400 }
-                  );
+                  return errorResponse("Name is too short", 400);
             }
 
-            const emailRegex =
-                  /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailRegex.test(email)) {
-                  return NextResponse.json(
-                        { error: "Invalid email address" },
-                        { status: 400 }
-                  );
+                  return errorResponse("Invalid email address", 400);
             }
 
             if (password.length < 6) {
-                  return NextResponse.json(
-                        { error: "Password must be at least 6 characters" },
-                        { status: 400 }
-                  );
+                  return errorResponse("Password must be at least 6 characters", 400);
             }
 
-            //  EXISTING USER 
-
+            // EXISTING USER
             const existingUser = await prisma.user.findUnique({
-                  where: {
-                        email,
-                  },
+                  where: { email },
             });
 
             if (existingUser) {
-                  return NextResponse.json(
-                        { error: "Email already registered" },
-                        { status: 400 }
-                  );
+                  return errorResponse("Email already registered", 400);
             }
 
-            //  HASH PASSWORD 
+            // HASH PASSWORD
+            const hashedPassword = await hashPassword(password);
 
-            const hashedPassword =
-                  await hashPassword(password);
-
-            //  CREATE USER 
-
+            // CREATE USER
             const user = await prisma.user.create({
                   data: {
                         name,
@@ -74,21 +73,13 @@ export async function POST(req) {
                   },
             });
 
-            return NextResponse.json(
-                  {
-                        message: "User created successfully",
-                        userId: user.id,
-                  },
-                  { status: 201 }
+            return successResponse(
+                  { message: "User created successfully", userId: user.id },
+                  201
             );
 
-      } catch (error) {
-
-            console.error("Signup Error:", error);
-
-            return NextResponse.json(
-                  { error: "Internal server error" },
-                  { status: 500 }
-            );
+      } catch (err) {
+            console.error("SIGNUP ERROR:", err);
+            return errorResponse("Internal server error", 500);
       }
 }

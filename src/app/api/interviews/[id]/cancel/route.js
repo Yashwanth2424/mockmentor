@@ -1,107 +1,53 @@
-import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { verifyToken } from "@/lib/jwt";
+import { requireAuth } from "@/lib/auth";
+import { successResponse, errorResponse } from "@/lib/apiResponse";
 
-export async function PATCH(req, context) {
-
-      const params = await context.params;
-
+export async function PATCH(req, { params }) {
       try {
+            const user = requireAuth(req);
 
-            const token = req.cookies.get("token")?.value;
-
-            if (!token) {
-                  return NextResponse.json(
-                        { error: "Unauthorized" },
-                        { status: 401 }
-                  );
-            }
-
-            const decoded = verifyToken(token);
+            const { id } = await params;
 
             const interview = await prisma.interview.findUnique({
-                  where: {
-                        id: params.id,
-                  },
+                  where: { id },
             });
 
-            //  NOT FOUND 
-
+            // NOT FOUND
             if (!interview) {
-                  return NextResponse.json(
-                        { error: "Interview not found" },
-                        { status: 404 }
-                  );
+                  return errorResponse("Interview not found", 404);
             }
 
-            //  OWNERSHIP 
-
-            if (interview.userId !== decoded.id) {
-                  return NextResponse.json(
-                        { error: "Forbidden" },
-                        { status: 403 }
-                  );
+            // OWNERSHIP
+            if (interview.userId !== user.id) {
+                  return errorResponse("Forbidden", 403);
             }
 
-            //  INVALID STATES 
-
+            // INVALID STATES
             if (interview.status === "CANCELLED") {
-                  return NextResponse.json(
-                        {
-                              error:
-                                    "Interview already cancelled",
-                        },
-                        {
-                              status: 400,
-                        }
-                  );
+                  return errorResponse("Interview already cancelled", 400);
             }
 
             if (interview.status === "COMPLETED") {
-                  return NextResponse.json(
-                        {
-                              error:
-                                    "Completed interviews cannot be cancelled",
-                        },
-                        {
-                              status: 400,
-                        }
-                  );
+                  return errorResponse("Completed interviews cannot be cancelled", 400);
             }
 
             if (interview.status === "REJECTED") {
-                  return NextResponse.json(
-                        {
-                              error:
-                                    "Rejected interviews cannot be cancelled",
-                        },
-                        {
-                              status: 400,
-                        }
-                  );
+                  return errorResponse("Rejected interviews cannot be cancelled", 400);
             }
 
-            //  UPDATE 
+            // UPDATE
+            const updated = await prisma.interview.update({
+                  where: { id },
+                  data: { status: "CANCELLED" },
+            });
 
-            const updated =
-                  await prisma.interview.update({
-                        where: {
-                              id: params.id,
-                        },
-                        data: {
-                              status: "CANCELLED",
-                        },
-                  });
+            return successResponse(updated);
 
-            return NextResponse.json(updated);
+      } catch (err) {
+            console.error("CANCEL ERROR:", err);
 
-      } catch (error) {
+            if (err.message === "Unauthorized") return errorResponse("Unauthorized", 401);
 
-            console.error(error);
-
-            return NextResponse.json(
-                  { error: "Server error" },
-                  { status: 500 }
-            );
+            return errorResponse("Server error", 500);
       }
 }

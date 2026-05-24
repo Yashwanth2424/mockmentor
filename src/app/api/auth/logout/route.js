@@ -1,28 +1,15 @@
-import { NextResponse } from "next/server";
+import { successResponse } from "@/lib/apiResponse";
 
 export async function POST() {
-
-      const response =
-            NextResponse.json({
-                  message: "Logged out",
-            });
-
-      //  CLEAR COOKIE 
+      const response = successResponse({ message: "Logged out" });
 
       response.cookies.set({
             name: "token",
             value: "",
-
             httpOnly: true,
-
-            secure:
-                  process.env.NODE_ENV ===
-                  "production",
-
+            secure: process.env.NODE_ENV === "production",
             sameSite: "lax",
-
             path: "/",
-
             maxAge: 0,
       });
 

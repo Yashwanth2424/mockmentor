@@ -1,146 +1,57 @@
 import { prisma } from "@/lib/prisma";
-import { verifyToken } from "@/lib/jwt";
-import { NextResponse } from "next/server";
+import { requireRole } from "@/lib/auth";
+import { successResponse, errorResponse } from "@/lib/apiResponse";
 
-export async function PATCH(req, context) {
-
+export async function PATCH(req, { params }) {
       try {
+            const mentor = requireRole(req, ["MENTOR"]);
 
-            const params = await context.params;
+            const { id } = await params;
 
-            const token = req.cookies.get("token")?.value;
-
-            //  AUTH 
-
-            if (!token) {
-                  return NextResponse.json(
-                        { error: "Unauthorized" },
-                        { status: 401 }
-                  );
-            }
-
-            const decoded = verifyToken(token);
-
-            if (decoded.role !== "MENTOR") {
-                  return NextResponse.json(
-                        { error: "Forbidden" },
-                        { status: 403 }
-                  );
-            }
-
-            //  ID 
-
-            const { id } = params;
-
-            if (!id) {
-                  return NextResponse.json(
-                        { error: "Missing interview ID" },
-                        { status: 400 }
-                  );
-            }
-
-            //  FIND 
-
-            const interview =
-                  await prisma.interview.findUnique({
-                        where: {
-                              id,
-                        },
-                  });
+            const interview = await prisma.interview.findUnique({
+                  where: { id },
+            });
 
             if (!interview) {
-                  return NextResponse.json(
-                        { error: "Interview not found" },
-                        { status: 404 }
-                  );
+                  return errorResponse("Interview not found", 404);
             }
 
-            //  OWNERSHIP 
-
-            if (interview.mentorId !== decoded.id) {
-                  return NextResponse.json(
-                        { error: "Forbidden" },
-                        { status: 403 }
-                  );
+            // OWNERSHIP
+            if (interview.mentorId !== mentor.id) {
+                  return errorResponse("Forbidden", 403);
             }
 
-            //  STATUS VALIDATION 
-
+            // STATUS VALIDATION
             if (interview.status === "ACCEPTED") {
-                  return NextResponse.json(
-                        {
-                              error:
-                                    "Interview already accepted",
-                        },
-                        {
-                              status: 400,
-                        }
-                  );
+                  return errorResponse("Interview already accepted", 400);
             }
 
-            if (
-                  interview.status === "COMPLETED"
-            ) {
-                  return NextResponse.json(
-                        {
-                              error:
-                                    "Completed interviews cannot be accepted",
-                        },
-                        {
-                              status: 400,
-                        }
-                  );
+            if (interview.status === "COMPLETED") {
+                  return errorResponse("Completed interviews cannot be accepted", 400);
             }
 
-            if (
-                  interview.status === "CANCELLED"
-            ) {
-                  return NextResponse.json(
-                        {
-                              error:
-                                    "Cancelled interviews cannot be accepted",
-                        },
-                        {
-                              status: 400,
-                        }
-                  );
+            if (interview.status === "CANCELLED") {
+                  return errorResponse("Cancelled interviews cannot be accepted", 400);
             }
 
-            if (
-                  interview.status === "REJECTED"
-            ) {
-                  return NextResponse.json(
-                        {
-                              error:
-                                    "Rejected interviews cannot be accepted",
-                        },
-                        {
-                              status: 400,
-                        }
-                  );
+            if (interview.status === "REJECTED") {
+                  return errorResponse("Rejected interviews cannot be accepted", 400);
             }
 
-            //  UPDATE 
+            // UPDATE
+            const updated = await prisma.interview.update({
+                  where: { id },
+                  data: { status: "ACCEPTED" },
+            });
 
-            const updated =
-                  await prisma.interview.update({
-                        where: {
-                              id,
-                        },
-                        data: {
-                              status: "ACCEPTED",
-                        },
-                  });
-
-            return NextResponse.json(updated);
+            return successResponse(updated);
 
       } catch (err) {
-
             console.error("ACCEPT ERROR:", err);
 
-            return NextResponse.json(
-                  { error: "Failed to accept" },
-                  { status: 500 }
-            );
+            if (err.message === "Unauthorized") return errorResponse("Unauthorized", 401);
+            if (err.message === "Forbidden") return errorResponse("Forbidden", 403);
+
+            return errorResponse("Failed to accept", 500);
       }
 }

@@ -3,14 +3,14 @@ import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/adminAuth";
 
 // GET — Fetch interview
-
 export async function GET(req, { params }) {
-      const auth = await requireAdmin();
 
-      if (auth.error) {
+      try {
+            requireAdmin(req);
+      } catch (err) {
             return NextResponse.json(
-                  { error: auth.error },
-                  { status: auth.status }
+                  { success: false, error: err.message },
+                  { status: err.message === "Forbidden" ? 403 : 401 }
             );
       }
 
@@ -24,37 +24,35 @@ export async function GET(req, { params }) {
 
             if (!interview) {
                   return NextResponse.json(
-                        { error: "Interview not found" },
+                        { success: false, error: "Interview not found" },
                         { status: 404 }
                   );
             }
 
-            return NextResponse.json(interview);
+            return NextResponse.json({ success: true, data: interview });
 
       } catch (err) {
             return NextResponse.json(
-                  { error: "Server error" },
+                  { success: false, error: "Server error" },
                   { status: 500 }
             );
       }
 }
 
-
 // PATCH — Update interview
-
 export async function PATCH(req, { params }) {
-      const auth = await requireAdmin();
 
-      if (auth.error) {
+      try {
+            requireAdmin(req);
+      } catch (err) {
             return NextResponse.json(
-                  { error: auth.error },
-                  { status: auth.status }
+                  { success: false, error: err.message },
+                  { status: err.message === "Forbidden" ? 403 : 401 }
             );
       }
 
       try {
             const { id } = await params;
-
             const body = await req.json();
             const { status, date, feedback } = body;
 
@@ -67,11 +65,11 @@ export async function PATCH(req, { params }) {
                   },
             });
 
-            return NextResponse.json(updated);
+            return NextResponse.json({ success: true, data: updated });
 
       } catch (err) {
             return NextResponse.json(
-                  { error: "Update failed" },
+                  { success: false, error: "Update failed" },
                   { status: 500 }
             );
       }

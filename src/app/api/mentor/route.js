@@ -34,6 +34,7 @@ export async function GET() {
             return successResponse(
                   mentors
             );
+            console
 
       } catch (err) {
 

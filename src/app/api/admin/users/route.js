@@ -2,14 +2,14 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/adminAuth";
 
-export async function GET() {
+export async function GET(req) {
 
-      const auth = await requireAdmin();
-
-      if (auth.error) {
+      try {
+            requireAdmin(req);
+      } catch (err) {
             return NextResponse.json(
-                  { error: auth.error },
-                  { status: auth.status }
+                  { success: false, error: err.message },
+                  { status: err.message === "Forbidden" ? 403 : 401 }
             );
       }
 
@@ -25,10 +25,11 @@ export async function GET() {
                   orderBy: { createdAt: "desc" },
             });
 
-            return NextResponse.json(users);
-      } catch (error) {
+            return NextResponse.json({ success: true, data: users });
+
+      } catch (err) {
             return NextResponse.json(
-                  { error: "Failed to fetch users" },
+                  { success: false, error: "Failed to fetch users" },
                   { status: 500 }
             );
       }

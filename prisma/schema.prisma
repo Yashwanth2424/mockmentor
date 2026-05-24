@@ -8,39 +8,37 @@ datasource db {
 }
 
 model User {
-  id       String   @id @default(cuid())
-  name     String
-  email    String   @unique
-  password String
-  role     Role     @default(STUDENT)
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      Role     @default(STUDENT)
+  createdAt DateTime @default(now())
 
+  availability     MentorAvailability[]
+  interviews       Interview[]          @relation("UserInterviews")
+  mentorInterviews Interview[]          @relation("MentorInterviews")
 
-  availability MentorAvailability[]  
-
-  interviews       Interview[] @relation("UserInterviews")
-  mentorInterviews Interview[] @relation("MentorInterviews")
+  @@index([role])
 }
 
 model Interview {
-  id        String   @id @default(cuid())
-  topic     String
-  date      DateTime
-  status    Status   @default(PENDING)
-
-  userId    String
-  mentorId  String?
-
+  id           String    @id @default(cuid())
+  topic        String
+  date         DateTime
+  status       Status    @default(PENDING)
+  userId       String
+  mentorId     String?
   rating       Int?
   feedback     String?
   strengths    String?
   improvements String?
   completedAt  DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
 
-  user   User  @relation("UserInterviews", fields: [userId], references: [id])
-  mentor User? @relation("MentorInterviews", fields: [mentorId], references: [id])
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now()) @updatedAt
+  user   User  @relation("UserInterviews", fields: [userId], references: [id], onDelete: Cascade)
+  mentor User? @relation("MentorInterviews", fields: [mentorId], references: [id], onDelete: SetNull)
 
   @@index([mentorId, date])
   @@index([userId, date])
@@ -50,8 +48,7 @@ model Interview {
 model MentorAvailability {
   id        String @id @default(cuid())
   mentorId  String
-  dayOfWeek Int    // 0 = Sunday, 6 = Saturday
-
+  dayOfWeek Int
   startHour Int
   endHour   Int
 
@@ -63,7 +60,6 @@ model MentorAvailability {
 enum Role {
   SUPER_ADMIN
   ADMIN
-  MODERATOR
   STUDENT
   MENTOR
 }

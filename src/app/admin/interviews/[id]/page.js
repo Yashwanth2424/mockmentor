@@ -1,33 +1,29 @@
 "use client";
 
 import SkeletonDetails from "@/components/skeletons/SkeletonDetails";
-
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import useSWR from "swr";
 import { toast } from "react-toastify";
 import "./details.css";
 
+const fetcher = async (url) => {
+      const res = await fetch(url);
+      const json = await res.json();
+      if (!res.ok || !json.success) throw new Error(json.error || "Failed");
+      return json.data;
+};
+
 export default function InterviewDetails() {
 
       const { id } = useParams();
       const router = useRouter();
 
-      const fetcher = (url) => fetch(url).then(res => res.json());
-
-      const {
-            data,
-            isLoading,
-            mutate
-      } = useSWR(
+      const { data: interview, isLoading, error, mutate } = useSWR(
             id ? `/api/admin/interviews/${id}` : null,
             fetcher,
-            {
-                  revalidateOnFocus: false
-            }
+            { revalidateOnFocus: false }
       );
-
-      const interview = data && !data.error ? data : null;
 
       const [feedback, setFeedback] = useState("");
       const [date, setDate] = useState("");
@@ -41,7 +37,6 @@ export default function InterviewDetails() {
       }, [interview]);
 
       async function updateInterview(fields) {
-
             if (loadingAction) return;
 
             setLoadingAction(true);
@@ -53,22 +48,19 @@ export default function InterviewDetails() {
                         body: JSON.stringify(fields),
                   });
 
-                  const result = await res.json();
+                  const json = await res.json();
 
-                  if (!res.ok) {
-                        toast.error(result.error || "Update failed");
+                  if (!res.ok || !json.success) {
+                        toast.error(json.error || "Update failed");
                         return;
                   }
 
                   toast.success("Updated successfully");
-
                   mutate();
 
-                  setTimeout(() => {
-                        router.push("/admin");
-                  }, 800);
+                  setTimeout(() => router.push("/admin"), 800);
 
-            } catch (err) {
+            } catch {
                   toast.error("Server error");
             } finally {
                   setLoadingAction(false);
@@ -77,7 +69,7 @@ export default function InterviewDetails() {
 
       if (isLoading) return <SkeletonDetails />;
 
-      if (!interview) {
+      if (error || !interview) {
             return (
                   <div style={{ padding: 40 }}>
                         <h2>Interview not found</h2>
@@ -93,10 +85,7 @@ export default function InterviewDetails() {
       return (
             <div className="details-container">
 
-                  <button
-                        className="back-btn"
-                        onClick={() => router.push("/admin")}
-                  >
+                  <button className="back-btn" onClick={() => router.push("/admin")}>
                         ← Back to Admin
                   </button>
 
@@ -120,22 +109,18 @@ export default function InterviewDetails() {
 
                         <p>
                               <strong>Scheduled Date:</strong>{" "}
-                              {interview.date
-                                    ? new Date(interview.date).toLocaleString()
-                                    : "N/A"}
+                              {interview.date ? new Date(interview.date).toLocaleString() : "N/A"}
                         </p>
 
                         {/* RESCHEDULE */}
                         <div className="field">
                               <label>Reschedule</label>
-
                               <input
                                     type="datetime-local"
                                     value={date}
                                     disabled={isCompleted || loadingAction}
                                     onChange={(e) => setDate(e.target.value)}
                               />
-
                               <button
                                     disabled={isCompleted || loadingAction || !date}
                                     onClick={() => updateInterview({ date })}
@@ -147,14 +132,12 @@ export default function InterviewDetails() {
                         {/* FEEDBACK */}
                         <div className="field">
                               <label>Feedback</label>
-
                               <textarea
                                     rows={4}
                                     value={feedback}
                                     disabled={loadingAction}
                                     onChange={(e) => setFeedback(e.target.value)}
                               />
-
                               <button
                                     disabled={loadingAction || feedback.trim() === ""}
                                     onClick={() => updateInterview({ feedback })}
@@ -165,7 +148,6 @@ export default function InterviewDetails() {
 
                         {/* ACTIONS */}
                         <div className="actions">
-
                               {!isCompleted && (
                                     <button
                                           className="complete"
@@ -185,7 +167,6 @@ export default function InterviewDetails() {
                                           {loadingAction ? "Updating..." : "Cancel Interview"}
                                     </button>
                               )}
-
                         </div>
 
                   </div>

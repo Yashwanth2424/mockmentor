@@ -1,189 +1,77 @@
 import { prisma } from "@/lib/prisma";
-import { NextResponse } from "next/server";
-import { verifyToken } from "@/lib/jwt";
+import { requireRole } from "@/lib/auth";
+import { successResponse, errorResponse } from "@/lib/apiResponse";
 
-export async function PATCH(req, context) {
-
+export async function PATCH(req, { params }) {
       try {
+            const mentor = requireRole(req, ["MENTOR"]);
 
-            const params = await context.params;
+            const { id } = await params;
 
-            const token = req.cookies.get("token")?.value;
+            // BODY
+            const { rating, feedback, strengths, improvements } = await req.json();
 
-            //  AUTH 
-
-            if (!token) {
-                  return NextResponse.json(
-                        { error: "Unauthorized" },
-                        { status: 401 }
-                  );
+            // VALIDATION
+            if (!rating || rating < 1 || rating > 5) {
+                  return errorResponse("Rating must be between 1 and 5", 400);
             }
 
-            const decoded = verifyToken(token);
+            const cleanFeedback = feedback?.trim();
+            const cleanStrengths = strengths?.trim();
+            const cleanImprovements = improvements?.trim();
 
-            if (decoded.role !== "MENTOR") {
-                  return NextResponse.json(
-                        { error: "Forbidden" },
-                        { status: 403 }
-                  );
-            }
-
-            //  ID 
-
-            const { id } = params;
-
-            if (!id) {
-                  return NextResponse.json(
-                        { error: "Missing interview ID" },
-                        { status: 400 }
-                  );
-            }
-
-            //  BODY 
-
-            const {
-                  rating,
-                  feedback,
-                  strengths,
-                  improvements,
-            } = await req.json();
-
-            //  VALIDATION 
-
-            if (
-                  !rating ||
-                  rating < 1 ||
-                  rating > 5
-            ) {
-                  return NextResponse.json(
-                        {
-                              error:
-                                    "Rating must be between 1 and 5",
-                        },
-                        {
-                              status: 400,
-                        }
-                  );
-            }
-
-            const cleanFeedback =
-                  feedback?.trim();
-
-            const cleanStrengths =
-                  strengths?.trim();
-
-            const cleanImprovements =
-                  improvements?.trim();
-
-            if (
-                  !cleanFeedback ||
-                  cleanFeedback.length < 5
-            ) {
-                  return NextResponse.json(
-                        {
-                              error:
-                                    "Feedback must be at least 5 characters",
-                        },
-                        {
-                              status: 400,
-                        }
-                  );
+            if (!cleanFeedback || cleanFeedback.length < 5) {
+                  return errorResponse("Feedback must be at least 5 characters", 400);
             }
 
             if (cleanFeedback.length > 1000) {
-                  return NextResponse.json(
-                        {
-                              error:
-                                    "Feedback too long",
-                        },
-                        {
-                              status: 400,
-                        }
-                  );
+                  return errorResponse("Feedback too long", 400);
             }
 
-            //  FIND 
-
-            const interview =
-                  await prisma.interview.findUnique({
-                        where: {
-                              id,
-                        },
-                  });
+            // FIND
+            const interview = await prisma.interview.findUnique({
+                  where: { id },
+            });
 
             if (!interview) {
-                  return NextResponse.json(
-                        { error: "Interview not found" },
-                        { status: 404 }
-                  );
+                  return errorResponse("Interview not found", 404);
             }
 
-            //  OWNERSHIP 
-
-            if (interview.mentorId !== decoded.id) {
-                  return NextResponse.json(
-                        { error: "Forbidden" },
-                        { status: 403 }
-                  );
+            // OWNERSHIP
+            if (interview.mentorId !== mentor.id) {
+                  return errorResponse("Forbidden", 403);
             }
 
-            //  STATUS 
-
-            if (
-                  interview.status === "COMPLETED"
-            ) {
-                  return NextResponse.json(
-                        {
-                              error:
-                                    "Interview already completed",
-                        },
-                        {
-                              status: 400,
-                        }
-                  );
+            // STATUS
+            if (interview.status === "COMPLETED") {
+                  return errorResponse("Interview already completed", 400);
             }
 
-            if (
-                  interview.status !== "ACCEPTED"
-            ) {
-                  return NextResponse.json(
-                        {
-                              error:
-                                    "Only accepted interviews can be completed",
-                        },
-                        {
-                              status: 400,
-                        }
-                  );
+            if (interview.status !== "ACCEPTED") {
+                  return errorResponse("Only accepted interviews can be completed", 400);
             }
 
-            //  UPDATE 
+            // UPDATE
+            const updated = await prisma.interview.update({
+                  where: { id },
+                  data: {
+                        status: "COMPLETED",
+                        rating,
+                        feedback: cleanFeedback,
+                        strengths: cleanStrengths,
+                        improvements: cleanImprovements,
+                        completedAt: new Date(),
+                  },
+            });
 
-            const updated =
-                  await prisma.interview.update({
-                        where: {
-                              id,
-                        },
-                        data: {
-                              status: "COMPLETED",
-                              rating,
-                              feedback: cleanFeedback,
-                              strengths: cleanStrengths,
-                              improvements:
-                                    cleanImprovements,
-                              completedAt: new Date(),
-                        },
-                  });
-
-            return NextResponse.json(updated);
+            return successResponse(updated);
 
       } catch (err) {
+            console.error("COMPLETE ERROR:", err);
 
-            console.error(err);
+            if (err.message === "Unauthorized") return errorResponse("Unauthorized", 401);
+            if (err.message === "Forbidden") return errorResponse("Forbidden", 403);
 
-            return NextResponse.json(
-                  { error: "Server error" },
-                  { status: 500 }
-            );
+            return errorResponse("Server error", 500);
       }
 }

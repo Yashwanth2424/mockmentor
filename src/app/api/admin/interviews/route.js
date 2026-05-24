@@ -2,20 +2,18 @@ import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/adminAuth";
 
-export async function GET() {
+export async function GET(req) {
 
-      // Admin / Super Admin protection
-      const auth = await requireAdmin();
-
-      if (auth.error) {
+      try {
+            requireAdmin(req);
+      } catch (err) {
             return NextResponse.json(
-                  { error: auth.error },
-                  { status: auth.status }
+                  { success: false, error: err.message },
+                  { status: err.message === "Forbidden" ? 403 : 401 }
             );
       }
 
       try {
-            //  Fetch ALL interviews + user info
             const interviews = await prisma.interview.findMany({
                   include: {
                         user: {
@@ -29,11 +27,11 @@ export async function GET() {
                   orderBy: { date: "desc" },
             });
 
-            return NextResponse.json(interviews);
+            return NextResponse.json({ success: true, data: interviews });
 
       } catch (err) {
             return NextResponse.json(
-                  { error: "Server error" },
+                  { success: false, error: "Server error" },
                   { status: 500 }
             );
       }

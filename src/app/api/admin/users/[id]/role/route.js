@@ -1,58 +1,41 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import jwt from "jsonwebtoken";
-import { cookies } from "next/headers";
 import { requireAdmin } from "@/lib/adminAuth";
+
+const ALLOWED_ROLES = ["STUDENT", "MENTOR", "ADMIN", "SUPER_ADMIN"];
 
 export async function PATCH(req, { params }) {
 
-      const auth = await requireAdmin();
-
-      if (auth.error) {
+      try {
+            requireAdmin(req);
+      } catch (err) {
             return NextResponse.json(
-                  { error: auth.error },
-                  { status: auth.status }
+                  { success: false, error: err.message },
+                  { status: err.message === "Forbidden" ? 403 : 401 }
             );
       }
 
       try {
-            // Get token
-            const cookieStore = await cookies();
-            const token = cookieStore.get("token")?.value;
-
-            if (!token) {
-                  return NextResponse.json(
-                        { error: "Unauthorized" },
-                        { status: 401 }
-                  );
-            }
-
-            // Verify token
-            const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-            //  Only ADMIN or SUPER_ADMIN allowed
-            if (!["ADMIN", "SUPER_ADMIN"].includes(decoded.role)) {
-                  return NextResponse.json(
-                        { error: "Forbidden" },
-                        { status: 403 }
-                  );
-            }
-
-            //  Get new role
+            const { id } = await params;
             const { role } = await req.json();
 
-            //  Update user
+            if (!role || !ALLOWED_ROLES.includes(role)) {
+                  return NextResponse.json(
+                        { success: false, error: "Invalid role" },
+                        { status: 400 }
+                  );
+            }
+
             const updated = await prisma.user.update({
-                  where: { id: params.id },
+                  where: { id },
                   data: { role },
             });
 
-            return NextResponse.json(updated);
+            return NextResponse.json({ success: true, data: updated });
 
-      } catch (error) {
-            console.error(error);
+      } catch (err) {
             return NextResponse.json(
-                  { error: "Failed to update role" },
+                  { success: false, error: "Failed to update role" },
                   { status: 500 }
             );
       }

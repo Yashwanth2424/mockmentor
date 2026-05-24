@@ -1,33 +1,50 @@
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
-import { verifyToken } from "@/lib/jwt";
+import { requireAdmin } from "@/lib/adminAuth";
 
 export async function PATCH(req, { params }) {
+
       try {
-            const token = req.cookies.get("token")?.value;
+            requireAdmin(req);
+      } catch (err) {
+            return NextResponse.json(
+                  { success: false, error: err.message },
+                  { status: err.message === "Forbidden" ? 403 : 401 }
+            );
+      }
 
-            if (!token) {
-                  return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-            }
-
-            const decoded = verifyToken(token);
+      try {
+            const { id } = await params;
 
             const interview = await prisma.interview.findUnique({
-                  where: { id: params.id },
+                  where: { id },
             });
 
-            if (!interview || interview.userId !== decoded.id) {
-                  return NextResponse.json({ error: "Not allowed" }, { status: 403 });
+            if (!interview) {
+                  return NextResponse.json(
+                        { success: false, error: "Interview not found" },
+                        { status: 404 }
+                  );
+            }
+
+            if (interview.status === "CANCELLED") {
+                  return NextResponse.json(
+                        { success: false, error: "Interview is already cancelled" },
+                        { status: 400 }
+                  );
             }
 
             const updated = await prisma.interview.update({
-                  where: { id: params.id },
+                  where: { id },
                   data: { status: "CANCELLED" },
             });
 
-            return NextResponse.json(updated);
+            return NextResponse.json({ success: true, data: updated });
 
       } catch (err) {
-            return NextResponse.json({ error: "Failed to cancel" }, { status: 500 });
+            return NextResponse.json(
+                  { success: false, error: "Failed to cancel" },
+                  { status: 500 }
+            );
       }
 }

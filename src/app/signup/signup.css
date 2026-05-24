@@ -7,7 +7,7 @@
       background: var(--bg);
 }
 
-/* ================= LEFT ================= */
+/*  LEFT  */
 
 .signup-left {
       display: flex;
@@ -24,7 +24,7 @@
       filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.12));
 }
 
-/* ================= RIGHT ================= */
+/*  RIGHT  */
 
 .signup-right {
       display: flex;
@@ -51,7 +51,7 @@
       text-align: center;
 }
 
-/* ================= HOME LINK ================= */
+/*  HOME   */
 
 .home-link {
       display: inline-flex;
@@ -64,7 +64,7 @@
       font-weight: 500;
 }
 
-/* ================= INPUTS ================= */
+/*  INPUTS  */
 
 .input-group {
       position: relative;
@@ -97,7 +97,7 @@
       border-color: var(--primary);
 }
 
-/* ================= EYE BUTTON ================= */
+/*  EYE BUTTON  */
 
 .eye-btn {
       position: absolute;
@@ -114,7 +114,7 @@
       padding: 0;
 }
 
-/* ================= BUTTON ================= */
+/*  BUTTON  */
 
 .signup-btn {
       width: 100%;
@@ -139,7 +139,7 @@
       cursor: not-allowed;
 }
 
-/* ================= FOOTER ================= */
+/*  FOOTER  */
 
 .bottom-text {
       margin-top: 20px;
@@ -154,7 +154,7 @@
       font-weight: 500;
 }
 
-/* ================= RESPONSIVE ================= */
+/*  RESPONSIVE  */
 
 @media (max-width: 1024px) {
 
