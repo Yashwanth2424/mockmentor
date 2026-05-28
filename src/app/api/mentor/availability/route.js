@@ -1,37 +1,25 @@
 import { prisma } from "@/lib/prisma";
 import { requireRole } from "@/lib/auth";
 import { successResponse, errorResponse } from "@/lib/apiResponse";
+import { availabilitySchema } from "@/lib/validators";
 
 export async function PATCH(req) {
       try {
             const mentor = requireRole(req, ["MENTOR"]);
 
-            const { availability } = await req.json();
+            const body = await req.json();
 
-            if (!Array.isArray(availability)) {
-                  return errorResponse("Invalid data", 400);
+            // ZOD VALIDATION
+            const parsed = availabilitySchema.safeParse(body);
+
+            if (!parsed.success) {
+                  const message = parsed.error.errors[0]?.message || "Invalid input";
+                  return errorResponse(message, 400);
             }
 
-            // Validate each availability entry
-            for (const a of availability) {
-                  const day = Number(a.dayOfWeek);
-                  const start = parseInt(a.startHour);
-                  const end = parseInt(a.endHour);
+            const { availability } = parsed.data;
 
-                  if (day < 0 || day > 6) {
-                        return errorResponse("Invalid day of week", 400);
-                  }
-
-                  if (start < 0 || start > 23 || end < 1 || end > 24) {
-                        return errorResponse("Invalid hours", 400);
-                  }
-
-                  if (start >= end) {
-                        return errorResponse("Start hour must be before end hour", 400);
-                  }
-            }
-
-            // Transaction to avoid partial updates
+            // TRANSACTION
             await prisma.$transaction([
                   prisma.mentorAvailability.deleteMany({
                         where: { mentorId: mentor.id },
@@ -39,9 +27,9 @@ export async function PATCH(req) {
                   prisma.mentorAvailability.createMany({
                         data: availability.map((a) => ({
                               mentorId: mentor.id,
-                              dayOfWeek: Number(a.dayOfWeek),
-                              startHour: parseInt(a.startHour),
-                              endHour: parseInt(a.endHour),
+                              dayOfWeek: a.dayOfWeek,
+                              startHour: a.startHour,
+                              endHour: a.endHour,
                         })),
                   }),
             ]);

@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import { useEffect, useState } from "react";
 import useSWR from "swr";
 import Header from "@/components/Header";
+import SkeletonMentor from "@/components/skeletons/SkeletonMentor";
 import "./mentor.css";
 
 const fetcher = async (url) => {
@@ -48,7 +49,6 @@ export default function MentorPage() {
                   Number(slot.start) < Number(slot.end)
       );
 
-      // FIX: auth check uses new response shape
       useEffect(() => {
             async function checkUser() {
                   try {
@@ -84,9 +84,7 @@ export default function MentorPage() {
             mutate,
       } = useSWR(user ? "/api/mentor/interviews" : null, fetcher);
 
-      // FIX: saveAvailability checks new response shape
       async function saveAvailability() {
-
             const formatted = Object.entries(availability)
                   .filter(([_, v]) =>
                         v.start !== "" &&
@@ -129,7 +127,6 @@ export default function MentorPage() {
             }
       }
 
-      // FIX: handleAccept checks new response shape
       async function handleAccept(id) {
             setLoadingId(id);
 
@@ -155,7 +152,6 @@ export default function MentorPage() {
             }
       }
 
-      // FIX: handleReject checks new response shape
       async function handleReject(id) {
             setLoadingId(id);
 
@@ -181,7 +177,6 @@ export default function MentorPage() {
             }
       }
 
-      // FIX: handleCompleteInterview checks new response shape
       async function handleCompleteInterview() {
             if (!feedbackModal) return;
 
@@ -206,7 +201,12 @@ export default function MentorPage() {
 
                   toast.success("Interview completed");
                   setFeedbackModal(null);
-                  setFeedbackForm({ rating: 5, feedback: "", strengths: "", improvements: "" });
+                  setFeedbackForm({
+                        rating: 5,
+                        feedback: "",
+                        strengths: "",
+                        improvements: "",
+                  });
                   mutate();
 
             } catch {
@@ -216,7 +216,8 @@ export default function MentorPage() {
             }
       }
 
-      if (!user) return <p>Loading...</p>;
+      // LOADING — show skeleton instead of plain text
+      if (!user) return <SkeletonMentor />;
 
       const safeInterviews = Array.isArray(interviews) ? interviews : [];
 
@@ -231,13 +232,13 @@ export default function MentorPage() {
                   <div className="mentor-container">
                         <h1 className="mentor-title">Mentor Dashboard</h1>
 
-                        {/* FIX: availability always visible, not gated behind interviews */}
+                        {/* AVAILABILITY */}
                         <div className="availability-box">
                               <h3>Set Weekly Availability</h3>
 
                               {["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"].map((day, index) => (
                                     <div key={index} className="availability-row">
-                                          <span style={{ width: "100px" }}>{day}</span>
+                                          <span className="availability-day">{day}</span>
 
                                           <select
                                                 value={availability[index].start}
@@ -282,11 +283,25 @@ export default function MentorPage() {
 
                         {/* INTERVIEWS */}
                         {isLoading ? (
-                              <p>Loading interviews...</p>
+                              <div className="skeleton-mentor-grid">
+                                    {Array(4).fill(0).map((_, i) => (
+                                          <div key={i} className="skeleton-mentor-card">
+                                                <div className="skeleton skeleton-mentor-card-title"></div>
+                                                <div className="skeleton skeleton-mentor-card-line"></div>
+                                                <div className="skeleton skeleton-mentor-card-line short"></div>
+                                                <div className="skeleton skeleton-mentor-status"></div>
+                                                <div className="skeleton skeleton-mentor-btn"></div>
+                                          </div>
+                                    ))}
+                              </div>
                         ) : error ? (
-                              <p style={{ color: "red" }}>Failed to load interviews</p>
+                              <div className="mentor-empty">
+                                    <p>Failed to load interviews. Please refresh.</p>
+                              </div>
                         ) : safeInterviews.length === 0 ? (
-                              <p>No interviews assigned yet</p>
+                              <div className="mentor-empty">
+                                    <p>No interviews assigned yet</p>
+                              </div>
                         ) : (
                               <>
                                     <div className="filter-tabs">
@@ -302,57 +317,63 @@ export default function MentorPage() {
                                     </div>
 
                                     <div className="mentor-grid">
-                                          {filteredInterviews.map((i) => (
-                                                <div key={i.id} className="mentor-card">
-                                                      <h3 className="mentor-topic">{i.topic}</h3>
-
-                                                      <p className="mentor-text">
-                                                            <strong>Student:</strong> {i.user?.name || "N/A"}
-                                                      </p>
-                                                      <p className="mentor-text">
-                                                            <strong>Email:</strong> {i.user?.email || "N/A"}
-                                                      </p>
-                                                      <p className="mentor-text">
-                                                            <strong>Date:</strong> {new Date(i.date).toLocaleString()}
-                                                      </p>
-                                                      <p className="mentor-text">
-                                                            <strong>Status:</strong>{" "}
-                                                            <span className={`status-badge status-${i.status.toLowerCase()}`}>
-                                                                  {i.status}
-                                                            </span>
-                                                      </p>
-
-                                                      {i.status === "PENDING" && (
-                                                            <div className="action-buttons">
-                                                                  <button
-                                                                        className="btn btn-accept"
-                                                                        onClick={() => handleAccept(i.id)}
-                                                                        disabled={loadingId === i.id}
-                                                                  >
-                                                                        {loadingId === i.id ? "Accepting..." : "Accept"}
-                                                                  </button>
-                                                                  <button
-                                                                        className="btn btn-reject"
-                                                                        onClick={() => handleReject(i.id)}
-                                                                        disabled={loadingId === i.id}
-                                                                  >
-                                                                        Reject
-                                                                  </button>
-                                                            </div>
-                                                      )}
-
-                                                      {i.status === "ACCEPTED" && (
-                                                            <div className="action-buttons">
-                                                                  <button
-                                                                        className="btn btn-complete"
-                                                                        onClick={() => setFeedbackModal(i)}
-                                                                  >
-                                                                        Complete Interview
-                                                                  </button>
-                                                            </div>
-                                                      )}
+                                          {filteredInterviews.length === 0 ? (
+                                                <div className="mentor-empty">
+                                                      <p>No interviews match this filter</p>
                                                 </div>
-                                          ))}
+                                          ) : (
+                                                filteredInterviews.map((i) => (
+                                                      <div key={i.id} className="mentor-card">
+                                                            <h3 className="mentor-topic">{i.topic}</h3>
+
+                                                            <p className="mentor-text">
+                                                                  <strong>Student:</strong> {i.user?.name || "N/A"}
+                                                            </p>
+                                                            <p className="mentor-text">
+                                                                  <strong>Email:</strong> {i.user?.email || "N/A"}
+                                                            </p>
+                                                            <p className="mentor-text">
+                                                                  <strong>Date:</strong> {new Date(i.date).toLocaleString()}
+                                                            </p>
+                                                            <p className="mentor-text">
+                                                                  <strong>Status:</strong>{" "}
+                                                                  <span className={`status-badge status-${i.status.toLowerCase()}`}>
+                                                                        {i.status}
+                                                                  </span>
+                                                            </p>
+
+                                                            {i.status === "PENDING" && (
+                                                                  <div className="action-buttons">
+                                                                        <button
+                                                                              className="btn btn-accept"
+                                                                              onClick={() => handleAccept(i.id)}
+                                                                              disabled={loadingId === i.id}
+                                                                        >
+                                                                              {loadingId === i.id ? "Accepting..." : "Accept"}
+                                                                        </button>
+                                                                        <button
+                                                                              className="btn btn-reject"
+                                                                              onClick={() => handleReject(i.id)}
+                                                                              disabled={loadingId === i.id}
+                                                                        >
+                                                                              Reject
+                                                                        </button>
+                                                                  </div>
+                                                            )}
+
+                                                            {i.status === "ACCEPTED" && (
+                                                                  <div className="action-buttons">
+                                                                        <button
+                                                                              className="btn btn-complete"
+                                                                              onClick={() => setFeedbackModal(i)}
+                                                                        >
+                                                                              Complete Interview
+                                                                        </button>
+                                                                  </div>
+                                                            )}
+                                                      </div>
+                                                ))
+                                          )}
                                     </div>
                               </>
                         )}

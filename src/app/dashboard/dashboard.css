@@ -1,11 +1,9 @@
 .dashboard-page {
       display: flex;
       flex-direction: column;
-      gap: 30px;
-
+      gap: 20px;
       width: 100%;
-      max-width: 1400px;
-
+      max-width: 1200px;
       margin: 0 auto;
 }
 
@@ -17,40 +15,35 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 20px;
+      gap: 16px;
       flex-wrap: wrap;
 }
 
 .dashboard-header h1 {
-      font-size: 34px;
+      font-size: 24px;
       font-weight: 700;
       color: var(--text);
-
-      margin-bottom: 6px;
+      margin-bottom: 4px;
 }
 
 .dashboard-header p {
       color: var(--text-secondary, var(--text));
       opacity: 0.7;
+      font-size: 14px;
 }
 
 .dashboard-book-btn {
-      height: 48px;
-
-      padding: 0 18px;
-
-      border-radius: 12px;
-
+      height: 40px;
+      padding: 0 16px;
+      border-radius: 10px;
       background: var(--primary);
       color: white;
-
       display: inline-flex;
       align-items: center;
       justify-content: center;
-
       text-decoration: none;
       font-weight: 600;
-
+      font-size: 14px;
       transition: opacity 0.2s ease;
 }
 
@@ -64,26 +57,18 @@
 
 .stats-grid {
       display: grid;
-
-      grid-template-columns:
-            repeat(auto-fit,
-                  minmax(220px, 1fr));
-
-      gap: 20px;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 14px;
 }
 
 .stats-card {
       background: var(--card);
-
       border: 1px solid var(--border);
-      border-radius: 20px;
-
-      padding: 22px;
-
+      border-radius: 14px;
+      padding: 16px;
       display: flex;
       align-items: center;
-      gap: 16px;
-
+      gap: 12px;
       transition:
             transform 0.2s ease,
             border-color 0.2s ease;
@@ -95,14 +80,13 @@
 }
 
 .stats-icon {
-      width: 54px;
-      height: 54px;
-
-      border-radius: 14px;
-
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
       display: flex;
       align-items: center;
       justify-content: center;
+      flex-shrink: 0;
 }
 
 .total-icon {
@@ -126,13 +110,13 @@
 }
 
 .stats-label {
-      font-size: 14px;
+      font-size: 12px;
       opacity: 0.75;
-      margin-bottom: 4px;
+      margin-bottom: 2px;
 }
 
 .stats-card h2 {
-      font-size: 30px;
+      font-size: 22px;
       font-weight: 700;
 }
 
@@ -142,59 +126,48 @@
 
 .recent-section {
       background: var(--card);
-
       border: 1px solid var(--border);
-      border-radius: 20px;
-
-      padding: 24px;
+      border-radius: 14px;
+      padding: 18px;
 }
 
 .section-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-
-      gap: 20px;
-
-      margin-bottom: 22px;
+      gap: 16px;
+      margin-bottom: 16px;
 }
 
 .section-header h2 {
-      font-size: 24px;
+      font-size: 18px;
       font-weight: 700;
 }
 
 .view-all-link {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-
+      gap: 4px;
       text-decoration: none;
-
       color: var(--primary);
-
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 600;
 }
 
 .recent-list {
       display: flex;
       flex-direction: column;
-      gap: 14px;
+      gap: 10px;
 }
 
 .recent-card {
       display: flex;
       align-items: center;
       justify-content: space-between;
-
-      gap: 20px;
-
-      padding: 18px;
-
+      gap: 16px;
+      padding: 14px;
       border: 1px solid var(--border);
-      border-radius: 16px;
-
+      border-radius: 10px;
       transition:
             border-color 0.2s ease,
             transform 0.2s ease;
@@ -206,50 +179,46 @@
 }
 
 .recent-card h3 {
-      font-size: 16px;
+      font-size: 14px;
       font-weight: 600;
-
-      margin-bottom: 6px;
+      margin-bottom: 4px;
 }
 
 .recent-card p {
-      font-size: 14px;
+      font-size: 13px;
       opacity: 0.7;
-
-      margin-bottom: 10px;
+      margin-bottom: 6px;
 }
 
 .dashboard-status {
       display: inline-flex;
-
-      padding: 5px 10px;
-
+      padding: 3px 8px;
       border-radius: 999px;
-
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 600;
 }
 
 .details-link {
       color: var(--primary);
-
       text-decoration: none;
-
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 600;
+      white-space: nowrap;
 }
 
 .empty-dashboard {
       text-align: center;
-      padding: 40px 20px;
+      padding: 30px 20px;
 }
 
 .empty-dashboard h3 {
-      margin-bottom: 8px;
+      margin-bottom: 6px;
+      font-size: 16px;
 }
 
 .empty-dashboard p {
       opacity: 0.7;
+      font-size: 14px;
 }
 
 /* =========================================
@@ -265,6 +234,7 @@
 
       .dashboard-book-btn {
             width: 100%;
+            justify-content: center;
       }
 
       .recent-card {

@@ -2,11 +2,12 @@ import { prisma } from "@/lib/prisma";
 import { hashPassword } from "@/lib/auth";
 import { successResponse, errorResponse } from "@/lib/apiResponse";
 import { rateLimit } from "@/lib/rateLimit";
+import { signupSchema } from "@/lib/validators";
 import { NextResponse } from "next/server";
 
 export async function POST(req) {
 
-      // RATE LIMIT — 3 attempts per 60 seconds
+      // RATE LIMIT
       const limited = rateLimit(req, {
             key: "signup",
             limit: 3,
@@ -21,36 +22,23 @@ export async function POST(req) {
                   },
                   {
                         status: 429,
-                        headers: {
-                              "Retry-After": String(limited.retryAfter),
-                        },
+                        headers: { "Retry-After": String(limited.retryAfter) },
                   }
             );
       }
 
       try {
             const body = await req.json();
-            const name = body.name?.trim();
-            const email = body.email?.trim().toLowerCase();
-            const password = body.password?.trim();
 
-            // VALIDATION
-            if (!name || !email || !password) {
-                  return errorResponse("All fields are required", 400);
+            // ZOD VALIDATION
+            const parsed = signupSchema.safeParse(body);
+
+            if (!parsed.success) {
+                  const message = parsed.error.errors[0]?.message || "Invalid input";
+                  return errorResponse(message, 400);
             }
 
-            if (name.length < 2) {
-                  return errorResponse("Name is too short", 400);
-            }
-
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(email)) {
-                  return errorResponse("Invalid email address", 400);
-            }
-
-            if (password.length < 6) {
-                  return errorResponse("Password must be at least 6 characters", 400);
-            }
+            const { name, email, password } = parsed.data;
 
             // EXISTING USER
             const existingUser = await prisma.user.findUnique({
@@ -66,11 +54,7 @@ export async function POST(req) {
 
             // CREATE USER
             const user = await prisma.user.create({
-                  data: {
-                        name,
-                        email,
-                        password: hashedPassword,
-                  },
+                  data: { name, email, password: hashedPassword },
             });
 
             return successResponse(

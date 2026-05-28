@@ -1,8 +1,14 @@
+/* ===============================
+   PANEL
+================================ */
+
 .users-panel {
-      padding: 10px;
+      padding: 4px;
 }
 
-/*  HEADER  */
+/* ===============================
+   HEADER
+================================ */
 
 .users-header {
       display: flex;
@@ -10,177 +16,212 @@
       align-items: center;
       gap: 12px;
       flex-wrap: wrap;
-      margin-bottom: 24px;
+      margin-bottom: 20px;
+}
+
+.users-header h2 {
+      font-size: 17px;
+      font-weight: 600;
 }
 
 .users-header input {
-      padding: 10px 14px;
-      border-radius: 6px;
+      padding: 10px 12px;
+      border-radius: 8px;
       border: 1px solid var(--border);
       outline: none;
       max-width: 220px;
       flex: 1;
       background: transparent;
       color: var(--text);
+      font-size: 13px;
+      transition: border-color 0.2s;
 }
 
 .users-header input:focus {
       border-color: var(--primary);
 }
 
-/*  GRID  */
+/* ===============================
+   GRID
+================================ */
 
 .users-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 20px;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 14px;
 }
 
-/*  CARD  */
+/* ===============================
+   CARD
+================================ */
 
 .user-card {
       background: var(--card);
-      padding: 20px;
-      border-radius: 14px;
+      padding: 16px;
+      border-radius: 12px;
       border: 1px solid var(--border);
       display: flex;
       flex-direction: column;
-      transition: 0.2s;
+      gap: 0;
+      transition: border-color 0.2s, transform 0.2s;
 }
 
 .user-card:hover {
-      transform: translateY(-4px);
+      transform: translateY(-2px);
       border-color: var(--primary);
 }
 
-/*  INFO  */
+/* ===============================
+   INFO
+================================ */
 
 .user-info h3 {
-      margin-bottom: 4px;
-      font-size: 1.1rem;
+      margin-bottom: 3px;
+      font-size: 14px;
+      font-weight: 600;
 }
 
 .user-info p {
-      font-size: 0.9rem;
+      font-size: 12px;
       color: var(--text);
       opacity: 0.7;
 }
 
-/*  ROLE BADGE  */
+/* ===============================
+   ROLE BADGE
+================================ */
 
 .role {
       display: inline-block;
-      padding: 6px 12px;
+      padding: 4px 10px;
       border-radius: 999px;
       font-weight: 600;
-      font-size: 12px;
-      margin: 12px 0;
+      font-size: 11px;
+      margin: 10px 0;
       width: fit-content;
 }
 
+.role.super_admin {
+      background: rgba(79, 70, 229, 0.15);
+      color: var(--primary);
+      border: 1px solid rgba(79, 70, 229, 0.3);
+}
+
 .role.admin {
-      background: #3b82f6;
-      color: white;
+      background: rgba(79, 70, 229, 0.1);
+      color: var(--primary);
+      border: 1px solid rgba(79, 70, 229, 0.2);
+}
+
+.role.mentor {
+      background: rgba(245, 158, 11, 0.12);
+      color: #f59e0b;
+      border: 1px solid rgba(245, 158, 11, 0.25);
 }
 
 .role.student {
-      background: #22c55e;
-      color: white;
+      background: rgba(16, 185, 129, 0.1);
+      color: #10b981;
+      border: 1px solid rgba(16, 185, 129, 0.2);
 }
 
-/*  ACTIONS  */
+/* ===============================
+   ACTIONS
+================================ */
 
 .user-actions {
       display: flex;
-      gap: 10px;
+      gap: 8px;
       margin-top: auto;
+      padding-top: 12px;
 }
 
 .role-btn,
 .delete-btn {
       flex: 1;
-      padding: 10px;
-      border-radius: 10px;
+      padding: 8px 10px;
+      border-radius: 8px;
       font-weight: 600;
+      font-size: 12px;
       cursor: pointer;
-      transition: 0.2s;
-      border: 1px solid var(--border);
+      transition: background 0.2s, opacity 0.2s, transform 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
 }
 
-/*  ROLE BUTTON (PRIMARY STYLE) */
 .role-btn {
       background: var(--primary);
       color: white;
+      border: none;
 }
 
 .role-btn:hover {
       background: var(--primary-hover);
-      transform: translateY(-1px);
 }
 
-/*  DELETE BUTTON (SOFT DESTRUCTIVE) */
+.role-btn:disabled,
+.delete-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+}
+
 .delete-btn {
       background: transparent;
       color: #ef4444;
-      border: 1px solid #ef4444;
+      border: 1px solid rgba(239, 68, 68, 0.4);
 }
 
 .delete-btn:hover {
-      background: #ef4444;
-      color: white;
-      transform: translateY(-1px);
+      background: rgba(239, 68, 68, 0.08);
+      border-color: #ef4444;
 }
 
-/*  JOINED  */
+/* ===============================
+   JOINED
+================================ */
 
 .joined {
-      margin-top: 12px;
-      font-size: 0.8rem;
+      margin-top: 10px;
+      font-size: 11px;
       color: var(--text);
-      opacity: 0.6;
+      opacity: 0.5;
 }
 
-/*  LOADER  */
-
-.loader {
-      margin: 40px auto;
-      width: 40px;
-      height: 40px;
-      border: 4px solid var(--border);
-      border-top: 4px solid var(--primary);
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-      to {
-            transform: rotate(360deg);
-      }
-}
-
-/*  RESPONSIVE  */
-
-@media (max-width: 600px) {
-      .users-header {
-            flex-direction: column;
-            align-items: stretch;
-      }
-
-      .user-actions {
-            flex-direction: column;
-      }
-}
-
-/*  SKELETON  */
+/* ===============================
+   SKELETON
+================================ */
 
 .skeleton-role {
       width: 80px;
-      height: 16px;
+      height: 14px;
       margin: 10px 0;
 }
 
 .skeleton-btn {
       width: 100%;
-      height: 32px;
+      height: 30px;
       border-radius: 8px;
+}
+
+/* ===============================
+   RESPONSIVE
+================================ */
+
+@media (max-width: 600px) {
+
+      .users-header {
+            flex-direction: column;
+            align-items: stretch;
+      }
+
+      .users-header input {
+            max-width: 100%;
+      }
+
+      .user-actions {
+            flex-direction: column;
+      }
 }

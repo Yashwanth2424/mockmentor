@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { requireAuth } from "@/lib/auth";
 import { successResponse, errorResponse } from "@/lib/apiResponse";
+import { rescheduleSchema } from "@/lib/validators";
 
 export async function PATCH(req, { params }) {
       try {
@@ -8,12 +9,17 @@ export async function PATCH(req, { params }) {
 
             const { id } = await params;
 
-            // BODY
-            const { date, mentorId } = await req.json();
+            const body = await req.json();
 
-            if (!date || !mentorId) {
-                  return errorResponse("Missing required fields", 400);
+            // ZOD VALIDATION
+            const parsed = rescheduleSchema.safeParse(body);
+
+            if (!parsed.success) {
+                  const message = parsed.error.errors[0]?.message || "Invalid input";
+                  return errorResponse(message, 400);
             }
+
+            const { date, mentorId } = parsed.data;
 
             // DATE
             const selectedDate = new Date(date);
@@ -29,7 +35,6 @@ export async function PATCH(req, { params }) {
 
             // SLOT VALIDATION
             const minutes = selectedDate.getMinutes();
-
             if (minutes !== 0 && minutes !== 30) {
                   return errorResponse("Only 30-minute slots allowed", 400);
             }
@@ -75,7 +80,10 @@ export async function PATCH(req, { params }) {
                   return errorResponse("Mentor unavailable on selected day", 400);
             }
 
-            if (selectedHour < availability.startHour || selectedHour >= availability.endHour) {
+            if (
+                  selectedHour < availability.startHour ||
+                  selectedHour >= availability.endHour
+            ) {
                   return errorResponse("Selected time outside mentor availability", 400);
             }
 

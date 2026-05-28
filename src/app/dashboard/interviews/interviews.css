@@ -35,13 +35,11 @@
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       gap: 20px;
-      align-items: start;
 }
 
 
 .interview-card {
       width: 100%;
-      min-width: 0;
       height: 100%;
       background: var(--card);
       border: 1px solid var(--border);

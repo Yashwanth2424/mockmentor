@@ -80,7 +80,12 @@ export default function AdminPage() {
       async function handleLogout() {
             const confirmLogout = confirm("Are you sure you want to logout?");
             if (!confirmLogout) return;
+
             await fetch("/api/auth/logout", { method: "POST" });
+
+            // Clear SWR cache
+            await mutate(() => true, undefined, { revalidate: false });
+
             window.location.href = "/login";
       }
 

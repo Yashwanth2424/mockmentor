@@ -4,10 +4,11 @@ import { comparePassword } from "@/lib/auth";
 import { createToken } from "@/lib/jwt";
 import { successResponse, errorResponse } from "@/lib/apiResponse";
 import { rateLimit } from "@/lib/rateLimit";
+import { loginSchema } from "@/lib/validators";
 
 export async function POST(req) {
 
-      // RATE LIMIT — 5 attempts per 60 seconds
+      // RATE LIMIT
       const limited = rateLimit(req, {
             key: "login",
             limit: 5,
@@ -22,24 +23,27 @@ export async function POST(req) {
                   },
                   {
                         status: 429,
-                        headers: {
-                              "Retry-After": String(limited.retryAfter),
-                        },
+                        headers: { "Retry-After": String(limited.retryAfter) },
                   }
             );
       }
 
       try {
-            const { email, password } = await req.json();
+            const body = await req.json();
 
-            // VALIDATION
-            if (!email?.trim() || !password?.trim()) {
-                  return errorResponse("Email and password are required", 400);
+            // ZOD VALIDATION
+            const parsed = loginSchema.safeParse(body);
+
+            if (!parsed.success) {
+                  const message = parsed.error.errors[0]?.message || "Invalid input";
+                  return errorResponse(message, 400);
             }
+
+            const { email, password } = parsed.data;
 
             // FIND USER
             const user = await prisma.user.findUnique({
-                  where: { email: email.trim().toLowerCase() },
+                  where: { email },
             });
 
             if (!user) {

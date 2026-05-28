@@ -3,11 +3,12 @@ import { requireAuth } from "@/lib/auth";
 import { successResponse, errorResponse } from "@/lib/apiResponse";
 import { sendEmail } from "@/lib/email";
 import { rateLimit } from "@/lib/rateLimit";
+import { bookingSchema } from "@/lib/validators";
 import { NextResponse } from "next/server";
 
 export async function POST(req) {
 
-      // RATE LIMIT — 10 attempts per 60 seconds
+      // RATE LIMIT
       const limited = rateLimit(req, {
             key: "booking",
             limit: 10,
@@ -22,32 +23,25 @@ export async function POST(req) {
                   },
                   {
                         status: 429,
-                        headers: {
-                              "Retry-After": String(limited.retryAfter),
-                        },
+                        headers: { "Retry-After": String(limited.retryAfter) },
                   }
             );
       }
 
       try {
-            // AUTH
             const user = requireAuth(req);
 
-            // BODY
-            const { topic, date, mentorId } = await req.json();
+            const body = await req.json();
 
-            // CLEAN INPUT
-            const cleanTopic = topic?.trim();
+            // ZOD VALIDATION
+            const parsed = bookingSchema.safeParse(body);
 
-            // VALIDATION
-            if (!cleanTopic || !date || !mentorId) {
-                  return errorResponse("Missing fields", 400);
+            if (!parsed.success) {
+                  const message = parsed.error.errors[0]?.message || "Invalid input";
+                  return errorResponse(message, 400);
             }
 
-            // TOPIC LENGTH
-            if (cleanTopic.length < 3 || cleanTopic.length > 100) {
-                  return errorResponse("Topic must be between 3 and 100 characters", 400);
-            }
+            const { topic: cleanTopic, date, mentorId } = parsed.data;
 
             // DATE
             const selectedDate = new Date(date);

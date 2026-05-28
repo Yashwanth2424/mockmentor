@@ -130,6 +130,11 @@
 .mentor-grid {
       display: grid;
       gap: 18px;
+      background: var(--secondary);
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 10px;
+      border-radius: 12px;
 }
 
 /*  CARD  */
@@ -485,4 +490,20 @@
       .title {
             font-size: 22px;
       }
+}
+
+.availability-day {
+      width: 100px;
+      flex-shrink: 0;
+      font-size: 13px;
+}
+
+.mentor-empty {
+      text-align: center;
+      padding: 30px 20px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      opacity: 0.7;
+      font-size: 14px;
 }
