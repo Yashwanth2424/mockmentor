@@ -2,6 +2,10 @@ const requiredEnvVars = [
       "DATABASE_URL",
       "JWT_SECRET",
       "RESEND_API_KEY",
+];
+
+// Only required at runtime, not build time
+const runtimeEnvVars = [
       "NEXT_PUBLIC_APP_URL",
 ];
 
@@ -23,13 +27,18 @@ function validateEnv() {
             );
       }
 
-      // NEXT_PUBLIC_APP_URL format check
-      try {
-            new URL(process.env.NEXT_PUBLIC_APP_URL);
-      } catch {
-            throw new Error(
-                  "NEXT_PUBLIC_APP_URL must be a valid URL (e.g. https://mockmentor.com)"
-            );
+      // Only validate NEXT_PUBLIC_APP_URL at runtime
+      if (
+            typeof window === "undefined" &&
+            process.env.NEXT_PUBLIC_APP_URL
+      ) {
+            try {
+                  new URL(process.env.NEXT_PUBLIC_APP_URL);
+            } catch {
+                  throw new Error(
+                        "NEXT_PUBLIC_APP_URL must be a valid URL"
+                  );
+            }
       }
 }
 
@@ -39,7 +48,7 @@ export const env = {
       DATABASE_URL: process.env.DATABASE_URL,
       JWT_SECRET: process.env.JWT_SECRET,
       RESEND_API_KEY: process.env.RESEND_API_KEY,
-      NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
+      NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL || "",
       NODE_ENV: process.env.NODE_ENV || "development",
       isProd: process.env.NODE_ENV === "production",
       isDev: process.env.NODE_ENV === "development",
