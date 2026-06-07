@@ -82,7 +82,7 @@ You can explore the platform without signing up using these test accounts:
 
 | Role | Email | Password |
 |---|---|---|
-| Student | yashwanththalka119@gmail.com | 123456 |
+| Student | yashwanththalka.example@gmail.com | 123456 |
 | Mentor | akshay123@gmail.com | 123456 |
 | Admin | ranjith@admin.com | admin1234 |
 
