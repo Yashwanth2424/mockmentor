@@ -15,11 +15,12 @@
       display: flex;
       align-items: center;
       justify-content: center;
+
 }
 
 .signup-image {
       width: 100%;
-      max-width: 580px;
+      max-width: 500px;
       height: auto;
       object-fit: contain;
       background: transparent;
@@ -32,7 +33,6 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 100%;
 }
 
 .signup-card {
