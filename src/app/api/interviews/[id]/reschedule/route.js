@@ -3,6 +3,8 @@ import { requireAuth } from "@/lib/auth";
 import { successResponse, errorResponse } from "@/lib/apiResponse";
 import { rescheduleSchema } from "@/lib/validators";
 
+const publicUser = { select: { id: true, name: true, email: true } };
+
 export async function PATCH(req, { params }) {
       try {
             const user = requireAuth(req);
@@ -123,7 +125,7 @@ export async function PATCH(req, { params }) {
                         mentorId,
                         status: "PENDING",
                   },
-                  include: { mentor: true },
+                  include: { mentor: publicUser },
             });
 
             return successResponse(updatedInterview);

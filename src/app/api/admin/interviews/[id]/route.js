@@ -2,6 +2,8 @@ import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/adminAuth";
 
+const publicUser = { select: { id: true, name: true, email: true } };
+
 // GET — Fetch interview
 export async function GET(req, { params }) {
 
@@ -19,7 +21,7 @@ export async function GET(req, { params }) {
 
             const interview = await prisma.interview.findUnique({
                   where: { id },
-                  include: { user: true },
+                  include: { user: publicUser },
             });
 
             if (!interview) {

@@ -2,13 +2,15 @@ import { prisma } from "@/lib/prisma";
 import { requireRole } from "@/lib/auth";
 import { successResponse, errorResponse } from "@/lib/apiResponse";
 
+const publicUser = { select: { id: true, name: true, email: true } };
+
 export async function GET(req) {
       try {
             const mentor = requireRole(req, ["MENTOR"]);
 
             const interviews = await prisma.interview.findMany({
                   where: { mentorId: mentor.id },
-                  include: { user: true },
+                  include: { user: publicUser },
                   orderBy: { date: "desc" },
             });
 

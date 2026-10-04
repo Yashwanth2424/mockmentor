@@ -6,6 +6,8 @@ import { rateLimit } from "@/lib/rateLimit";
 import { bookingSchema } from "@/lib/validators";
 import { NextResponse } from "next/server";
 
+const publicUser = { select: { id: true, name: true, email: true } };
+
 export async function POST(req) {
 
       // RATE LIMIT
@@ -132,8 +134,8 @@ export async function POST(req) {
                         mentor: { connect: { id: mentorId } },
                   },
                   include: {
-                        mentor: true,
-                        user: true,
+                        mentor: publicUser,
+                        user: publicUser,
                   },
             });
 

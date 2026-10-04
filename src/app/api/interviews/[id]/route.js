@@ -9,6 +9,8 @@ import {
       errorResponse,
 } from "@/lib/apiResponse";
 
+const publicUser = { select: { id: true, name: true, email: true } };
+
 export async function GET(
       req,
       { params }
@@ -35,8 +37,8 @@ export async function GET(
                         },
 
                         include: {
-                              user: true,
-                              mentor: true,
+                              user: publicUser,
+                              mentor: publicUser,
                         },
                   });
 
