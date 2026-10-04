@@ -24,7 +24,7 @@ export async function PATCH(req, { params }) {
             const parsed = roleSchema.safeParse(body);
 
             if (!parsed.success) {
-                  const message = parsed.error.errors[0]?.message || "Invalid role";
+                  const message = parsed.error.issues[0]?.message || "Invalid role";
                   return errorResponse(message, 400);
             }
 

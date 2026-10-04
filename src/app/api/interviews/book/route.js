@@ -39,7 +39,7 @@ export async function POST(req) {
             const parsed = bookingSchema.safeParse(body);
 
             if (!parsed.success) {
-                  const message = parsed.error.errors[0]?.message || "Invalid input";
+                  const message = parsed.error.issues[0]?.message || "Invalid input";
                   return errorResponse(message, 400);
             }
 
