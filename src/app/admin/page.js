@@ -4,7 +4,7 @@ import SkeletonInterviewCard from "@/components/skeletons/SkeletonInterviewCard"
 import ThemeToggle from "@/components/ThemeToggle";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import useSWR from "swr";
+import useSWR, { mutate } from "swr";
 import UsersPanel from "./UsersPanel";
 import { toast } from "react-toastify";
 import { FiGrid, FiUsers, FiMenu, FiX } from "react-icons/fi";
@@ -83,7 +83,6 @@ export default function AdminPage() {
 
             await fetch("/api/auth/logout", { method: "POST" });
 
-            // Clear SWR cache
             await mutate(() => true, undefined, { revalidate: false });
 
             window.location.href = "/login";
