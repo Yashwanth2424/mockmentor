@@ -25,6 +25,7 @@ export async function PATCH(req, { params }) {
 
             // DATE
             const selectedDate = new Date(date);
+            selectedDate.setSeconds(0, 0);
 
             if (isNaN(selectedDate.getTime())) {
                   return errorResponse("Invalid date", 400);
@@ -100,7 +101,7 @@ export async function PATCH(req, { params }) {
             });
 
             if (mentorConflict) {
-                  return errorResponse("Mentor already booked", 400);
+                  return errorResponse("Mentor already booked", 409);
             }
 
             // STUDENT CONFLICT
@@ -114,19 +115,27 @@ export async function PATCH(req, { params }) {
             });
 
             if (studentConflict) {
-                  return errorResponse("You already have another interview at this time", 400);
+                  return errorResponse("You already have another interview at this time", 409);
             }
 
             // UPDATE
-            const updatedInterview = await prisma.interview.update({
-                  where: { id },
-                  data: {
-                        date: selectedDate,
-                        mentorId,
-                        status: "PENDING",
-                  },
-                  include: { mentor: publicUser },
-            });
+            let updatedInterview;
+            try {
+                  updatedInterview = await prisma.interview.update({
+                        where: { id },
+                        data: {
+                              date: selectedDate,
+                              mentorId,
+                              status: "PENDING",
+                        },
+                        include: { mentor: publicUser },
+                  });
+            } catch (err) {
+                  if (err.code === "P2002") {
+                        return errorResponse("This slot was just booked. Please pick another time.", 409);
+                  }
+                  throw err;
+            }
 
             return successResponse(updatedInterview);
 

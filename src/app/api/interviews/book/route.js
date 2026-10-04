@@ -79,7 +79,7 @@ export async function POST(req) {
             });
 
             if (existingStudentInterview) {
-                  return errorResponse("You already have an interview at this time", 400);
+                  return errorResponse("You already have an interview at this time", 409);
             }
 
             // MENTOR
@@ -102,7 +102,7 @@ export async function POST(req) {
             });
 
             if (existingMentorInterview) {
-                  return errorResponse("Mentor already booked for this time", 400);
+                  return errorResponse("Mentor already booked for this time", 409);
             }
 
             // AVAILABILITY
@@ -125,19 +125,27 @@ export async function POST(req) {
             }
 
             // CREATE INTERVIEW
-            const interview = await prisma.interview.create({
-                  data: {
-                        topic: cleanTopic,
-                        date: selectedDate,
-                        status: "PENDING",
-                        user: { connect: { id: user.id } },
-                        mentor: { connect: { id: mentorId } },
-                  },
-                  include: {
-                        mentor: publicUser,
-                        user: publicUser,
-                  },
-            });
+            let interview;
+            try {
+                  interview = await prisma.interview.create({
+                        data: {
+                              topic: cleanTopic,
+                              date: selectedDate,
+                              status: "PENDING",
+                              user: { connect: { id: user.id } },
+                              mentor: { connect: { id: mentorId } },
+                        },
+                        include: {
+                              mentor: publicUser,
+                              user: publicUser,
+                        },
+                  });
+            } catch (err) {
+                  if (err.code === "P2002") {
+                        return errorResponse("This slot was just booked. Please pick another time.", 409);
+                  }
+                  throw err;
+            }
 
             // EMAIL
             try {
