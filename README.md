@@ -84,9 +84,8 @@ You can explore the platform without signing up using these test accounts:
 |---|---|---|
 | Student | yashwanththalka.example@gmail.com | 123456 |
 | Mentor | akshay123@gmail.com | 123456 |
-| Admin | ranjith@admin.com | admin1234 |
 
-> These are read-access demo accounts for evaluation purposes.
+> The admin panel is not publicly accessible. Admin features are listed under Features above.
 
 ---
 
