@@ -400,11 +400,6 @@ export default function BookPage() {
       const groupedSlots =
             groupSlots(availableSlots);
 
-
-      console.log("mentors:", mentors);
-      console.log("safeMentors:", safeMentors);
-      console.log("mentorsLoading:", mentorsLoading);
-
       return (
             <section>
                   <div className="book-page">
