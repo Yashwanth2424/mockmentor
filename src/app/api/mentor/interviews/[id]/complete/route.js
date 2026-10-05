@@ -8,10 +8,8 @@ export async function PATCH(req, { params }) {
 
             const { id } = await params;
 
-            // BODY
             const { rating, feedback, strengths, improvements } = await req.json();
 
-            // VALIDATION
             if (!rating || rating < 1 || rating > 5) {
                   return errorResponse("Rating must be between 1 and 5", 400);
             }
@@ -28,7 +26,6 @@ export async function PATCH(req, { params }) {
                   return errorResponse("Feedback too long", 400);
             }
 
-            // FIND
             const interview = await prisma.interview.findUnique({
                   where: { id },
             });
@@ -37,12 +34,10 @@ export async function PATCH(req, { params }) {
                   return errorResponse("Interview not found", 404);
             }
 
-            // OWNERSHIP
             if (interview.mentorId !== mentor.id) {
                   return errorResponse("Forbidden", 403);
             }
 
-            // STATUS
             if (interview.status === "COMPLETED") {
                   return errorResponse("Interview already completed", 400);
             }
@@ -51,7 +46,6 @@ export async function PATCH(req, { params }) {
                   return errorResponse("Only accepted interviews can be completed", 400);
             }
 
-            // UPDATE
             const updated = await prisma.interview.update({
                   where: { id },
                   data: {

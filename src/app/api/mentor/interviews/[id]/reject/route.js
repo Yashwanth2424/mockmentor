@@ -16,12 +16,10 @@ export async function PATCH(req, { params }) {
                   return errorResponse("Interview not found", 404);
             }
 
-            // OWNERSHIP
             if (interview.mentorId !== mentor.id) {
                   return errorResponse("Forbidden", 403);
             }
 
-            // STATUS VALIDATION
             if (interview.status === "REJECTED") {
                   return errorResponse("Interview already rejected", 400);
             }
@@ -38,7 +36,6 @@ export async function PATCH(req, { params }) {
                   return errorResponse("Accepted interviews cannot be rejected", 400);
             }
 
-            // UPDATE
             const updated = await prisma.interview.update({
                   where: { id },
                   data: { status: "REJECTED" },

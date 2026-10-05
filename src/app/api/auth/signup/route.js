@@ -7,7 +7,6 @@ import { NextResponse } from "next/server";
 
 export async function POST(req) {
 
-      // RATE LIMIT
       const limited = rateLimit(req, {
             key: "signup",
             limit: 3,
@@ -30,7 +29,6 @@ export async function POST(req) {
       try {
             const body = await req.json();
 
-            // ZOD VALIDATION
             const parsed = signupSchema.safeParse(body);
 
             if (!parsed.success) {
@@ -40,7 +38,6 @@ export async function POST(req) {
 
             const { name, email, password } = parsed.data;
 
-            // EXISTING USER
             const existingUser = await prisma.user.findUnique({
                   where: { email },
             });
@@ -49,10 +46,8 @@ export async function POST(req) {
                   return errorResponse("Email already registered", 400);
             }
 
-            // HASH PASSWORD
             const hashedPassword = await hashPassword(password);
 
-            // CREATE USER
             const user = await prisma.user.create({
                   data: { name, email, password: hashedPassword },
             });

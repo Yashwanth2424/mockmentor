@@ -23,12 +23,10 @@ export default function DashboardLayout({ children }) {
       return (
             <div className="layout">
 
-                  {/* SIDEBAR */}
                   <div className="sidebar-layer">
                         <Sidebar open={open} setOpen={setOpen} />
                   </div>
 
-                  {/* OVERLAY */}
                   {open && (
                         <div
                               className="sidebar-overlay"
@@ -36,7 +34,6 @@ export default function DashboardLayout({ children }) {
                         />
                   )}
 
-                  {/* MAIN */}
                   <div className="main">
                         <header className="topbar">
                               <button className="menu-btn" onClick={() => setOpen(true)}>

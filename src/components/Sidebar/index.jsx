@@ -39,7 +39,6 @@ export default function Sidebar({ open, setOpen }) {
       return (
             <aside className={`sidebar ${open ? "open" : ""}`}>
 
-                  {/* CLOSE */}
                   <button
                         className="close-btn"
                         onClick={() => setOpen(false)}
@@ -47,10 +46,8 @@ export default function Sidebar({ open, setOpen }) {
                         <X size={20} />
                   </button>
 
-                  {/* LOGO */}
                   <h2 className="logo">MockMentor</h2>
 
-                  {/* MENU */}
                   <div className="menu">
 
                         <button
@@ -89,7 +86,6 @@ export default function Sidebar({ open, setOpen }) {
                         </button>
                   </div>
 
-                  {/* FOOTER */}
                   <div className="sidebar-footer">
                         <button onClick={handleLogout}>
                               <LogOut size={18} />

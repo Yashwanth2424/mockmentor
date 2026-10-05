@@ -5,8 +5,6 @@ export default function SkeletonDashboard() {
       return (
             <section className="dashboard-page">
 
-                  {/* HEADER */}
-
                   <div className="dashboard-header">
 
                         <div>
@@ -18,8 +16,6 @@ export default function SkeletonDashboard() {
 
                         <div className="skeleton skeleton-button"></div>
                   </div>
-
-                  {/* STATS */}
 
                   <div className="stats-grid">
 
@@ -43,8 +39,6 @@ export default function SkeletonDashboard() {
                                     </div>
                               ))}
                   </div>
-
-                  {/* RECENT */}
 
                   <div className="recent-section">
 

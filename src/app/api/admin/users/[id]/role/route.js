@@ -20,7 +20,6 @@ export async function PATCH(req, { params }) {
 
             const body = await req.json();
 
-            // ZOD VALIDATION
             const parsed = roleSchema.safeParse(body);
 
             if (!parsed.success) {

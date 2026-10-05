@@ -1,6 +1,4 @@
-/* ===============================
-   GLOBAL LAYOUT
-================================ */
+/* GLOBAL LAYOUT */
 
 .admin-layout {
       display: flex;
@@ -9,9 +7,7 @@
       color: var(--text);
 }
 
-/* ===============================
-   SIDEBAR
-================================ */
+/* SIDEBAR */
 
 .sidebar {
       width: 220px;
@@ -89,9 +85,7 @@
       opacity: 1;
 }
 
-/* ===============================
-   MAIN AREA
-================================ */
+/* MAIN AREA */
 
 .admin-main {
       flex: 1;
@@ -100,9 +94,7 @@
       width: 100%;
 }
 
-/* ===============================
-   HEADER
-================================ */
+/* HEADER */
 
 .admin-header {
       display: flex;
@@ -148,9 +140,7 @@
       font-weight: 600;
 }
 
-/* ===============================
-   STATS
-================================ */
+/* STATS */
 
 .stats {
       display: grid;
@@ -190,9 +180,7 @@
       border-left: 4px solid #10b981;
 }
 
-/* ===============================
-   SECTION
-================================ */
+/* SECTION */
 
 section h2 {
       font-size: 17px;
@@ -200,9 +188,7 @@ section h2 {
       font-weight: 600;
 }
 
-/* ===============================
-   CONTROLS
-================================ */
+/* CONTROLS */
 
 .controls {
       display: flex;
@@ -244,9 +230,7 @@ section h2 {
       border-color: var(--primary);
 }
 
-/* ===============================
-   CARDS
-================================ */
+/* CARDS */
 
 .interview-card {
       background: var(--card);
@@ -283,9 +267,7 @@ section h2 {
       margin-bottom: 4px;
 }
 
-/* ===============================
-   STATUS
-================================ */
+/* STATUS */
 
 .status {
       padding: 4px 10px;
@@ -324,9 +306,7 @@ section h2 {
       border: 1px solid rgba(107, 114, 128, 0.25);
 }
 
-/* ===============================
-   BUTTONS
-================================ */
+/* BUTTONS */
 
 .complete-btn {
       margin-top: 12px;
@@ -363,9 +343,7 @@ section h2 {
       border-color: var(--primary);
 }
 
-/* ===============================
-   EMPTY
-================================ */
+/* EMPTY */
 
 .empty-state {
       text-align: center;
@@ -385,17 +363,13 @@ section h2 {
       font-size: 13px;
 }
 
-/* ===============================
-   NAV ICON
-================================ */
+/* NAV ICON */
 
 .nav-icon {
       font-size: 16px;
 }
 
-/* ===============================
-   OVERLAY
-================================ */
+/* OVERLAY */
 
 .sidebar-overlay {
       position: fixed;
@@ -404,9 +378,7 @@ section h2 {
       z-index: 90;
 }
 
-/* ===============================
-   RESPONSIVE
-================================ */
+/* RESPONSIVE */
 
 @media (max-width: 900px) {
 

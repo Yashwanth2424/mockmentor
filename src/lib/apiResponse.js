@@ -1,7 +1,5 @@
 import { NextResponse } from "next/server";
 
-/* SUCCESS RESPONSE  */
-
 export function successResponse(
       data = null,
       status = 200
@@ -15,8 +13,6 @@ export function successResponse(
             { status }
       );
 }
-
-/* ERROR RESPONSE */
 
 export function errorResponse(
       message = "Something went wrong",

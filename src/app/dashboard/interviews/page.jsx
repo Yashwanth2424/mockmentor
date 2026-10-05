@@ -45,8 +45,6 @@ export default function InterviewsPage() {
             setRescheduling,
       ] = useState(false);
 
-      // FETCHER
-
       const fetcher = async (url) => {
 
             const res =
@@ -73,8 +71,6 @@ export default function InterviewsPage() {
                   : [];
       };
 
-      // INTERVIEWS
-
       const {
             data: interviews = [],
             isLoading,
@@ -85,8 +81,6 @@ export default function InterviewsPage() {
             fetcher
       );
 
-      // MENTORS
-
       const {
             data: mentors = [],
       } = useSWR(
@@ -94,14 +88,10 @@ export default function InterviewsPage() {
             fetcher
       );
 
-      // SAFE INTERVIEWS
-
       const safeInterviews =
             Array.isArray(interviews)
                   ? interviews
                   : [];
-
-      // CANCEL INTERVIEW
 
       async function handleCancel(id) {
 
@@ -160,8 +150,6 @@ export default function InterviewsPage() {
             }
       }
 
-      // OPEN RESCHEDULE MODAL
-
       function openRescheduleModal(
             interview
       ) {
@@ -189,8 +177,6 @@ export default function InterviewsPage() {
             setShowModal(true);
       }
 
-      // CLOSE MODAL
-
       function closeModal() {
 
             setShowModal(false);
@@ -203,8 +189,6 @@ export default function InterviewsPage() {
 
             setSelectedTime("");
       }
-
-      // AVAILABLE MENTORS
 
       function getAvailableMentors() {
 
@@ -228,8 +212,6 @@ export default function InterviewsPage() {
                         )
             );
       }
-
-      // BOOKED SLOTS
 
       function getBookedSlots() {
 
@@ -284,8 +266,6 @@ export default function InterviewsPage() {
                         }
                   );
       }
-
-      // GENERATE TIME SLOTS
 
       function generateTimeSlots() {
 
@@ -357,8 +337,6 @@ export default function InterviewsPage() {
                         )
             );
       }
-
-      // RESCHEDULE
 
       async function handleReschedule() {
 
@@ -444,8 +422,6 @@ export default function InterviewsPage() {
       return (
             <section className="interviews-page">
 
-                  {/* HEADER */}
-
                   <div className="interviews-header">
                         <div>
                               <h1>
@@ -458,8 +434,6 @@ export default function InterviewsPage() {
                               </p>
                         </div>
                   </div>
-
-                  {/* LOADING */}
 
                   {isLoading ? (
 
@@ -621,8 +595,6 @@ export default function InterviewsPage() {
                               ))}
                         </div>
                   )}
-
-                  {/* MODAL */}
 
                   {showModal && (
                         <div className="modal-overlay">

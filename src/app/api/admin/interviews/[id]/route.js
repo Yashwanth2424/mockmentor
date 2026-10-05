@@ -4,7 +4,6 @@ import { requireAdmin } from "@/lib/adminAuth";
 
 const publicUser = { select: { id: true, name: true, email: true } };
 
-// GET — Fetch interview
 export async function GET(req, { params }) {
 
       try {
@@ -41,7 +40,6 @@ export async function GET(req, { params }) {
       }
 }
 
-// PATCH — Update interview
 export async function PATCH(req, { params }) {
 
       try {

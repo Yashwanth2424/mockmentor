@@ -128,7 +128,6 @@ export default function UsersPanel() {
                                           </span>
 
                                           <div className="user-actions">
-                                                {/* FIX: onClick handlers added */}
                                                 <button
                                                       className="role-btn"
                                                       disabled={actionLoading}

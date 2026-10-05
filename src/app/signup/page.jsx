@@ -48,7 +48,6 @@ export default function SignupPage() {
                         }),
                   });
 
-                  // FIX: check new response shape
                   const json = await res.json();
 
                   if (!res.ok || !json.success) {
@@ -70,7 +69,6 @@ export default function SignupPage() {
       return (
             <div className="signup-page">
 
-                  {/* RIGHT */}
                   <div className="signup-right">
                         <form className="signup-card" onSubmit={handleSubmit}>
 
@@ -81,7 +79,6 @@ export default function SignupPage() {
 
                               <h1>Create Account</h1>
 
-                              {/* NAME */}
                               <div className="input-group">
                                     <User size={18} className="input-icon" />
                                     <input
@@ -93,7 +90,6 @@ export default function SignupPage() {
                                     />
                               </div>
 
-                              {/* EMAIL */}
                               <div className="input-group">
                                     <Mail size={18} className="input-icon" />
                                     <input
@@ -105,7 +101,6 @@ export default function SignupPage() {
                                     />
                               </div>
 
-                              {/* PASSWORD */}
                               <div className="input-group">
                                     <Lock size={18} className="input-icon" />
                                     <input
@@ -140,7 +135,6 @@ export default function SignupPage() {
                         </form>
                   </div>
 
-                  {/* LEFT */}
                   <div className="signup-left">
                         <Image
                               src="/sign_page_image.webp"

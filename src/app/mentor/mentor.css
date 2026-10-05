@@ -1,4 +1,4 @@
-/*  PAGE  */
+/* PAGE */
 
 .mentor-container {
       max-width: 1200px;
@@ -7,7 +7,7 @@
       color: var(--text);
 }
 
-/*  HEADER  */
+/* HEADER */
 
 .mentor-title {
       font-size: 32px;
@@ -17,7 +17,7 @@
       line-height: 1.2;
 }
 
-/*  FILTERS  */
+/* FILTERS */
 
 .filter-tabs {
       display: flex;
@@ -49,7 +49,7 @@
       border-color: var(--primary);
 }
 
-/*  AVAILABILITY  */
+/* AVAILABILITY */
 
 .availability-box {
       background: var(--card);
@@ -125,7 +125,7 @@
 }
 
 
-/*  GRID  */
+/* GRID */
 
 .mentor-grid {
       display: grid;
@@ -137,7 +137,7 @@
       border-radius: 12px;
 }
 
-/*  CARD  */
+/* CARD */
 
 .mentor-card {
       background: var(--card);
@@ -173,7 +173,7 @@
       line-height: 1.6;
 }
 
-/*  STATUS  */
+/* STATUS */
 
 .status-badge {
       display: inline-flex;
@@ -210,7 +210,7 @@
       color: #3b82f6;
 }
 
-/*  ACTIONS  */
+/* ACTIONS */
 
 .action-buttons {
       display: flex;
@@ -282,7 +282,7 @@
       background: #dc2626;
 }
 
-/*  MODAL  */
+/* MODAL */
 
 .modal-overlay {
       position: fixed;
@@ -326,7 +326,7 @@
       font-weight: 700;
 }
 
-/*  FORM  */
+/* FORM */
 
 .form-group {
       display: flex;
@@ -367,7 +367,7 @@
       border-color: var(--primary);
 }
 
-/*  MODAL ACTIONS  */
+/* MODAL ACTIONS */
 
 .modal-actions {
       display: flex;
@@ -377,7 +377,7 @@
       margin-top: 24px;
 }
 
-/*  STATES  */
+/* STATES */
 
 .loading-text,
 .empty-text,
@@ -390,7 +390,7 @@
       color: #ef4444;
 }
 
-/*  RESPONSIVE  */
+/* RESPONSIVE */
 
 @media (min-width: 700px) {
       .mentor-grid {
@@ -404,7 +404,7 @@
       }
 }
 
-/*  TABLET  */
+/* TABLET */
 
 @media (max-width: 768px) {
 
@@ -440,7 +440,7 @@
       }
 }
 
-/*  MOBILE  */
+/* MOBILE */
 
 @media (max-width: 520px) {
 

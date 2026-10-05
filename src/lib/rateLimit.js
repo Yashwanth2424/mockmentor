@@ -19,22 +19,18 @@ export function rateLimit(req, { limit, windowMs, key }) {
 
       const record = store.get(storeKey);
 
-      // First request from this IP for this route
       if (!record) {
             store.set(storeKey, { count: 1, start: now });
             return null;
       }
 
-      // Window expired — reset
       if (now - record.start > windowMs) {
             store.set(storeKey, { count: 1, start: now });
             return null;
       }
 
-      // Within window — increment
       record.count += 1;
 
-      // Limit exceeded
       if (record.count > limit) {
             const retryAfter = Math.ceil(
                   (record.start + windowMs - now) / 1000

@@ -10,7 +10,6 @@ const publicUser = { select: { id: true, name: true, email: true } };
 
 export async function POST(req) {
 
-      // RATE LIMIT
       const limited = rateLimit(req, {
             key: "booking",
             limit: 10,
@@ -35,7 +34,6 @@ export async function POST(req) {
 
             const body = await req.json();
 
-            // ZOD VALIDATION
             const parsed = bookingSchema.safeParse(body);
 
             if (!parsed.success) {
@@ -45,7 +43,6 @@ export async function POST(req) {
 
             const { topic: cleanTopic, date, mentorId } = parsed.data;
 
-            // DATE
             const selectedDate = new Date(date);
             selectedDate.setSeconds(0, 0);
 
@@ -53,7 +50,6 @@ export async function POST(req) {
                   return errorResponse("Invalid date format", 400);
             }
 
-            // TOMORROW ONLY
             const now = new Date();
             const tomorrow = new Date();
             tomorrow.setDate(now.getDate() + 1);
@@ -63,13 +59,11 @@ export async function POST(req) {
                   return errorResponse("Booking allowed only from tomorrow", 400);
             }
 
-            // SLOT VALIDATION
             const minutes = selectedDate.getMinutes();
             if (minutes !== 0 && minutes !== 30) {
                   return errorResponse("Only 30-minute slots allowed", 400);
             }
 
-            // STUDENT CONFLICT
             const existingStudentInterview = await prisma.interview.findFirst({
                   where: {
                         userId: user.id,
@@ -82,7 +76,6 @@ export async function POST(req) {
                   return errorResponse("You already have an interview at this time", 409);
             }
 
-            // MENTOR
             const mentor = await prisma.user.findUnique({
                   where: { id: mentorId },
                   include: { availability: true },
@@ -92,7 +85,6 @@ export async function POST(req) {
                   return errorResponse("Invalid mentor", 400);
             }
 
-            // MENTOR CONFLICT
             const existingMentorInterview = await prisma.interview.findFirst({
                   where: {
                         mentorId,
@@ -105,7 +97,6 @@ export async function POST(req) {
                   return errorResponse("Mentor already booked for this time", 409);
             }
 
-            // AVAILABILITY
             const selectedHour = selectedDate.getHours();
             const selectedDay = selectedDate.getDay();
 
@@ -124,7 +115,6 @@ export async function POST(req) {
                   return errorResponse("Time outside mentor availability", 400);
             }
 
-            // CREATE INTERVIEW
             let interview;
             try {
                   interview = await prisma.interview.create({
@@ -147,7 +137,6 @@ export async function POST(req) {
                   throw err;
             }
 
-            // EMAIL
             try {
                   await sendEmail({
                         to: interview.user.email,

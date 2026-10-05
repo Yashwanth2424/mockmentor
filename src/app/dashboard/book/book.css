@@ -1,4 +1,4 @@
-/*  PAGE  */
+/* PAGE */
 
 .book-page {
       width: 100%;
@@ -38,7 +38,7 @@
       font-size: 14px;
 }
 
-/*  CARD  */
+/* CARD */
 
 .booking-card {
       background: var(--card);
@@ -48,7 +48,7 @@
       overflow: hidden;
 }
 
-/*  LAYOUT  */
+/* LAYOUT */
 
 .booking-layout {
       display: grid;
@@ -57,7 +57,7 @@
       align-items: flex-start;
 }
 
-/*  LEFT  */
+/* LEFT */
 
 .booking-left {
       display: flex;
@@ -65,7 +65,7 @@
       gap: 16px;
 }
 
-/*  RIGHT  */
+/* RIGHT */
 
 .booking-right {
       flex: 2;
@@ -79,7 +79,7 @@
       gap: 18px;
 }
 
-/*  INPUT GROUP  */
+/* INPUT GROUP */
 
 .input-group {
       display: flex;
@@ -93,7 +93,7 @@
       color: var(--text);
 }
 
-/*  INPUTS  */
+/* INPUTS */
 
 .booking-left input,
 .booking-left select {
@@ -117,7 +117,7 @@
       box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.08);
 }
 
-/*  DISABLED  */
+/* DISABLED */
 
 .booking-left select:disabled,
 .booking-left button:disabled {
@@ -125,7 +125,7 @@
       cursor: not-allowed;
 }
 
-/*  BUTTON  */
+/* BUTTON */
 
 .booking-left button {
       height: 48px;
@@ -145,7 +145,7 @@
       transform: translateY(-1px);
 }
 
-/*  ERROR  */
+/* ERROR */
 
 .error-text {
       color: #ef4444;
@@ -153,7 +153,7 @@
       margin-top: -2px;
 }
 
-/*  SLOT HEADINGS  */
+/* SLOT HEADINGS */
 
 .slot-group {
       display: flex;
@@ -168,7 +168,7 @@
       opacity: 0.9;
 }
 
-/*  SLOT GRID  */
+/* SLOT GRID */
 
 .slots-grid {
       display: grid;
@@ -176,7 +176,7 @@
       gap: 12px;
 }
 
-/*  SLOT  */
+/* SLOT */
 
 .slot {
       border: 1px solid var(--border);
@@ -206,7 +206,7 @@
       box-shadow: 0 8px 18px rgba(99, 102, 241, 0.2);
 }
 
-/*  EMPTY  */
+/* EMPTY */
 
 .empty-slots {
       display: flex;
@@ -220,7 +220,7 @@
       font-size: 14px;
 }
 
-/*  SELECTED  */
+/* SELECTED */
 
 .selected-slot {
       padding: 0 0 0 3px;
@@ -230,7 +230,7 @@
       font-weight: 600;
 }
 
-/*  SECTION TITLE  */
+/* SECTION TITLE */
 
 .booking-right-title {
       font-size: 16px;
@@ -238,7 +238,7 @@
       color: var(--text);
 }
 
-/*  LOADING  */
+/* LOADING */
 
 .loading-text {
       color: var(--text);
@@ -246,7 +246,7 @@
       font-size: 14px;
 }
 
-/*  TABLET  */
+/* TABLET */
 
 @media (max-width: 1024px) {
 
@@ -259,7 +259,7 @@
       }
 }
 
-/*  MOBILE  */
+/* MOBILE */
 
 @media (max-width: 768px) {
 
@@ -287,7 +287,7 @@
       }
 }
 
-/*  SMALL MOBILE  */
+/* SMALL MOBILE */
 
 @media (max-width: 480px) {
 

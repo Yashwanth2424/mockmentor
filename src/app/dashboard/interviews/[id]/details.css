@@ -1,4 +1,4 @@
-/*  PAGE  */
+/* PAGE */
 
 .details-container {
       max-width: 920px;
@@ -7,7 +7,7 @@
       animation: fadeIn 0.25s ease;
 }
 
-/*  ANIMATION  */
+/* ANIMATION */
 
 @keyframes fadeIn {
       from {
@@ -21,7 +21,7 @@
       }
 }
 
-/*  BACK BUTTON  */
+/* BACK BUTTON */
 
 .back-btn {
       display: inline-flex;
@@ -44,7 +44,7 @@
       transform: translateX(-2px);
 }
 
-/*  CARD  */
+/* CARD */
 
 .details-card {
       background: var(--card);
@@ -63,7 +63,7 @@
       box-shadow: 0 12px 30px #00000014;
 }
 
-/*  HEADER  */
+/* HEADER */
 
 .details-header {
       display: flex;
@@ -83,7 +83,7 @@
       word-break: break-word;
 }
 
-/*  STATUS  */
+/* STATUS */
 
 .status {
       display: inline-flex;
@@ -132,7 +132,7 @@
       color: #ef4444;
 }
 
-/*  INFO GRID  */
+/* INFO GRID */
 
 .info-grid {
       display: grid;
@@ -185,7 +185,7 @@
       word-break: break-word;
 }
 
-/*  FEEDBACK  */
+/* FEEDBACK */
 
 .feedback-box {
       background: var(--secondary);
@@ -210,7 +210,7 @@
       margin-bottom: 18px;
 }
 
-/*  FEEDBACK CONTENT  */
+/* FEEDBACK CONTENT */
 
 .feedback-content {
       display: flex;
@@ -218,7 +218,7 @@
       gap: 18px;
 }
 
-/*  RATING  */
+/* RATING */
 
 .feedback-rating {
       display: flex;
@@ -239,7 +239,7 @@
       letter-spacing: 2px;
 }
 
-/*  FEEDBACK SECTIONS  */
+/* FEEDBACK SECTIONS */
 
 .feedback-section {
       background: var(--card);
@@ -269,7 +269,7 @@
       word-break: break-word;
 }
 
-/*  NO FEEDBACK  */
+/* NO FEEDBACK */
 
 .no-feedback {
       color: var(--text);
@@ -281,7 +281,7 @@
       line-height: 1.6;
 }
 
-/*  SKELETON  */
+/* SKELETON */
 
 .skeleton {
       border-radius: 10px;
@@ -307,7 +307,7 @@
       }
 }
 
-/*  SKELETON SIZES  */
+/* SKELETON SIZES */
 
 .skeleton-back {
       width: 180px;
@@ -348,8 +348,8 @@
       width: 70%;
 }
 
-/*  RESPONSIVE  */
-/*  LARGE TABLET  */
+/* RESPONSIVE */
+/* LARGE TABLET */
 
 @media (max-width: 900px) {
 
@@ -381,7 +381,7 @@
       }
 }
 
-/*  TABLET  */
+/* TABLET */
 
 @media (max-width: 768px) {
 
@@ -420,7 +420,7 @@
       }
 }
 
-/*  MOBILE  */
+/* MOBILE */
 
 @media (max-width: 480px) {
 

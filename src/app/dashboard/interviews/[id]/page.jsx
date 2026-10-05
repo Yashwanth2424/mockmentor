@@ -27,8 +27,6 @@ export default function InterviewDetailsPage() {
       const router =
             useRouter();
 
-      // FETCHER
-
       const fetcher = async (url) => {
 
             const res =
@@ -51,8 +49,6 @@ export default function InterviewDetailsPage() {
             return json.data;
       };
 
-      // SWR
-
       const {
             data,
             isLoading,
@@ -67,12 +63,8 @@ export default function InterviewDetailsPage() {
             }
       );
 
-      // SAFE DATA
-
       const interview =
             data || null;
-
-      // LOADING
 
       if (isLoading) {
 
@@ -101,8 +93,6 @@ export default function InterviewDetailsPage() {
                   </div>
             );
       }
-
-      // ERROR
 
       if (error || !interview) {
 
@@ -137,8 +127,6 @@ export default function InterviewDetailsPage() {
             );
       }
 
-      // STATUS ICON
-
       function renderStatusIcon() {
 
             switch (
@@ -166,8 +154,6 @@ export default function InterviewDetailsPage() {
                         );
             }
       }
-
-      // FEEDBACK MESSAGE
 
       function renderFeedbackMessage() {
 
@@ -210,8 +196,6 @@ export default function InterviewDetailsPage() {
       return (
             <div className="details-container fade-in">
 
-                  {/* BACK BUTTON */}
-
                   <button
                         className="back-btn"
                         onClick={() =>
@@ -226,11 +210,7 @@ export default function InterviewDetailsPage() {
                         Back to Interviews
                   </button>
 
-                  {/* CARD */}
-
                   <div className="details-card hover-card">
-
-                        {/* HEADER */}
 
                         <div className="details-header">
 
@@ -245,11 +225,7 @@ export default function InterviewDetailsPage() {
                               </span>
                         </div>
 
-                        {/* INFO GRID */}
-
                         <div className="info-grid">
-
-                              {/* DATE */}
 
                               <div className="info-card">
 
@@ -270,8 +246,6 @@ export default function InterviewDetailsPage() {
                                     </div>
                               </div>
 
-                              {/* STATUS */}
-
                               <div className="info-card">
 
                                     <div className="info-label">
@@ -286,8 +260,6 @@ export default function InterviewDetailsPage() {
                                           {interview.status}
                                     </div>
                               </div>
-
-                              {/* MENTOR */}
 
                               <div className="info-card">
 
@@ -304,8 +276,6 @@ export default function InterviewDetailsPage() {
                                                 "Not Assigned"}
                                     </div>
                               </div>
-
-                              {/* EMAIL */}
 
                               <div className="info-card">
 
@@ -324,8 +294,6 @@ export default function InterviewDetailsPage() {
                               </div>
                         </div>
 
-                        {/* FEEDBACK */}
-
                         <div className="feedback-box">
 
                               <h3>
@@ -335,8 +303,6 @@ export default function InterviewDetailsPage() {
                               {interview.feedback ? (
 
                                     <div className="feedback-content">
-
-                                          {/* RATING */}
 
                                           <div className="feedback-rating">
 
@@ -354,8 +320,6 @@ export default function InterviewDetailsPage() {
                                                 </div>
                                           </div>
 
-                                          {/* STRENGTHS */}
-
                                           {interview.strengths && (
 
                                                 <div className="feedback-section">
@@ -370,8 +334,6 @@ export default function InterviewDetailsPage() {
                                                 </div>
                                           )}
 
-                                          {/* IMPROVEMENTS */}
-
                                           {interview.improvements && (
 
                                                 <div className="feedback-section">
@@ -385,8 +347,6 @@ export default function InterviewDetailsPage() {
                                                       </p>
                                                 </div>
                                           )}
-
-                                          {/* OVERALL */}
 
                                           <div className="feedback-section">
 

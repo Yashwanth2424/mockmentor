@@ -7,7 +7,6 @@ export async function proxy(req) {
       const token = req.cookies.get("token")?.value;
       const secret = new TextEncoder().encode(process.env.JWT_SECRET);
 
-      /* ===== LOGIN / SIGNUP ===== */
       if (pathname === "/login" || pathname === "/signup") {
 
             if (!token) return NextResponse.next();
@@ -30,7 +29,6 @@ export async function proxy(req) {
             }
       }
 
-      /* ===== NO TOKEN ===== */
       if (!token) {
             if (pathname.startsWith("/api")) {
                   return NextResponse.json(
@@ -41,7 +39,6 @@ export async function proxy(req) {
             return NextResponse.redirect(new URL("/login", req.url));
       }
 
-      /* ===== VERIFY TOKEN ===== */
       let payload;
 
       try {
@@ -61,7 +58,6 @@ export async function proxy(req) {
 
       const role = payload.role;
 
-      /* ===== ADMIN ROUTES ===== */
       if (pathname.startsWith("/admin") || pathname.startsWith("/api/admin")) {
             if (!["ADMIN", "SUPER_ADMIN"].includes(role)) {
                   if (pathname.startsWith("/api")) {
@@ -74,14 +70,13 @@ export async function proxy(req) {
             }
       }
 
-      /* ===== MENTOR PAGE ROUTES ===== */
       if (pathname.startsWith("/mentor")) {
             if (role !== "MENTOR") {
                   return NextResponse.redirect(new URL("/dashboard", req.url));
             }
       }
 
-      /* ===== MENTOR API — management only, not public listing ===== */
+      // Only the mentor management APIs need the MENTOR role; the public mentor list (/api/mentor) does not
       if (
             pathname.startsWith("/api/mentor/interviews") ||
             pathname.startsWith("/api/mentor/availability")
@@ -94,7 +89,6 @@ export async function proxy(req) {
             }
       }
 
-      /* ===== DASHBOARD ROUTES ===== */
       if (pathname.startsWith("/dashboard")) {
             if (role === "ADMIN" || role === "SUPER_ADMIN")
                   return NextResponse.redirect(new URL("/admin", req.url));

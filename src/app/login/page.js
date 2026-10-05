@@ -19,7 +19,6 @@ export default function LoginPage() {
       const [showPassword, setShowPassword] = useState(false);
       const [loading, setLoading] = useState(false);
 
-      // FIX: auth check uses new response shape
       useEffect(() => {
             async function checkUser() {
                   try {
@@ -46,7 +45,6 @@ export default function LoginPage() {
             checkUser();
       }, [router]);
 
-      // FIX: login response uses new response shape
       async function handleSubmit(e) {
             e.preventDefault();
 
@@ -101,7 +99,6 @@ export default function LoginPage() {
       return (
             <div className="login-page">
 
-                  {/* LEFT */}
                   <div className="login-left">
                         <Image
                               src="/login_page_img_mock_mentor.webp"
@@ -112,7 +109,6 @@ export default function LoginPage() {
                         />
                   </div>
 
-                  {/* RIGHT */}
                   <div className="login-right">
                         <form className="login-card" onSubmit={handleSubmit}>
 
@@ -123,7 +119,6 @@ export default function LoginPage() {
 
                               <h1>Login</h1>
 
-                              {/* EMAIL */}
                               <div className="input-group">
                                     <Mail size={18} className="input-icon" />
                                     <input
@@ -135,7 +130,6 @@ export default function LoginPage() {
                                     />
                               </div>
 
-                              {/* PASSWORD */}
                               <div className="input-group">
                                     <Lock size={18} className="input-icon" />
                                     <input

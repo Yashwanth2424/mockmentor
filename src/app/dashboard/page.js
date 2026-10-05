@@ -19,8 +19,6 @@ import "./dashboard.css";
 
 export default function DashboardPage() {
 
-      // FETCHER
-
       const fetcher =
             async (url) => {
 
@@ -48,8 +46,6 @@ export default function DashboardPage() {
                         : [];
             };
 
-      // INTERVIEWS
-
       const {
             data: interviews = [],
             isLoading,
@@ -62,8 +58,6 @@ export default function DashboardPage() {
             }
       );
 
-      // SAFE DATA
-
       const safeInterviews =
             Array.isArray(
                   interviews
@@ -71,16 +65,12 @@ export default function DashboardPage() {
                   ? interviews
                   : [];
 
-      // LOADING
-
       if (isLoading) {
 
             return (
                   <SkeletonDashboard />
             );
       }
-
-      // ERROR
 
       if (error) {
 
@@ -100,8 +90,6 @@ export default function DashboardPage() {
                   </section>
             );
       }
-
-      // STATS
 
       const totalInterviews =
             safeInterviews.length;
@@ -127,8 +115,6 @@ export default function DashboardPage() {
                         "CANCELLED"
             ).length;
 
-      // RECENT INTERVIEWS
-
       const recentInterviews =
             [...safeInterviews]
                   .sort(
@@ -144,8 +130,6 @@ export default function DashboardPage() {
 
       return (
             <section className="dashboard-page">
-
-                  {/* HEADER */}
 
                   <div className="dashboard-header">
 
@@ -168,11 +152,7 @@ export default function DashboardPage() {
                         </Link>
                   </div>
 
-                  {/* STATS */}
-
                   <div className="stats-grid">
-
-                        {/* TOTAL */}
 
                         <div className="stats-card">
 
@@ -192,8 +172,6 @@ export default function DashboardPage() {
                               </div>
                         </div>
 
-                        {/* PENDING */}
-
                         <div className="stats-card">
 
                               <div className="stats-icon pending-icon">
@@ -211,8 +189,6 @@ export default function DashboardPage() {
                                     </h2>
                               </div>
                         </div>
-
-                        {/* COMPLETED */}
 
                         <div className="stats-card">
 
@@ -232,8 +208,6 @@ export default function DashboardPage() {
                               </div>
                         </div>
 
-                        {/* CANCELLED */}
-
                         <div className="stats-card">
 
                               <div className="stats-icon cancelled-icon">
@@ -252,8 +226,6 @@ export default function DashboardPage() {
                               </div>
                         </div>
                   </div>
-
-                  {/* RECENT */}
 
                   <div className="recent-section">
 

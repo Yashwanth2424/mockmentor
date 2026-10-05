@@ -112,7 +112,6 @@ export default function InterviewDetails() {
                               {interview.date ? new Date(interview.date).toLocaleString() : "N/A"}
                         </p>
 
-                        {/* RESCHEDULE */}
                         <div className="field">
                               <label>Reschedule</label>
                               <input
@@ -129,7 +128,6 @@ export default function InterviewDetails() {
                               </button>
                         </div>
 
-                        {/* FEEDBACK */}
                         <div className="field">
                               <label>Feedback</label>
                               <textarea
@@ -146,7 +144,6 @@ export default function InterviewDetails() {
                               </button>
                         </div>
 
-                        {/* ACTIONS */}
                         <div className="actions">
                               {!isCompleted && (
                                     <button

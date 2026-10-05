@@ -2,7 +2,6 @@
 
 import { useEffect } from "react";
 import "../error.css";
-// import "./dashboard-error.css";
 
 export default function DashboardError({ error, reset }) {
 

@@ -9,7 +9,6 @@ export async function PATCH(req) {
 
             const body = await req.json();
 
-            // ZOD VALIDATION
             const parsed = availabilitySchema.safeParse(body);
 
             if (!parsed.success) {
@@ -19,7 +18,6 @@ export async function PATCH(req) {
 
             const { availability } = parsed.data;
 
-            // TRANSACTION
             await prisma.$transaction([
                   prisma.mentorAvailability.deleteMany({
                         where: { mentorId: mentor.id },

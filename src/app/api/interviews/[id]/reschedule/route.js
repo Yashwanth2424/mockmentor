@@ -13,7 +13,6 @@ export async function PATCH(req, { params }) {
 
             const body = await req.json();
 
-            // ZOD VALIDATION
             const parsed = rescheduleSchema.safeParse(body);
 
             if (!parsed.success) {
@@ -23,7 +22,6 @@ export async function PATCH(req, { params }) {
 
             const { date, mentorId } = parsed.data;
 
-            // DATE
             const selectedDate = new Date(date);
             selectedDate.setSeconds(0, 0);
 
@@ -31,18 +29,15 @@ export async function PATCH(req, { params }) {
                   return errorResponse("Invalid date", 400);
             }
 
-            // FUTURE DATE ONLY
             if (selectedDate <= new Date()) {
                   return errorResponse("Please select a future time", 400);
             }
 
-            // SLOT VALIDATION
             const minutes = selectedDate.getMinutes();
             if (minutes !== 0 && minutes !== 30) {
                   return errorResponse("Only 30-minute slots allowed", 400);
             }
 
-            // INTERVIEW
             const interview = await prisma.interview.findUnique({
                   where: { id },
             });
@@ -51,17 +46,14 @@ export async function PATCH(req, { params }) {
                   return errorResponse("Interview not found", 404);
             }
 
-            // OWNERSHIP
             if (interview.userId !== user.id) {
                   return errorResponse("Forbidden", 403);
             }
 
-            // STATUS CHECK
             if (!["PENDING", "ACCEPTED"].includes(interview.status)) {
                   return errorResponse("Cannot reschedule this interview", 400);
             }
 
-            // MENTOR
             const mentor = await prisma.user.findUnique({
                   where: { id: mentorId },
                   include: { availability: true },
@@ -71,7 +63,6 @@ export async function PATCH(req, { params }) {
                   return errorResponse("Invalid mentor", 400);
             }
 
-            // AVAILABILITY
             const selectedDay = selectedDate.getDay();
             const selectedHour = selectedDate.getHours();
 
@@ -90,7 +81,6 @@ export async function PATCH(req, { params }) {
                   return errorResponse("Selected time outside mentor availability", 400);
             }
 
-            // MENTOR CONFLICT
             const mentorConflict = await prisma.interview.findFirst({
                   where: {
                         mentorId,
@@ -104,7 +94,6 @@ export async function PATCH(req, { params }) {
                   return errorResponse("Mentor already booked", 409);
             }
 
-            // STUDENT CONFLICT
             const studentConflict = await prisma.interview.findFirst({
                   where: {
                         userId: user.id,
@@ -118,7 +107,6 @@ export async function PATCH(req, { params }) {
                   return errorResponse("You already have another interview at this time", 409);
             }
 
-            // UPDATE
             let updatedInterview;
             try {
                   updatedInterview = await prisma.interview.update({

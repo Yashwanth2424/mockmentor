@@ -1,4 +1,4 @@
-/*  HEADER  */
+/* HEADER */
 
 .app-header {
       display: flex;
@@ -33,7 +33,7 @@
       gap: 12px;
 }
 
-/*  USER  */
+/* USER */
 
 .user-name {
       display: flex;
@@ -48,7 +48,7 @@
       white-space: nowrap;
 }
 
-/*  LOGOUT  */
+/* LOGOUT */
 
 .logout-btn {
       height: 40px;
@@ -68,7 +68,7 @@
       transform: translateY(-1px);
 }
 
-/*  RESPONSIVE  */
+/* RESPONSIVE */
 
 @media (max-width: 640px) {
 

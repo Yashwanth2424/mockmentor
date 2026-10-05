@@ -15,12 +15,8 @@ export async function GET(req) {
 
       try {
 
-            // AUTH
-
             const user =
                   requireAuth(req);
-
-            // INTERVIEWS
 
             const interviews =
                   await prisma.interview.findMany({
@@ -37,8 +33,6 @@ export async function GET(req) {
                         },
                   });
 
-            // SUCCESS
-
             return successResponse(
                   interviews
             );
@@ -50,8 +44,6 @@ export async function GET(req) {
                   err
             );
 
-            // AUTH ERRORS
-
             if (
                   err.message ===
                   "Unauthorized"
@@ -62,8 +54,6 @@ export async function GET(req) {
                         401
                   );
             }
-
-            // SERVER ERROR
 
             return errorResponse(
                   "Server error",

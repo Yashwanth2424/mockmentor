@@ -8,7 +8,6 @@ import { loginSchema } from "@/lib/validators";
 
 export async function POST(req) {
 
-      // RATE LIMIT
       const limited = rateLimit(req, {
             key: "login",
             limit: 5,
@@ -31,7 +30,6 @@ export async function POST(req) {
       try {
             const body = await req.json();
 
-            // ZOD VALIDATION
             const parsed = loginSchema.safeParse(body);
 
             if (!parsed.success) {
@@ -41,7 +39,6 @@ export async function POST(req) {
 
             const { email, password } = parsed.data;
 
-            // FIND USER
             const user = await prisma.user.findUnique({
                   where: { email },
             });
@@ -50,26 +47,22 @@ export async function POST(req) {
                   return errorResponse("Invalid email or password", 401);
             }
 
-            // PASSWORD
             const isValid = await comparePassword(password, user.password);
 
             if (!isValid) {
                   return errorResponse("Invalid email or password", 401);
             }
 
-            // TOKEN
             const token = createToken({
                   id: user.id,
                   role: user.role,
             });
 
-            // RESPONSE
             const response = successResponse({
                   message: "Login successful",
                   role: user.role,
             });
 
-            // COOKIE
             response.cookies.set({
                   name: "token",
                   value: token,

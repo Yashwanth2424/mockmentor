@@ -1,7 +1,5 @@
 import { z } from "zod";
 
-/* ===== AUTH ===== */
-
 export const loginSchema = z.object({
       email: z
             .string()
@@ -33,8 +31,6 @@ export const signupSchema = z.object({
             .max(100, "Password too long"),
 });
 
-/* ===== BOOKING ===== */
-
 export const bookingSchema = z.object({
       topic: z
             .string()
@@ -57,8 +53,6 @@ export const bookingSchema = z.object({
             .min(1, "Mentor is required"),
 });
 
-/* ===== RESCHEDULE ===== */
-
 export const rescheduleSchema = z.object({
       date: z
             .string()
@@ -71,8 +65,6 @@ export const rescheduleSchema = z.object({
             .string()
             .min(1, "Mentor is required"),
 });
-
-/* ===== AVAILABILITY ===== */
 
 export const availabilitySchema = z.object({
       availability: z
@@ -102,8 +94,6 @@ export const availabilitySchema = z.object({
             )
             .min(1, "At least one availability slot is required"),
 });
-
-/* ===== ROLE ===== */
 
 export const roleSchema = z.object({
       role: z.enum(

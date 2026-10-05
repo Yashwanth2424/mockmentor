@@ -18,17 +18,11 @@ export async function GET(
 
       try {
 
-            // AUTH
-
             const user =
                   requireAuth(req);
 
-            // PARAMS
-
             const { id } =
                   await params;
-
-            // INTERVIEW
 
             const interview =
                   await prisma.interview.findUnique({
@@ -42,8 +36,6 @@ export async function GET(
                         },
                   });
 
-            // NOT FOUND
-
             if (!interview) {
 
                   return errorResponse(
@@ -51,8 +43,6 @@ export async function GET(
                         404
                   );
             }
-
-            // OWNERSHIP CHECK
 
             if (
                   interview.userId !==
@@ -65,8 +55,6 @@ export async function GET(
                   );
             }
 
-            // SUCCESS
-
             return successResponse(
                   interview
             );
@@ -78,8 +66,6 @@ export async function GET(
                   err
             );
 
-            // AUTH
-
             if (
                   err.message ===
                   "Unauthorized"
@@ -90,8 +76,6 @@ export async function GET(
                         401
                   );
             }
-
-            // SERVER
 
             return errorResponse(
                   "Server error",

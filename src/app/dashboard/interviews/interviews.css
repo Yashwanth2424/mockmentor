@@ -30,7 +30,7 @@
       color: white;
 }
 
-/*  INTERVIEW CARD  */
+/* INTERVIEW CARD */
 .interview-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -83,7 +83,7 @@
       word-break: break-word;
 }
 
-/*  STATUS BADGES  */
+/* STATUS BADGES */
 
 .status-badge {
       display: inline-flex;
@@ -120,7 +120,7 @@
       color: #047857;
 }
 
-/* CARD ACTIONS  */
+/* CARD ACTIONS */
 
 .card-actions {
       display: flex;
@@ -142,7 +142,7 @@
       transition: all 0.2s ease;
 }
 
-/*  BUTTONS */
+/* BUTTONS */
 
 .cancel-btn {
       background: rgba(239, 68, 68, 0.12);
@@ -176,7 +176,7 @@
       opacity: 0.9;
 }
 
-/* EMPTY STATE  */
+/* EMPTY STATE */
 
 .empty-state {
       border: 1px dashed var(--border);
@@ -207,7 +207,7 @@
       margin: 0 auto;
 }
 
-/* HEADER  */
+/* HEADER */
 
 .interviews-header h1 {
       font-size: 32px;
@@ -224,7 +224,7 @@
       line-height: 1.6;
 }
 
-/* CARD TOP  */
+/* CARD TOP */
 
 .card-top {
       display: flex;
@@ -273,7 +273,7 @@
       color: var(--text);
 }
 
-/*  MODAL FORM  */
+/* MODAL FORM */
 
 .modal-group {
       display: flex;
@@ -299,7 +299,7 @@
       font-size: 14px;
 }
 
-/* SLOT GRID  */
+/* SLOT GRID */
 
 .slots-grid {
       display: grid;
@@ -329,7 +329,7 @@
       border-color: var(--primary);
 }
 
-/*  MODAL ACTIONS  */
+/* MODAL ACTIONS */
 
 .modal-actions {
       display: flex;
@@ -367,7 +367,7 @@
       opacity: 0.92;
 }
 
-/*  TABLET  */
+/* TABLET */
 
 @media (max-width: 1024px) {
       .interview-grid {
@@ -375,7 +375,7 @@
       }
 }
 
-/* MOBILE  */
+/* MOBILE */
 
 @media (max-width: 768px) {
       .interview-grid {
@@ -421,7 +421,7 @@
       }
 }
 
-/* SMALL MOBILE  */
+/* SMALL MOBILE */
 
 @media (max-width: 480px) {
       .interview-card {

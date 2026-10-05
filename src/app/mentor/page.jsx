@@ -216,7 +216,6 @@ export default function MentorPage() {
             }
       }
 
-      // LOADING — show skeleton instead of plain text
       if (!user) return <SkeletonMentor />;
 
       const safeInterviews = Array.isArray(interviews) ? interviews : [];
@@ -232,7 +231,6 @@ export default function MentorPage() {
                   <div className="mentor-container">
                         <h1 className="mentor-title">Mentor Dashboard</h1>
 
-                        {/* AVAILABILITY */}
                         <div className="availability-box">
                               <h3>Set Weekly Availability</h3>
 
@@ -281,7 +279,6 @@ export default function MentorPage() {
                               </button>
                         </div>
 
-                        {/* INTERVIEWS */}
                         {isLoading ? (
                               <div className="skeleton-mentor-grid">
                                     {Array(4).fill(0).map((_, i) => (
@@ -379,7 +376,6 @@ export default function MentorPage() {
                         )}
                   </div>
 
-                  {/* FEEDBACK MODAL */}
                   {feedbackModal && (
                         <div className="modal-overlay">
                               <div className="feedback-modal">

@@ -12,17 +12,14 @@ export async function PATCH(req, { params }) {
                   where: { id },
             });
 
-            // NOT FOUND
             if (!interview) {
                   return errorResponse("Interview not found", 404);
             }
 
-            // OWNERSHIP
             if (interview.userId !== user.id) {
                   return errorResponse("Forbidden", 403);
             }
 
-            // INVALID STATES
             if (interview.status === "CANCELLED") {
                   return errorResponse("Interview already cancelled", 400);
             }
@@ -35,7 +32,6 @@ export async function PATCH(req, { params }) {
                   return errorResponse("Rejected interviews cannot be cancelled", 400);
             }
 
-            // UPDATE
             const updated = await prisma.interview.update({
                   where: { id },
                   data: { status: "CANCELLED" },

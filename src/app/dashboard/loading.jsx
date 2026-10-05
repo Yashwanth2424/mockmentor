@@ -5,8 +5,6 @@ export default function DashboardLoading() {
       return (
             <section className="dashboard-loading-page">
 
-                  {/* HEADER */}
-
                   <div className="dashboard-header">
 
                         <div>
@@ -18,8 +16,6 @@ export default function DashboardLoading() {
 
                         <div className="dashboard-skeleton skeleton-button"></div>
                   </div>
-
-                  {/* STATS */}
 
                   <div className="stats-grid">
 
@@ -43,8 +39,6 @@ export default function DashboardLoading() {
                               </div>
                         ))}
                   </div>
-
-                  {/* RECENT */}
 
                   <div className="recent-section">
 

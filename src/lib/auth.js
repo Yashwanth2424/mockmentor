@@ -2,8 +2,6 @@ import bcrypt from "bcryptjs";
 
 import { verifyToken } from "@/lib/jwt";
 
-/* PASSWORD HELPERS */
-
 export async function hashPassword(
       password
 ) {
@@ -25,15 +23,11 @@ export async function comparePassword(
       );
 }
 
-/* GET TOKEN */
-
 export function getToken(req) {
 
       return req.cookies.get("token")
             ?.value;
 }
-
-/* GET CURRENT USER */
 
 export function getCurrentUser(req) {
 
@@ -56,8 +50,6 @@ export function getCurrentUser(req) {
       }
 }
 
-/* REQUIRE AUTH */
-
 export function requireAuth(req) {
 
       const user =
@@ -72,8 +64,6 @@ export function requireAuth(req) {
 
       return user;
 }
-
-/* REQUIRE ROLE */
 
 export function requireRole(
       req,
