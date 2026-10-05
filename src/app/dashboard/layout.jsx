@@ -6,7 +6,12 @@ import Sidebar from "@/components/Sidebar";
 import useSWR from "swr";
 import "./layout.css";
 
-const fetcher = (url) => fetch(url).then(res => res.json());
+const fetcher = async (url) => {
+      const res = await fetch(url);
+      const json = await res.json();
+      if (!res.ok || !json.success) throw new Error(json.error || "Request failed");
+      return json.data;
+};
 
 export default function DashboardLayout({ children }) {
       const [open, setOpen] = useState(false);
