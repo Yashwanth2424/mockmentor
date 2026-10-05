@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { capitalizeWords } from "@/lib/format";
 
 export const loginSchema = z.object({
       email: z
@@ -34,12 +35,10 @@ export const signupSchema = z.object({
 export const bookingSchema = z.object({
       topic: z
             .string()
+            .trim()
             .min(3, "Topic must be at least 3 characters")
             .max(100, "Topic must be under 100 characters")
-            .transform((val) => {
-                  const clean = val.trim();
-                  return clean.charAt(0).toUpperCase() + clean.slice(1);
-            }),
+            .transform(capitalizeWords),
 
       date: z
             .string()

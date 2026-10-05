@@ -7,6 +7,7 @@ import useSWR, {
 } from "swr";
 
 import { toast } from "react-toastify";
+import { capitalizeWords } from "@/lib/format";
 import "./book.css";
 
 const TOPIC_MIN = 3;
@@ -356,13 +357,6 @@ export default function BookPage() {
 
             try {
 
-                  const cleanTopic =
-                        topic.trim();
-
-                  const formattedTopic =
-                        cleanTopic.charAt(0).toUpperCase() +
-                        cleanTopic.slice(1);
-
                   const fullDateTime = new Date(
                         `${selectedDate}T${selectedTime}:00`
                   );
@@ -377,7 +371,7 @@ export default function BookPage() {
                                           "application/json",
                               },
                               body: JSON.stringify({
-                                    topic: formattedTopic,
+                                    topic: topic.trim(),
                                     date: fullDateTime,
                                     mentorId: selectedMentor,
                               }),
@@ -453,12 +447,11 @@ export default function BookPage() {
                                                       maxLength={TOPIC_MAX}
                                                       value={topic}
                                                       onChange={(e) => {
-
-                                                            setTopic(
-                                                                  e.target.value
-                                                            );
-
+                                                            const input = e.target;
+                                                            const cursor = input.selectionStart;
+                                                            setTopic(capitalizeWords(input.value));
                                                             setTopicError("");
+                                                            requestAnimationFrame(() => input.setSelectionRange(cursor, cursor));
                                                       }}
                                                 />
                                                 <datalist id="topic-suggestions">
