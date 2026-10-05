@@ -1,181 +1,164 @@
 # MockMentor
 
-**A production-grade full-stack mock interview booking platform** that connects students with mentors for scheduled interview practice sessions.
+MockMentor is a web app where students can book mock interviews with mentors. I built it to practice full-stack development with Next.js, Prisma and PostgreSQL.
 
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-mockmentor--flame.vercel.app-6366f1?style=for-the-badge)](https://mockmentor-flame.vercel.app/)
-[![Next.js](https://img.shields.io/badge/Next.js-16-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Neon-336791?style=for-the-badge&logo=postgresql)](https://neon.tech/)
-[![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?style=for-the-badge&logo=vercel)](https://vercel.com/)
+Live demo: https://mockmentor-flame.vercel.app
 
----
+## What it does
+
+There are three roles: student, mentor and admin.
+
+**Students can:**
+- book an interview by choosing a topic, a date, a mentor and a time slot
+- see their interviews and the status (pending, accepted, rejected, completed, cancelled)
+- reschedule or cancel an interview
+- read the mentor's feedback after the interview
+- get a confirmation email when they book
+
+**Mentors can:**
+- set the hours they are available for each day of the week
+- accept or reject booking requests
+- mark an interview as completed and give feedback (rating, strengths, things to improve)
+
+**Admins can:**
+- see all users, change their role or delete them
+- see all interviews and update or cancel them
+- see simple counts of total, pending and completed interviews
 
 ## Screenshots
 
-### Landing Page
-![Landing Page](screenshots/landing.png)
+**Student dashboard**
 
-### Login
-![Login Page](screenshots/login.png)
-
-### Student Dashboard
 ![Student Dashboard](screenshots/student-dashboard.png)
 
-### Book Interview
+**Booking an interview**
+
 ![Book Interview](screenshots/book-interview.png)
 
-### My Interviews
+**My interviews**
+
 ![My Interviews](screenshots/my-interviews.png)
 
----
+More: [landing page](screenshots/landing.png), [login page](screenshots/login.png)
 
-## Features
+## Tech stack
 
-**Student**
-- Book mock interviews by selecting topic, date, mentor, and time slot
-- Real-time slot availability — already booked slots are automatically disabled
-- View full interview history with status tracking (Pending, Accepted, Rejected, Completed, Cancelled)
-- Reschedule or cancel upcoming interviews
-- Receive automated email confirmations on booking events
+- Next.js 16 (App Router) with React and plain CSS
+- Next.js API routes for the backend
+- PostgreSQL on Neon, with Prisma as the ORM
+- Login with JWT stored in an HTTP-only cookie
+- SWR for fetching data on the client
+- Zod for validating request data
+- Resend for sending emails
+- Deployed on Vercel
 
-**Mentor**
-- Configure weekly working hours and availability
-- Accept or reject incoming interview requests
-- Submit structured feedback after completed sessions
-- View full session history from a dedicated dashboard
+## How some things work
 
-**Admin**
-- Manage all users and assign or change roles
-- View and manage all interviews across the platform
-- Access analytics dashboard with platform-wide stats
+**Roles and access.** `src/proxy.js` checks the login cookie and the role before a page or API route is opened. Each API route also checks the user again, so the API is protected even without the proxy.
 
----
+**No double booking.** A mentor or a student should never have two active interviews at the same time. The API first checks for a conflict to show a clear error message. But two requests can arrive at the same moment and both pass that check, so the real protection is in the database: two partial unique indexes on `(mentorId, date)` and `(userId, date)`, only for interviews that are PENDING or ACCEPTED. If two bookings for the same slot come in together, PostgreSQL accepts the first one and rejects the second, and the API returns a 409 error. Cancelled or rejected interviews do not block the slot.
 
-## Tech Stack
+Note: Prisma 5 cannot describe partial indexes in `schema.prisma`, so they only exist in the migration file. If a future `prisma migrate dev` tries to drop them, remove those `DROP INDEX` lines from the new migration.
 
-| Layer | Technology |
-|---|---|
-| Frontend | Next.js 16 (App Router), React, Tailwind CSS |
-| Backend | Next.js API Routes (Node.js) |
-| Database | PostgreSQL (Neon Serverless) |
-| ORM | Prisma |
-| Authentication | Custom JWT with HTTP-only cookies |
-| Data Fetching | SWR |
-| Validation | Zod |
-| Email | Resend |
-| Deployment | Vercel |
+**Other details:**
+- passwords are hashed with bcrypt
+- API responses always look like `{ success, data }` or `{ success, error }`
+- simple rate limiting on login, signup and booking
+- the SWR cache is cleared when a user logs out
 
----
+## Demo accounts
 
-## Architecture Highlights
-
-- **Role-based access control** — Student, Mentor, and Admin roles enforced at middleware level across all routes
-- **20+ REST API endpoints** with centralized error handling and standardized response structure
-- **Conflict detection** — scheduling system prevents double-bookings by checking existing reservations before confirming slots
-- **Security** — rate limiting on auth endpoints, HTTP-only cookies, Zod input validation, SWR cache cleared on logout to prevent cross-user data leaks
-- **Database** — composite indexes and cascade delete rules prevent N+1 queries and orphaned records
-
----
-
-## Demo Credentials
-
-You can explore the platform without signing up using these test accounts:
+You can try the app with these accounts:
 
 | Role | Email | Password |
 |---|---|---|
 | Student | yashwanththalka.example@gmail.com | 123456 |
 | Mentor | akshay123@gmail.com | 123456 |
 
-> The admin panel is not publicly accessible. Admin features are listed under Features above.
+The admin panel is not public. The admin features are listed above.
 
----
+## Run it locally
 
-## Getting Started (Local Setup)
-
-### Prerequisites
-
-- Node.js 18+
-- PostgreSQL database (or a free [Neon](https://neon.tech/) account)
-- [Resend](https://resend.com/) account for email (free tier works)
-
-### Installation
+You need Node.js 20.9 or newer and a PostgreSQL database (a free Neon account works). For emails you also need a Resend API key.
 
 ```bash
-# Clone the repository
 git clone https://github.com/Yashwanth2424/mockmentor.git
 cd mockmentor
-
-# Install dependencies
 npm install
 
-# Set up environment variables
+# copy the example env file and fill in your values
 cp .env.example .env
-# Fill in your values in .env (see below)
 
-# Push Prisma schema to your database
-npx prisma db push
+# create the tables
+npx prisma migrate deploy
 
-# Generate Prisma client
-npx prisma generate
+# create the two demo accounts
+npx prisma db seed
 
-# Start the development server
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+Then open http://localhost:3000.
 
-### Environment Variables
+The `.env` file needs these values:
 
 ```env
-# Database
 DATABASE_URL=your_postgresql_connection_string
-
-# Auth
-JWT_SECRET=your_jwt_secret_key
-
-# Email (Resend)
+JWT_SECRET=a_random_string_of_at_least_32_characters
 RESEND_API_KEY=your_resend_api_key
-
-# App URL
 NEXT_PUBLIC_APP_URL=http://localhost:3000
 ```
 
----
-
-## Project Structure
+## Project structure
 
 ```
 src/
 ├── app/
-│   ├── api/          # 20+ REST API route handlers
-│   ├── dashboard/    # Student dashboard pages
-│   ├── mentor/       # Mentor dashboard pages
-│   ├── admin/        # Admin panel pages
-│   ├── login/        # Authentication pages
+│   ├── api/          # API routes
+│   ├── dashboard/    # student pages
+│   ├── mentor/       # mentor page
+│   ├── admin/        # admin pages
+│   ├── login/
 │   └── signup/
-├── components/       # Reusable UI components
+├── components/       # header, sidebar, skeleton loaders, theme toggle
 ├── lib/
-│   ├── prisma.js     # Prisma client instance
-│   ├── auth.js       # JWT utilities
-│   ├── validators.js # Centralized Zod schemas
-│   └── mailer.js     # Resend email helpers
-└── middleware.js     # Route protection and role enforcement
+│   ├── prisma.js      # Prisma client
+│   ├── auth.js        # password hashing and login checks
+│   ├── adminAuth.js   # admin check
+│   ├── jwt.js         # create and verify tokens
+│   ├── validators.js  # Zod schemas
+│   ├── apiResponse.js # helpers for API responses
+│   ├── rateLimit.js   # rate limiting
+│   ├── env.js         # checks the environment variables
+│   └── email.js       # sending emails with Resend
+└── proxy.js           # checks login and role before a route is opened
 ```
 
----
+## What I learned
 
-## Roadmap
+- A check in the code is not enough to stop double bookings. Two requests can pass the check at the same time, so I added unique indexes in the database and tested it by sending two bookings at once.
+- How Prisma migrations work, and why I test a migration on a copy of the database (a Neon branch) before running it on production.
+- How login with JWT and HTTP-only cookies works, and why the API routes check the user again and do not only trust the proxy.
+- To only send the data the page needs. At first some API responses included the password hash of users, and I changed them to return only id, name and email.
+- My validation code used `error.errors`, which does not exist in Zod 4 (it is called `error.issues`). Because of that, every wrong input returned a server error instead of a clear message. Now I also test what happens with wrong input, not only with correct input.
 
-- [ ] TypeScript migration (branch: `typescript-migration`)
-- [ ] Unit tests with Jest and React Testing Library
-- [ ] Mentor rating and review system
-- [ ] Calendar view for interview scheduling
+## Known limitations
 
----
+- The rate limiter keeps its counts in memory. On Vercel every server instance has its own memory, so the limit is not reliable there. A shared store like Redis would fix this.
+- Time slots are checked in server time (UTC on Vercel). There is no timezone handling per user yet.
+- Emails are sent with Resend's test sender, so they only reach the email address of the Resend account.
+- There are no automated tests yet.
+
+## Next steps
+
+- [ ] Move the project to TypeScript
+- [ ] Add tests with Jest and React Testing Library
+- [ ] Let students rate their mentors
+- [ ] Add a calendar view for interviews
 
 ## Author
 
-**Thalka Yashwanth**
-M.Sc. Web Engineering — TU Chemnitz, Germany
+Thalka Yashwanth, M.Sc. Web Engineering student at TU Chemnitz, Germany
 
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-thalka--yashwanth-blue?style=flat&logo=linkedin)](https://linkedin.com/in/thalka-yashwanth)
-[![Portfolio](https://img.shields.io/badge/Portfolio-Visit-6366f1?style=flat)](https://yashwanth2424.github.io/My-Portfolio/)
+- LinkedIn: https://www.linkedin.com/in/thalka-yashwanth
+- Portfolio: https://yashwanth2424.github.io/My-Portfolio/
