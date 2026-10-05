@@ -8,6 +8,28 @@ import useSWR, {
 
 import { toast } from "react-toastify";
 import "./book.css";
+
+const TOPIC_MIN = 3;
+const TOPIC_MAX = 100;
+
+const TOPIC_SUGGESTIONS = [
+      "React",
+      "JavaScript",
+      "TypeScript",
+      "Node.js",
+      "Next.js",
+      "Python",
+      "Java",
+      "System Design",
+      "Data Structures & Algorithms",
+      "SQL & Databases",
+      "HTML & CSS",
+      "REST APIs",
+      "Git & GitHub",
+      "Frontend Development",
+      "Behavioral Interview",
+];
+
 export default function BookPage() {
 
       const router = useRouter();
@@ -18,6 +40,9 @@ export default function BookPage() {
       const [topic, setTopic] = useState("");
       const [booking, setBooking] = useState(false);
       const [topicError, setTopicError] = useState("");
+
+      const topicLength = topic.trim().length;
+      const topicValid = topicLength >= TOPIC_MIN && topicLength <= TOPIC_MAX;
 
       const fetcher = async (url) => {
 
@@ -424,6 +449,8 @@ export default function BookPage() {
                                                 <input
                                                       type="text"
                                                       placeholder="Frontend Development, React, DSA..."
+                                                      list="topic-suggestions"
+                                                      maxLength={TOPIC_MAX}
                                                       value={topic}
                                                       onChange={(e) => {
 
@@ -434,9 +461,19 @@ export default function BookPage() {
                                                             setTopicError("");
                                                       }}
                                                 />
-                                                {topicError && (
+                                                <datalist id="topic-suggestions">
+                                                      {TOPIC_SUGGESTIONS.map((t) => (
+                                                            <option key={t} value={t} />
+                                                      ))}
+                                                </datalist>
+
+                                                {topicError ? (
                                                       <p className="error-text">
                                                             {topicError}
+                                                      </p>
+                                                ) : !topicValid && (
+                                                      <p className="topic-hint">
+                                                            At least {TOPIC_MIN} characters ({Math.min(topicLength, TOPIC_MIN)}/{TOPIC_MIN})
                                                       </p>
                                                 )}
 
@@ -522,7 +559,7 @@ export default function BookPage() {
                                                 onClick={bookInterview}
                                                 disabled={
                                                       booking ||
-                                                      !topic.trim() ||
+                                                      !topicValid ||
                                                       !selectedDate ||
                                                       !selectedMentor ||
                                                       !selectedTime
