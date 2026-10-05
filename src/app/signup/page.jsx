@@ -142,6 +142,7 @@ export default function SignupPage() {
                               width={420}
                               height={420}
                               className="signup-image"
+                              loading="eager"
                         />
                   </div>
             </div>

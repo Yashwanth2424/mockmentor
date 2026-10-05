@@ -106,6 +106,7 @@ export default function LoginPage() {
                               width={420}
                               height={420}
                               className="login-image"
+                              loading="eager"
                         />
                   </div>
 
