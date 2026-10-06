@@ -115,18 +115,7 @@ export default function DashboardPage() {
                         "CANCELLED"
             ).length;
 
-      const recentInterviews =
-            [...safeInterviews]
-                  .sort(
-                        (a, b) =>
-                              new Date(
-                                    b.date
-                              ) -
-                              new Date(
-                                    a.date
-                              )
-                  )
-                  .slice(0, 5);
+      const recentInterviews = safeInterviews.slice(0, 5);
 
       return (
             <section className="dashboard-page">
