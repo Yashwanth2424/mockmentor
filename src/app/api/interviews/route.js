@@ -11,6 +11,8 @@ import {
 
 const publicUser = { select: { id: true, name: true, email: true } };
 
+const HIDE_AFTER_DAYS = 7;
+
 export async function GET(req) {
 
       try {
@@ -18,10 +20,16 @@ export async function GET(req) {
             const user =
                   requireAuth(req);
 
+            const cutoff = new Date(Date.now() - HIDE_AFTER_DAYS * 24 * 60 * 60 * 1000);
+
             const interviews =
                   await prisma.interview.findMany({
                         where: {
                               userId: user.id,
+                              NOT: {
+                                    status: { in: ["CANCELLED", "REJECTED"] },
+                                    updatedAt: { lt: cutoff },
+                              },
                         },
 
                         include: {
