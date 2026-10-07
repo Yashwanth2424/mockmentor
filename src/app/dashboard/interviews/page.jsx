@@ -89,6 +89,12 @@ export default function InterviewsPage() {
             fetcher
       );
 
+      const mentorSlotsKey = selectedMentor
+            ? `/api/mentor/${selectedMentor}/booked-slots`
+            : null;
+
+      const { data: mentorBooked = [], mutate: mutateMentorBooked } = useSWR(mentorSlotsKey, fetcher);
+
       const safeInterviews =
             Array.isArray(interviews)
                   ? interviews
@@ -220,31 +226,25 @@ export default function InterviewsPage() {
                   return [];
             }
 
-            return safeInterviews
-                  .filter(
-                        (interview) => {
+            const ownDate = selectedInterview?.date;
 
-                              if (
-                                    interview.id ===
-                                    selectedInterview?.id
-                              ) {
+            const mentorTaken = [...mentorBooked];
+            const ownIndex = mentorTaken.indexOf(ownDate);
+            if (ownIndex !== -1 && selectedInterview?.mentorId === selectedMentor) {
+                  mentorTaken.splice(ownIndex, 1);
+            }
 
-                                    return false;
-                              }
-
-                              return (
-                                    getZonedParts(new Date(interview.date)).dateString ===
-                                    selectedDate &&
-                                    interview.mentorId ===
-                                    selectedMentor &&
-                                    interview.status !==
-                                    "CANCELLED"
-                              );
-                        }
+            const myActive = safeInterviews
+                  .filter((i) =>
+                        i.id !== selectedInterview?.id &&
+                        ["PENDING", "ACCEPTED"].includes(i.status)
                   )
-                  .map(
-                        (interview) => getZonedParts(new Date(interview.date)).time
-                  );
+                  .map((i) => i.date);
+
+            return [...mentorTaken, ...myActive]
+                  .map((date) => getZonedParts(new Date(date)))
+                  .filter((p) => p.dateString === selectedDate)
+                  .map((p) => p.time);
       }
 
       function generateTimeSlots() {
@@ -379,6 +379,8 @@ export default function InterviewsPage() {
                   toast.success(
                         "Interview rescheduled"
                   );
+
+                  mutateMentorBooked();
 
                   closeModal();
 

@@ -83,6 +83,12 @@ export default function BookPage() {
             isLoading: interviewsLoading,
       } = useSWR("/api/interviews", fetcher);
 
+      const mentorSlotsKey = selectedMentor
+            ? `/api/mentor/${selectedMentor}/booked-slots`
+            : null;
+
+      const { data: mentorBooked } = useSWR(mentorSlotsKey, fetcher);
+
       const {
             data: userData,
             isLoading: userLoading,
@@ -237,14 +243,16 @@ export default function BookPage() {
                   return [];
             }
 
-            return safeInterviews
-                  .filter((i) => {
-                        return (
-                              getZonedParts(new Date(i.date)).dateString === selectedDate &&
-                              i.mentorId === selectedMentor
-                        );
-                  })
-                  .map((i) => getZonedParts(new Date(i.date)).time);
+            const myActive = safeInterviews
+                  .filter((i) => ["PENDING", "ACCEPTED"].includes(i.status))
+                  .map((i) => i.date);
+
+            const taken = [...(Array.isArray(mentorBooked) ? mentorBooked : []), ...myActive];
+
+            return taken
+                  .map((date) => getZonedParts(new Date(date)))
+                  .filter((p) => p.dateString === selectedDate)
+                  .map((p) => p.time);
       }
 
       function getAvailableSlots() {
@@ -379,6 +387,7 @@ export default function BookPage() {
                   );
 
                   globalMutate("/api/interviews");
+                  globalMutate(mentorSlotsKey);
 
                   setTopic("");
                   setSelectedDate("");
