@@ -145,7 +145,7 @@ src/
 ## Known limitations
 
 - The rate limiter keeps its counts in memory. On Vercel every server instance has its own memory, so the limit is not reliable there. A shared store like Redis would fix this.
-- Time slots are checked in server time (UTC on Vercel). There is no timezone handling per user yet.
+- All times use German time (Europe/Berlin). There is no timezone setting per user yet.
 - Emails are sent with Resend's test sender, so they only reach the email address of the Resend account.
 - There are no automated tests yet.
 

@@ -8,6 +8,7 @@ import useSWR, {
 
 import { toast } from "react-toastify";
 import { capitalizeWords } from "@/lib/format";
+import { addDays, getZonedParts, zonedTimeToUtc } from "@/lib/time";
 import "./book.css";
 
 const TOPIC_MIN = 3;
@@ -145,9 +146,7 @@ export default function BookPage() {
 
 
       function getMinDate() {
-            const d = new Date();
-            d.setDate(d.getDate() + 1);
-            return d.toISOString().split("T")[0];
+            return addDays(getZonedParts(new Date()).dateString, 1);
       }
 
       function formatTime(time) {
@@ -240,23 +239,12 @@ export default function BookPage() {
 
             return safeInterviews
                   .filter((i) => {
-
-                        const d = new Date(i.date);
-
                         return (
-                              d.toISOString().split("T")[0] ===
-                              selectedDate &&
+                              getZonedParts(new Date(i.date)).dateString === selectedDate &&
                               i.mentorId === selectedMentor
                         );
                   })
-                  .map((i) => {
-
-                        const d = new Date(i.date);
-
-                        return d
-                              .toTimeString()
-                              .slice(0, 5);
-                  });
+                  .map((i) => getZonedParts(new Date(i.date)).time);
       }
 
       function getAvailableSlots() {
@@ -357,9 +345,7 @@ export default function BookPage() {
 
             try {
 
-                  const fullDateTime = new Date(
-                        `${selectedDate}T${selectedTime}:00`
-                  );
+                  const fullDateTime = zonedTimeToUtc(selectedDate, selectedTime);
 
                   const res = await fetch(
                         "/api/interviews/book",
@@ -539,7 +525,7 @@ export default function BookPage() {
                                                       Selected:
                                                       {" "}
                                                       {new Date(
-                                                            selectedDate
+                                                            `${selectedDate}T12:00:00`
                                                       ).toLocaleDateString()}
                                                       {" • "}
                                                       {formatTime(
@@ -569,6 +555,9 @@ export default function BookPage() {
                                           <h3 className="booking-right-title">
                                                 Available Time Slots
                                           </h3>
+                                          <p className="timezone-note">
+                                                Times are in German time (Berlin)
+                                          </p>
 
                                           {!selectedDate ? (
 

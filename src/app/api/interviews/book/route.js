@@ -5,6 +5,7 @@ import { sendEmail } from "@/lib/email";
 import { rateLimit } from "@/lib/rateLimit";
 import { bookingSchema } from "@/lib/validators";
 import { NextResponse } from "next/server";
+import { APP_TIME_ZONE, getZonedParts } from "@/lib/time";
 
 const publicUser = { select: { id: true, name: true, email: true } };
 
@@ -50,17 +51,14 @@ export async function POST(req) {
                   return errorResponse("Invalid date format", 400);
             }
 
-            const now = new Date();
-            const tomorrow = new Date();
-            tomorrow.setDate(now.getDate() + 1);
-            tomorrow.setHours(0, 0, 0, 0);
+            const slot = getZonedParts(selectedDate);
+            const today = getZonedParts(new Date());
 
-            if (selectedDate < tomorrow) {
+            if (slot.dateString <= today.dateString) {
                   return errorResponse("Booking allowed only from tomorrow", 400);
             }
 
-            const minutes = selectedDate.getMinutes();
-            if (minutes !== 0 && minutes !== 30) {
+            if (slot.minute !== 0 && slot.minute !== 30) {
                   return errorResponse("Only 30-minute slots allowed", 400);
             }
 
@@ -97,11 +95,8 @@ export async function POST(req) {
                   return errorResponse("Mentor already booked for this time", 409);
             }
 
-            const selectedHour = selectedDate.getHours();
-            const selectedDay = selectedDate.getDay();
-
             const dayAvailability = mentor.availability.find(
-                  (a) => a.dayOfWeek === selectedDay
+                  (a) => a.dayOfWeek === slot.weekday
             );
 
             if (!dayAvailability) {
@@ -109,8 +104,8 @@ export async function POST(req) {
             }
 
             if (
-                  selectedHour < dayAvailability.startHour ||
-                  selectedHour >= dayAvailability.endHour
+                  slot.hour < dayAvailability.startHour ||
+                  slot.hour >= dayAvailability.endHour
             ) {
                   return errorResponse("Time outside mentor availability", 400);
             }
@@ -153,7 +148,7 @@ export async function POST(req) {
                                                 <p style="color:#374151;">Your interview has been successfully scheduled.</p>
                                                 <div style="background:#f3f4f6; padding:16px; border-radius:8px; margin:20px 0;">
                                                       <p><strong>Topic:</strong> ${interview.topic}</p>
-                                                      <p><strong>Date:</strong> ${new Date(interview.date).toLocaleString()}</p>
+                                                      <p><strong>Date:</strong> ${new Date(interview.date).toLocaleString("en-GB", { timeZone: APP_TIME_ZONE })} (German time)</p>
                                                       <p><strong>Mentor:</strong> ${interview.mentor.name}</p>
                                                 </div>
                                                 <div style="text-align:center; margin-top:20px;">

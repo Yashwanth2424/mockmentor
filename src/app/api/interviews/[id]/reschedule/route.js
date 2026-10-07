@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { requireAuth } from "@/lib/auth";
 import { successResponse, errorResponse } from "@/lib/apiResponse";
 import { rescheduleSchema } from "@/lib/validators";
+import { getZonedParts } from "@/lib/time";
 
 const publicUser = { select: { id: true, name: true, email: true } };
 
@@ -33,8 +34,9 @@ export async function PATCH(req, { params }) {
                   return errorResponse("Please select a future time", 400);
             }
 
-            const minutes = selectedDate.getMinutes();
-            if (minutes !== 0 && minutes !== 30) {
+            const slot = getZonedParts(selectedDate);
+
+            if (slot.minute !== 0 && slot.minute !== 30) {
                   return errorResponse("Only 30-minute slots allowed", 400);
             }
 
@@ -63,11 +65,8 @@ export async function PATCH(req, { params }) {
                   return errorResponse("Invalid mentor", 400);
             }
 
-            const selectedDay = selectedDate.getDay();
-            const selectedHour = selectedDate.getHours();
-
             const availability = mentor.availability.find(
-                  (a) => Number(a.dayOfWeek) === selectedDay
+                  (a) => Number(a.dayOfWeek) === slot.weekday
             );
 
             if (!availability) {
@@ -75,8 +74,8 @@ export async function PATCH(req, { params }) {
             }
 
             if (
-                  selectedHour < availability.startHour ||
-                  selectedHour >= availability.endHour
+                  slot.hour < availability.startHour ||
+                  slot.hour >= availability.endHour
             ) {
                   return errorResponse("Selected time outside mentor availability", 400);
             }

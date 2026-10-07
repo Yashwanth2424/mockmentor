@@ -334,3 +334,10 @@
             font-size: 22px;
       }
 }
+
+.timezone-note {
+      color: var(--text);
+      opacity: 0.6;
+      font-size: 13px;
+      margin: -8px 0 12px;
+}

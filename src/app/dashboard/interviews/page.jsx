@@ -4,6 +4,7 @@ import useSWR from "swr";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "react-toastify";
+import { getZonedParts, zonedTimeToUtc } from "@/lib/time";
 
 import SkeletonInterviewCard
       from "@/components/skeletons/SkeletonInterviewCard";
@@ -159,9 +160,7 @@ export default function InterviewsPage() {
             );
 
             setSelectedDate(
-                  new Date(interview.date)
-                        .toISOString()
-                        .split("T")[0]
+                  getZonedParts(new Date(interview.date)).dateString
             );
 
             setSelectedMentor(
@@ -169,9 +168,7 @@ export default function InterviewsPage() {
             );
 
             setSelectedTime(
-                  new Date(interview.date)
-                        .toTimeString()
-                        .slice(0, 5)
+                  getZonedParts(new Date(interview.date)).time
             );
 
             setShowModal(true);
@@ -235,15 +232,8 @@ export default function InterviewsPage() {
                                     return false;
                               }
 
-                              const interviewDate =
-                                    new Date(
-                                          interview.date
-                                    );
-
                               return (
-                                    interviewDate
-                                          .toISOString()
-                                          .split("T")[0] ===
+                                    getZonedParts(new Date(interview.date)).dateString ===
                                     selectedDate &&
                                     interview.mentorId ===
                                     selectedMentor &&
@@ -253,17 +243,7 @@ export default function InterviewsPage() {
                         }
                   )
                   .map(
-                        (interview) => {
-
-                              const date =
-                                    new Date(
-                                          interview.date
-                                    );
-
-                              return date
-                                    .toTimeString()
-                                    .slice(0, 5);
-                        }
+                        (interview) => getZonedParts(new Date(interview.date)).time
                   );
       }
 
@@ -357,10 +337,7 @@ export default function InterviewsPage() {
 
                   setRescheduling(true);
 
-                  const fullDate =
-                        new Date(
-                              `${selectedDate}T${selectedTime}:00`
-                        );
+                  const fullDate = zonedTimeToUtc(selectedDate, selectedTime);
 
                   const res =
                         await fetch(
