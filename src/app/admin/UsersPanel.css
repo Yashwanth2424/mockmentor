@@ -143,6 +143,23 @@
       border: none;
 }
 
+.role-select {
+      flex: 1;
+      padding: 8px 10px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 12px;
+      cursor: pointer;
+      background: var(--primary);
+      color: white;
+      border: none;
+}
+
+.role-select:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+}
+
 .role-btn:hover {
       background: var(--primary-hover);
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import SkeletonUserCard from "@/components/skeletons/SkeletonUserCard";
-import { FiUserCheck, FiTrash2 } from "react-icons/fi";
+import { FiTrash2 } from "react-icons/fi";
 import { useState } from "react";
 import useSWR from "swr";
 import { toast } from "react-toastify";
@@ -14,7 +14,7 @@ const fetcher = async (url) => {
       return json.data;
 };
 
-export default function UsersPanel() {
+export default function UsersPanel({ currentUserId }) {
 
       const { data: users, isLoading: loading, mutate } = useSWR("/api/admin/users", fetcher);
 
@@ -26,10 +26,10 @@ export default function UsersPanel() {
             u.email.toLowerCase().includes(search.toLowerCase())
       );
 
-      const toggleRole = async (user) => {
-            const newRole = user.role === "ADMIN" ? "STUDENT" : "ADMIN";
+      const changeRole = async (user, newRole) => {
+            if (newRole === user.role) return;
 
-            if (!confirm(`Change role to ${newRole}?`)) return;
+            if (!confirm(`Change ${user.name} to ${newRole}? They need to log in again for the change to take effect.`)) return;
             if (actionLoading) return;
 
             setActionLoading(true);
@@ -128,14 +128,20 @@ export default function UsersPanel() {
                                           </span>
 
                                           <div className="user-actions">
-                                                <button
-                                                      className="role-btn"
-                                                      disabled={actionLoading}
-                                                      onClick={() => toggleRole(u)}
+                                                <select
+                                                      className="role-select"
+                                                      value={u.role}
+                                                      disabled={actionLoading || u.id === currentUserId}
+                                                      title={u.id === currentUserId ? "You cannot change your own role" : "Change role"}
+                                                      onChange={(e) => changeRole(u, e.target.value)}
                                                 >
-                                                      <FiUserCheck style={{ marginRight: 6 }} />
-                                                      Toggle Role
-                                                </button>
+                                                      <option value="STUDENT">Student</option>
+                                                      <option value="MENTOR">Mentor</option>
+                                                      <option value="ADMIN">Admin</option>
+                                                      {u.role === "SUPER_ADMIN" && (
+                                                            <option value="SUPER_ADMIN" disabled>Super Admin</option>
+                                                      )}
+                                                </select>
 
                                                 <button
                                                       className="delete-btn"

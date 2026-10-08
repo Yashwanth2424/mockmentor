@@ -313,7 +313,7 @@ export default function AdminPage() {
                               </>
                         )}
 
-                        {activeTab === "users" && <UsersPanel />}
+                        {activeTab === "users" && <UsersPanel currentUserId={user?.id} />}
 
                   </main>
             </div>

@@ -6,8 +6,10 @@ import { roleSchema } from "@/lib/validators";
 
 export async function PATCH(req, { params }) {
 
+      let admin;
+
       try {
-            requireAdmin(req);
+            admin = requireAdmin(req);
       } catch (err) {
             return errorResponse(
                   err.message,
@@ -17,6 +19,10 @@ export async function PATCH(req, { params }) {
 
       try {
             const { id } = await params;
+
+            if (id === admin.id) {
+                  return errorResponse("You cannot change your own role", 400);
+            }
 
             const body = await req.json();
 
@@ -32,6 +38,7 @@ export async function PATCH(req, { params }) {
             const updated = await prisma.user.update({
                   where: { id },
                   data: { role },
+                  select: { id: true, name: true, email: true, role: true },
             });
 
             return successResponse(updated);

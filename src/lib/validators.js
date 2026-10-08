@@ -96,7 +96,7 @@ export const availabilitySchema = z.object({
 
 export const roleSchema = z.object({
       role: z.enum(
-            ["STUDENT", "MENTOR", "ADMIN", "SUPER_ADMIN"],
+            ["STUDENT", "MENTOR", "ADMIN"],
             { message: "Invalid role" }
       ),
 });
