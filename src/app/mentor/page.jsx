@@ -210,7 +210,7 @@ export default function MentorPage() {
                         ) : (
                               <>
                                     <div className="filter-tabs">
-                                          {["ALL", "PENDING", "ACCEPTED", "REJECTED"].map((status) => (
+                                          {["ALL", "PENDING", "ACCEPTED", "COMPLETED", "REJECTED", "CANCELLED"].map((status) => (
                                                 <button
                                                       key={status}
                                                       className={filter === status ? "active" : ""}

@@ -253,7 +253,10 @@ export default function AdminPage() {
                                                 >
                                                       <option value="ALL">All</option>
                                                       <option value="PENDING">Pending</option>
+                                                      <option value="ACCEPTED">Accepted</option>
                                                       <option value="COMPLETED">Completed</option>
+                                                      <option value="REJECTED">Rejected</option>
+                                                      <option value="CANCELLED">Cancelled</option>
                                                 </select>
 
                                                 <select
