@@ -289,7 +289,7 @@
       background:
             linear-gradient(90deg,
                   var(--secondary) 25%,
-                  rgba(255, 255, 255, 0.08) 37%,
+                  var(--border) 37%,
                   var(--secondary) 63%);
 
       background-size: 400% 100%;
