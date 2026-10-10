@@ -4,7 +4,7 @@ import useSWR from "swr";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "react-toastify";
-import { addDays, getZonedParts, zonedTimeToUtc } from "@/lib/time";
+import { addDays, formatDateTime, getZonedParts, zonedTimeToUtc } from "@/lib/time";
 
 import SkeletonInterviewCard
       from "@/components/skeletons/SkeletonInterviewCard";
@@ -488,9 +488,7 @@ export default function InterviewsPage() {
                                                             Date:
                                                       </strong>{" "}
 
-                                                      {new Date(
-                                                            i.date
-                                                      ).toLocaleString()}
+                                                      {formatDateTime(i.date)}
                                                 </p>
 
                                                 <p className="card-text">
@@ -688,6 +686,12 @@ export default function InterviewsPage() {
                                                 )}
                                           </div>
                                     </div>
+
+                                    {selectedDate && selectedTime && (
+                                          <p className="modal-selected">
+                                                Selected: {formatDateTime(zonedTimeToUtc(selectedDate, selectedTime)).replace(", ", " • ")}
+                                          </p>
+                                    )}
 
                                     <div className="modal-actions">
 

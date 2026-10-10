@@ -5,6 +5,7 @@ import { FiTrash2 } from "react-icons/fi";
 import { useState } from "react";
 import useSWR from "swr";
 import { toast } from "react-toastify";
+import { formatDate } from "@/lib/time";
 import "./UsersPanel.css";
 
 const fetcher = async (url) => {
@@ -154,7 +155,7 @@ export default function UsersPanel({ currentUserId }) {
                                           </div>
 
                                           <p className="joined">
-                                                Joined: {new Date(u.createdAt).toLocaleDateString()}
+                                                Joined: {formatDate(u.createdAt)}
                                           </p>
 
                                     </div>

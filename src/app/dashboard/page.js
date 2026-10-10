@@ -15,6 +15,8 @@ import {
 import SkeletonDashboard
       from "@/components/skeletons/SkeletonDashboard";
 
+import { formatDateTime } from "@/lib/time";
+
 import "./dashboard.css";
 
 export default function DashboardPage() {
@@ -270,9 +272,7 @@ export default function DashboardPage() {
                                                             </h3>
 
                                                             <p>
-                                                                  {new Date(
-                                                                        interview.date
-                                                                  ).toLocaleString()}
+                                                                  {formatDateTime(interview.date)}
                                                             </p>
 
                                                             <span

@@ -8,6 +8,7 @@ import useSWR, { mutate } from "swr";
 import UsersPanel from "./UsersPanel";
 import { toast } from "react-toastify";
 import { FiGrid, FiUsers, FiMenu, FiX } from "react-icons/fi";
+import { formatDateTime } from "@/lib/time";
 import "./admin.css";
 
 const fetcher = async (url) => {
@@ -298,7 +299,7 @@ export default function AdminPage() {
                                                             <p><strong>Email:</strong> {i.user?.email}</p>
                                                             <p>
                                                                   <strong>Date:</strong>{" "}
-                                                                  {new Date(i.date).toLocaleString()}
+                                                                  {formatDateTime(i.date)}
                                                             </p>
 
                                                             {i.status === "PENDING" && (

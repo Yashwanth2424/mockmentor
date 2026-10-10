@@ -17,6 +17,8 @@ import {
       XCircle,
 } from "lucide-react";
 
+import { formatDateTime } from "@/lib/time";
+
 import "./details.css";
 
 export default function InterviewDetailsPage() {
@@ -239,9 +241,7 @@ export default function InterviewDetailsPage() {
                                     <div className="info-value">
 
                                           {interview.date
-                                                ? new Date(
-                                                      interview.date
-                                                ).toLocaleString()
+                                                ? formatDateTime(interview.date)
                                                 : "N/A"}
                                     </div>
                               </div>

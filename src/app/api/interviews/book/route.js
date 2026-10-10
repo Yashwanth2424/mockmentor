@@ -5,7 +5,7 @@ import { sendEmail } from "@/lib/email";
 import { rateLimit } from "@/lib/rateLimit";
 import { bookingSchema } from "@/lib/validators";
 import { NextResponse } from "next/server";
-import { APP_TIME_ZONE, getZonedParts } from "@/lib/time";
+import { formatDateTime, getZonedParts } from "@/lib/time";
 
 const publicUser = { select: { id: true, name: true, email: true } };
 
@@ -148,7 +148,7 @@ export async function POST(req) {
                                                 <p style="color:#374151;">Your interview has been successfully scheduled.</p>
                                                 <div style="background:#f3f4f6; padding:16px; border-radius:8px; margin:20px 0;">
                                                       <p><strong>Topic:</strong> ${interview.topic}</p>
-                                                      <p><strong>Date:</strong> ${new Date(interview.date).toLocaleString("en-GB", { timeZone: APP_TIME_ZONE })} (German time)</p>
+                                                      <p><strong>Date:</strong> ${formatDateTime(interview.date)} (German time)</p>
                                                       <p><strong>Mentor:</strong> ${interview.mentor.name}</p>
                                                 </div>
                                                 <div style="text-align:center; margin-top:20px;">

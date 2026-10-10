@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import useSWR from "swr";
 import { toast } from "react-toastify";
+import { formatDateTime } from "@/lib/time";
 import "./details.css";
 
 const fetcher = async (url) => {
@@ -109,7 +110,7 @@ export default function InterviewDetails() {
 
                         <p>
                               <strong>Scheduled Date:</strong>{" "}
-                              {interview.date ? new Date(interview.date).toLocaleString() : "N/A"}
+                              {interview.date ? formatDateTime(interview.date) : "N/A"}
                         </p>
 
                         <div className="field">

@@ -8,7 +8,7 @@ import useSWR, {
 
 import { toast } from "react-toastify";
 import { capitalizeWords } from "@/lib/format";
-import { addDays, getZonedParts, zonedTimeToUtc } from "@/lib/time";
+import { addDays, formatDate, getZonedParts, zonedTimeToUtc } from "@/lib/time";
 import "./book.css";
 
 const TOPIC_MIN = 3;
@@ -533,9 +533,7 @@ export default function BookPage() {
 
                                                       Selected:
                                                       {" "}
-                                                      {new Date(
-                                                            `${selectedDate}T12:00:00`
-                                                      ).toLocaleDateString()}
+                                                      {formatDate(zonedTimeToUtc(selectedDate, "12:00"))}
                                                       {" • "}
                                                       {formatTime(
                                                             selectedTime

@@ -331,6 +331,12 @@
 
 /* MODAL ACTIONS */
 
+.modal-selected {
+      color: var(--primary);
+      font-size: 14px;
+      font-weight: 600;
+}
+
 .modal-actions {
       display: flex;
       gap: 12px;

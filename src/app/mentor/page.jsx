@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import useSWR from "swr";
 import Header from "@/components/Header";
 import SkeletonMentor from "@/components/skeletons/SkeletonMentor";
+import { formatDateTime } from "@/lib/time";
 import "./mentor.css";
 
 const fetcher = async (url) => {
@@ -238,7 +239,7 @@ export default function MentorPage() {
                                                                   <strong>Email:</strong> {i.user?.email || "N/A"}
                                                             </p>
                                                             <p className="mentor-text">
-                                                                  <strong>Date:</strong> {new Date(i.date).toLocaleString()}
+                                                                  <strong>Date:</strong> {formatDateTime(i.date)}
                                                             </p>
                                                             <p className="mentor-text">
                                                                   <strong>Status:</strong>{" "}
