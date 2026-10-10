@@ -148,13 +148,15 @@ export default function AdminPage() {
                               <button
                                     className="close-btn"
                                     onClick={() => setMenuOpen(false)}
+                                    aria-label="Close menu"
                               >
                                     <FiX />
                               </button>
                         </div>
 
                         <nav>
-                              <a
+                              <button
+                                    type="button"
                                     className={activeTab === "dashboard" ? "active" : ""}
                                     onClick={() => {
                                           setActiveTab("dashboard");
@@ -163,9 +165,10 @@ export default function AdminPage() {
                               >
                                     <FiGrid className="nav-icon" />
                                     Dashboard
-                              </a>
+                              </button>
 
-                              <a
+                              <button
+                                    type="button"
                                     className={activeTab === "users" ? "active" : ""}
                                     onClick={() => {
                                           setActiveTab("users");
@@ -174,7 +177,7 @@ export default function AdminPage() {
                               >
                                     <FiUsers className="nav-icon" />
                                     Users
-                              </a>
+                              </button>
                         </nav>
 
                   </aside>
@@ -185,6 +188,7 @@ export default function AdminPage() {
                               <button
                                     className="menu-btn"
                                     onClick={() => setMenuOpen(true)}
+                                    aria-label="Open menu"
                               >
                                     <FiMenu />
                               </button>
@@ -274,7 +278,8 @@ export default function AdminPage() {
                                                       <p>No data available</p>
                                                 </div>
                                           ) : (
-                                                filteredInterviews.map(i => (
+                                                <div className="interview-grid">
+                                                {filteredInterviews.map(i => (
                                                       <div
                                                             key={i.id}
                                                             className="interview-card"
@@ -282,7 +287,7 @@ export default function AdminPage() {
                                                       >
                                                             <div className="interview-header">
                                                                   <h3>{i.topic}</h3>
-                                                                  <span className={`status ${i.status.toLowerCase()}`}>
+                                                                  <span className={`status status-${i.status.toLowerCase()}`}>
                                                                         {i.status}
                                                                   </span>
                                                             </div>
@@ -303,7 +308,8 @@ export default function AdminPage() {
                                                                   </button>
                                                             )}
                                                       </div>
-                                                ))
+                                                ))}
+                                                </div>
                                           )}
                                     </section>
                               </>
