@@ -21,15 +21,14 @@
       width: 64px;
       height: 64px;
       border-radius: 50%;
-      background: #fef2f2;
-      color: #ef4444;
+      background: var(--danger-soft);
+      color: var(--danger);
       font-size: 28px;
       font-weight: 700;
       display: flex;
       align-items: center;
       justify-content: center;
       margin: 0 auto 24px;
-      border: 2px solid #fecaca;
 }
 
 .error-title {
@@ -40,7 +39,7 @@
 }
 
 .error-message {
-      color: var(--muted);
+      color: var(--text-secondary);
       font-size: 15px;
       line-height: 1.6;
       margin-bottom: 32px;
@@ -61,25 +60,29 @@
       cursor: pointer;
       border: none;
       text-decoration: none;
-      transition: opacity 0.2s;
-}
-
-.error-btn:hover {
-      opacity: 0.85;
+      transition: background 0.15s ease;
 }
 
 .error-btn.primary {
       background: var(--primary);
-      color: white;
+      color: var(--on-primary);
+}
+
+.error-btn.primary:hover {
+      background: var(--primary-hover);
 }
 
 .error-btn.secondary {
-      background: var(--secondary);
+      background: transparent;
       color: var(--text);
       border: 1px solid var(--border);
 }
 
-@media (max-width: 480px) {
+.error-btn.secondary:hover {
+      background: var(--secondary);
+}
+
+@media (max-width: 640px) {
       .error-card {
             padding: 32px 20px;
       }

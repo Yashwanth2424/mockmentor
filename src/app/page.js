@@ -22,7 +22,7 @@ export default function Home() {
   // Close menu when resizing to desktop
   useEffect(() => {
     function handleResize() {
-      if (window.innerWidth > 600) {
+      if (window.innerWidth > 640) {
         setMenuOpen(false);
       }
     }
@@ -37,7 +37,7 @@ export default function Home() {
   };
 
   const handleMenuOpen = () => {
-    if (window.innerWidth <= 600) {
+    if (window.innerWidth <= 640) {
       setMenuOpen(true);
     }
   };
@@ -64,6 +64,7 @@ export default function Home() {
         <button
           className={styles.menuBtn}
           onClick={handleMenuOpen}
+          aria-label="Open menu"
         >
           <FiMenu />
         </button>
@@ -84,6 +85,7 @@ export default function Home() {
           <button
             className={styles.closeBtn}
             onClick={() => setMenuOpen(false)}
+            aria-label="Close menu"
           >
             <FiX />
           </button>
@@ -97,10 +99,10 @@ export default function Home() {
           Signup
         </button>
 
-        <button className={styles.themeBtn}>
+        <div className={styles.themeBtn}>
           <span>Theme</span>
           <ThemeToggle />
-        </button>
+        </div>
 
       </div>
 

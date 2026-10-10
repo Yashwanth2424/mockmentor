@@ -33,7 +33,7 @@
 }
 
 .notfound-message {
-      color: var(--muted);
+      color: var(--text-secondary);
       font-size: 15px;
       line-height: 1.6;
       margin-bottom: 32px;
@@ -43,19 +43,19 @@
       display: inline-block;
       padding: 10px 28px;
       background: var(--primary);
-      color: white;
+      color: var(--on-primary);
       border-radius: 8px;
       text-decoration: none;
       font-size: 14px;
       font-weight: 500;
-      transition: opacity 0.2s;
+      transition: background 0.15s ease;
 }
 
 .notfound-btn:hover {
-      opacity: 0.85;
+      background: var(--primary-hover);
 }
 
-@media (max-width: 480px) {
+@media (max-width: 640px) {
       .notfound-card {
             padding: 32px 20px;
       }
