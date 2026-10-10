@@ -212,7 +212,7 @@ export default function InterviewDetailsPage() {
                         Back to Interviews
                   </button>
 
-                  <div className="details-card hover-card">
+                  <div className="details-card">
 
                         <div className="details-header">
 
@@ -221,7 +221,7 @@ export default function InterviewDetailsPage() {
                               </h1>
 
                               <span
-                                    className={`status ${interview.status?.toLowerCase()}`}
+                                    className={`status status-${interview.status?.toLowerCase()}`}
                               >
                                     {interview.status}
                               </span>

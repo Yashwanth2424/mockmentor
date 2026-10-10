@@ -84,7 +84,7 @@ export default function InterviewDetails() {
       const isCompleted = interview.status === "COMPLETED";
 
       return (
-            <div className="details-container">
+            <div className="admin-details">
 
                   <button className="back-btn" onClick={() => router.push("/admin")}>
                         ← Back to Admin
@@ -98,7 +98,7 @@ export default function InterviewDetails() {
 
                         <p>
                               <strong>Status:</strong>{" "}
-                              <span className={`status ${interview.status.toLowerCase()}`}>
+                              <span className={`status status-${interview.status.toLowerCase()}`}>
                                     {interview.status}
                               </span>
                         </p>

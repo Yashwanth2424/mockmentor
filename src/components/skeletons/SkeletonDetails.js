@@ -2,7 +2,7 @@ import SkeletonBase from "./SkeletonBase";
 
 export default function SkeletonDetails() {
       return (
-            <div className="details-container">
+            <div className="admin-details">
 
                   <SkeletonBase className="skeleton-back" />
 
