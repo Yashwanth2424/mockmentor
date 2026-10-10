@@ -30,11 +30,12 @@ export async function PATCH(req, { params }) {
                   return errorResponse("Invalid date", 400);
             }
 
-            if (selectedDate <= new Date()) {
-                  return errorResponse("Please select a future time", 400);
-            }
-
             const slot = getZonedParts(selectedDate);
+            const today = getZonedParts(new Date());
+
+            if (slot.dateString <= today.dateString) {
+                  return errorResponse("Rescheduling allowed only from tomorrow", 400);
+            }
 
             if (slot.minute !== 0 && slot.minute !== 30) {
                   return errorResponse("Only 30-minute slots allowed", 400);

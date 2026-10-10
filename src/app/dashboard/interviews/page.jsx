@@ -4,7 +4,7 @@ import useSWR from "swr";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "react-toastify";
-import { getZonedParts, zonedTimeToUtc } from "@/lib/time";
+import { addDays, getZonedParts, zonedTimeToUtc } from "@/lib/time";
 
 import SkeletonInterviewCard
       from "@/components/skeletons/SkeletonInterviewCard";
@@ -165,17 +165,17 @@ export default function InterviewsPage() {
                   interview
             );
 
-            setSelectedDate(
-                  getZonedParts(new Date(interview.date)).dateString
-            );
+            const current = getZonedParts(new Date(interview.date));
+            const tomorrow = addDays(getZonedParts(new Date()).dateString, 1);
+            const canKeepDate = current.dateString >= tomorrow;
+
+            setSelectedDate(canKeepDate ? current.dateString : "");
 
             setSelectedMentor(
                   interview.mentorId || ""
             );
 
-            setSelectedTime(
-                  getZonedParts(new Date(interview.date)).time
-            );
+            setSelectedTime(canKeepDate ? current.time : "");
 
             setShowModal(true);
       }
@@ -592,6 +592,7 @@ export default function InterviewsPage() {
 
                                           <input
                                                 type="date"
+                                                min={addDays(getZonedParts(new Date()).dateString, 1)}
                                                 value={
                                                       selectedDate
                                                 }
