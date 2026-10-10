@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect } from "react";
 import "./error.css";
 
@@ -21,9 +22,9 @@ export default function GlobalError({ error, reset }) {
                               <button className="error-btn primary" onClick={reset}>
                                     Try Again
                               </button>
-                              <a className="error-btn secondary" href="/">
+                              <Link className="error-btn secondary" href="/">
                                     Go Home
-                              </a>
+                              </Link>
                         </div>
                   </div>
             </div>

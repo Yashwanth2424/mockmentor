@@ -2,7 +2,7 @@
 
 import SkeletonInterviewCard from "@/components/skeletons/SkeletonInterviewCard";
 import ThemeToggle from "@/components/ThemeToggle";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import { useRouter } from "next/navigation";
 import useSWR, { mutate } from "swr";
 import UsersPanel from "./UsersPanel";
@@ -18,6 +18,20 @@ const fetcher = async (url) => {
       return json.data;
 };
 
+function subscribeToTab(callback) {
+      window.addEventListener("admintab", callback);
+      return () => window.removeEventListener("admintab", callback);
+}
+
+function getSavedTab() {
+      return localStorage.getItem("adminTab") || "dashboard";
+}
+
+function setActiveTab(tab) {
+      localStorage.setItem("adminTab", tab);
+      window.dispatchEvent(new Event("admintab"));
+}
+
 export default function AdminPage() {
 
       const router = useRouter();
@@ -27,21 +41,8 @@ export default function AdminPage() {
       const [search, setSearch] = useState("");
       const [statusFilter, setStatusFilter] = useState("ALL");
       const [sortOrder, setSortOrder] = useState("NEWEST");
-      const [activeTab, setActiveTab] = useState("dashboard");
-      const [isReady, setIsReady] = useState(false);
+      const activeTab = useSyncExternalStore(subscribeToTab, getSavedTab, () => "dashboard");
       const [menuOpen, setMenuOpen] = useState(false);
-
-      useEffect(() => {
-            const savedTab = localStorage.getItem("adminTab");
-            if (savedTab) setActiveTab(savedTab);
-            setIsReady(true);
-      }, []);
-
-      useEffect(() => {
-            if (isReady) {
-                  localStorage.setItem("adminTab", activeTab);
-            }
-      }, [activeTab, isReady]);
 
       useEffect(() => {
             async function fetchUser() {
@@ -129,15 +130,6 @@ export default function AdminPage() {
                         : new Date(a.date) - new Date(b.date)
             );
 
-      if (!isReady) {
-            return (
-                  <div className="interview-grid" style={{ padding: 40 }}>
-                        {Array(3).fill(0).map((_, i) => (
-                              <SkeletonInterviewCard key={i} />
-                        ))}
-                  </div>
-            );
-      }
 
       return (
             <div className="admin-layout">

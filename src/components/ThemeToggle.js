@@ -1,28 +1,28 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useSyncExternalStore } from "react";
 import { FiSun, FiMoon } from "react-icons/fi";
 import "./ThemeToggle.css";
 
+function subscribe(callback) {
+      window.addEventListener("themechange", callback);
+      return () => window.removeEventListener("themechange", callback);
+}
+
+function getTheme() {
+      return localStorage.getItem("theme") || "light";
+}
+
 export default function ThemeToggle() {
-      const [theme, setTheme] = useState("light");
+      const theme = useSyncExternalStore(subscribe, getTheme, () => "light");
 
       useEffect(() => {
-            const saved = localStorage.getItem("theme") || "light";
-            setTheme(saved);
-
-            if (saved === "dark") {
-                  document.documentElement.classList.add("dark");
-            }
-      }, []);
+            document.documentElement.classList.toggle("dark", theme === "dark");
+      }, [theme]);
 
       const toggleTheme = () => {
-            const newTheme = theme === "dark" ? "light" : "dark";
-
-            setTheme(newTheme);
-            document.documentElement.classList.toggle("dark");
-
-            localStorage.setItem("theme", newTheme);
+            localStorage.setItem("theme", theme === "dark" ? "light" : "dark");
+            window.dispatchEvent(new Event("themechange"));
       };
 
       return (
