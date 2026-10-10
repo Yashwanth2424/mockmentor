@@ -19,9 +19,7 @@ export default function Header({ user }) {
                   </div>
 
                   <div className="header-right">
-                        <div className="theme-toggle-button">
-                              <ThemeToggle />
-                        </div>
+                        <ThemeToggle />
                         <span className="user-name">{user?.name}</span>
 
                         <button className="logout-btn" onClick={handleLogout}>

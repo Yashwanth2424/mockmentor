@@ -4,6 +4,7 @@ import { useState } from "react";
 import ThemeToggle from "@/components/ThemeToggle";
 import Sidebar from "@/components/Sidebar";
 import useSWR from "swr";
+import { Menu } from "lucide-react";
 import "./layout.css";
 
 const fetcher = async (url) => {
@@ -36,9 +37,12 @@ export default function DashboardLayout({ children }) {
 
                   <div className="main">
                         <header className="topbar">
-                              <button className="menu-btn" onClick={() => setOpen(true)}>
-                                    ☰
-                              </button>
+                              <div className="topbar-left">
+                                    <button className="menu-btn" onClick={() => setOpen(true)} aria-label="Open menu">
+                                          <Menu size={18} />
+                                    </button>
+                                    <span className="topbar-logo">MockMentor</span>
+                              </div>
 
                               <div className="top-right">
                                     <ThemeToggle />

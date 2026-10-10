@@ -1,29 +1,26 @@
-/* SIDEBAR */
-
 .sidebar {
-      width: 220px;
+      position: sticky;
+      top: 0;
+      width: 240px;
+      height: 100vh;
       flex-shrink: 0;
       overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      padding: 20px 12px;
       background: var(--card);
       color: var(--text);
       border-right: 1px solid var(--border);
-      display: flex;
-      flex-direction: column;
-      padding: 16px 12px;
-      position: relative;
-      transition: 0.25s ease;
       z-index: 1201;
 }
 
-/* LOGO */
-
-.logo {
+.sidebar .logo {
       font-size: 17px;
       font-weight: 700;
-      margin-bottom: 20px;
+      letter-spacing: -0.3px;
+      padding: 0 12px;
+      margin-bottom: 24px;
 }
-
-/* MENU */
 
 .menu {
       display: flex;
@@ -31,150 +28,86 @@
       gap: 4px;
 }
 
-.menu button {
-      width: 100%;
-      min-height: 40px;
-      border: none;
-      border-radius: 10px;
-      background: transparent;
-      color: var(--text);
-      padding: 0 12px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      text-align: left;
-      font-size: 13px;
-      font-weight: 500;
-      transition:
-            background 0.2s ease,
-            color 0.2s ease,
-            transform 0.2s ease;
-}
-
-.menu button:hover {
-      background: var(--primary);
-      color: white;
-      transform: translateX(2px);
-}
-
-/* ACTIVE */
-
-.menu .active {
-      background: var(--secondary);
-      color: var(--text);
-      position: relative;
-}
-
-.menu .active::before {
-      content: "";
-      position: absolute;
-      left: -12px;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 3px;
-      height: 60%;
-      background: var(--primary);
-      border-radius: 999px;
-}
-
-/* FOOTER */
-
-.sidebar-footer {
-      margin-top: auto;
-      padding-top: 14px;
-      border-top: 1px solid var(--border);
-}
-
+.menu button,
 .sidebar-footer button {
       width: 100%;
       height: 40px;
-      border: none;
-      border-radius: 10px;
-      background: var(--secondary);
-      color: var(--text);
-      cursor: pointer;
       display: flex;
       align-items: center;
-      justify-content: center;
-      gap: 8px;
-      font-size: 13px;
+      gap: 10px;
+      padding: 0 12px;
+      border: none;
+      border-radius: var(--radius-sm);
+      background: transparent;
+      color: var(--text-secondary);
+      font-size: 14px;
+      font-weight: 500;
+      text-align: left;
+      cursor: pointer;
+      transition: background 0.15s ease, color 0.15s ease;
+}
+
+.menu button:hover {
+      background: var(--secondary);
+      color: var(--text);
+}
+
+.menu .active,
+.menu .active:hover {
+      background: var(--primary-soft);
+      color: var(--primary);
       font-weight: 600;
-      transition:
-            transform 0.2s ease,
-            border-color 0.2s ease;
+}
+
+.sidebar-footer {
+      margin-top: auto;
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
 }
 
 .sidebar-footer button:hover {
-      background: var(--primary);
-      color: white;
+      background: var(--danger-soft);
+      color: var(--danger);
 }
-
-/* CLOSE BUTTON */
 
 .close-btn {
       display: none;
       position: absolute;
-      top: 12px;
+      top: 14px;
       right: 12px;
       width: 32px;
       height: 32px;
-      border: none;
-      border-radius: 8px;
-      background: transparent;
-      color: var(--text);
-      cursor: pointer;
       align-items: center;
       justify-content: center;
-      transition:
-            background 0.2s ease,
-            color 0.2s ease;
+      border: none;
+      border-radius: var(--radius-sm);
+      background: transparent;
+      color: var(--text-secondary);
+      cursor: pointer;
 }
 
 .close-btn:hover {
       background: var(--secondary);
+      color: var(--text);
 }
-
-/* TABLET */
 
 @media (max-width: 1024px) {
       .sidebar {
-            width: 200px;
-      }
-}
-
-/* MOBILE */
-
-@media (max-width: 768px) {
-      .sidebar {
             position: fixed;
-            top: 0;
-            left: -100%;
-            width: 240px;
-            height: 100vh;
-            box-shadow: 2px 0 12px rgba(0, 0, 0, 0.12);
-            transition: left 0.25s ease;
+            left: 0;
+            width: 260px;
+            max-width: 85vw;
+            transform: translateX(-100%);
+            transition: transform 0.25s ease;
             z-index: 4000;
       }
 
       .sidebar.open {
-            left: 0;
-            box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.35);
+            transform: translateX(0);
+            box-shadow: 4px 0 24px rgba(0, 0, 0, 0.15);
       }
 
       .close-btn {
             display: flex;
-      }
-}
-
-/* SMALL MOBILE */
-
-@media (max-width: 480px) {
-      .sidebar {
-            width: 210px;
-      }
-
-      .menu button {
-            font-size: 12px;
       }
 }

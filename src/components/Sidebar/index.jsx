@@ -42,6 +42,7 @@ export default function Sidebar({ open, setOpen }) {
                   <button
                         className="close-btn"
                         onClick={() => setOpen(false)}
+                        aria-label="Close menu"
                   >
                         <X size={20} />
                   </button>

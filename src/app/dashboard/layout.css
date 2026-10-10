@@ -2,7 +2,6 @@
       display: flex;
       min-height: 100vh;
       background: var(--bg);
-      overflow: hidden;
 }
 
 .sidebar-layer {
@@ -10,47 +9,51 @@
       flex-shrink: 0;
 }
 
-@media (max-width: 768px) {
-      .sidebar-layer {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 0;
-            height: 0;
-            z-index: 4000;
-            overflow: visible;
-      }
-}
-
 .main {
       flex: 1;
       min-width: 0;
       display: flex;
       flex-direction: column;
-      overflow-x: hidden;
 }
 
 .topbar {
-      height: 52px;
-      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      height: 56px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 16px;
+      gap: 12px;
+      padding: 0 24px;
       background: var(--card);
+      border-bottom: 1px solid var(--border);
+}
+
+.topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+}
+
+.topbar-logo {
+      display: none;
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
 }
 
 .menu-btn {
       display: none;
-      background: none;
-      border: none;
-      font-size: 18px;
-      cursor: pointer;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: var(--card);
       color: var(--text);
-      padding: 6px;
-      margin: -6px;
-      border-radius: 6px;
-      line-height: 1;
+      cursor: pointer;
 }
 
 .menu-btn:hover {
@@ -60,51 +63,54 @@
 .top-right {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
 }
 
 .content {
       flex: 1;
       width: 100%;
-      min-width: 0;
-      padding: 20px;
-      overflow-x: hidden;
-}
-
-@media (max-width: 1024px) {
-      .content {
-            padding: 16px;
-      }
-}
-
-@media (max-width: 768px) {
-      .menu-btn {
-            display: block;
-      }
-
-      .content {
-            padding: 14px;
-      }
-}
-
-@media (max-width: 480px) {
-      .content {
-            padding: 12px;
-      }
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 32px;
 }
 
 .sidebar-overlay {
       position: fixed;
       inset: 0;
-      background: rgba(0, 0, 0, 0.3);
+      background: var(--overlay);
       z-index: 3000;
 }
 
-html,
-body {
-      overflow-x: hidden;
+@media (max-width: 1024px) {
+      .sidebar-layer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+            z-index: 4000;
+            overflow: visible;
+      }
+
+      .menu-btn {
+            display: inline-flex;
+      }
+
+      .topbar-logo {
+            display: block;
+      }
+
+      .content {
+            padding: 24px;
+      }
 }
 
-* {
-      box-sizing: border-box;
+@media (max-width: 640px) {
+      .topbar {
+            padding: 0 16px;
+      }
+
+      .content {
+            padding: 16px;
+      }
 }

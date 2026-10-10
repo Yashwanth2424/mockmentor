@@ -2,30 +2,21 @@
       display: flex;
       align-items: center;
       justify-content: center;
-
-      padding: 8px 12px;
-      border-radius: 10px;
-
+      width: 36px;
+      height: 36px;
       border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
       background: var(--card);
       color: var(--text);
-
       cursor: pointer;
-      transition: 0.2s;
+      transition: background 0.15s ease;
 }
 
 .themeToggleBtn:hover {
       background: var(--secondary);
-      border-color: var(--primary);
-      transform: translateY(-1px);
-}
-
-.themeToggleBtn:active {
-      transform: scale(0.95);
 }
 
 .themeToggleBtn svg {
       width: 18px;
       height: 18px;
-      color: var(--text);
 }
