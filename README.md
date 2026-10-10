@@ -100,6 +100,13 @@ npm run dev
 
 Then open http://localhost:3000.
 
+To run the tests and the linter:
+
+```bash
+npm test
+npm run lint
+```
+
 The `.env` file needs these values:
 
 ```env
@@ -127,11 +134,14 @@ src/
 │   ├── adminAuth.js   # admin check
 │   ├── jwt.js         # create and verify tokens
 │   ├── validators.js  # Zod schemas
+│   ├── time.js        # Berlin time helpers and date format
+│   ├── format.js      # title case for the topic
 │   ├── apiResponse.js # helpers for API responses
 │   ├── rateLimit.js   # rate limiting
 │   ├── env.js         # checks the environment variables
 │   └── email.js       # sending emails with Resend
 └── proxy.js           # checks login and role before a route is opened
+tests/                 # small tests with Node's built-in test runner
 ```
 
 ## What I learned
@@ -141,18 +151,20 @@ src/
 - How login with JWT and HTTP-only cookies works, and why the API routes check the user again and do not only trust the proxy.
 - To only send the data the page needs. At first some API responses included the password hash of users, and I changed them to return only id, name and email.
 - My validation code used `error.errors`, which does not exist in Zod 4 (it is called `error.issues`). Because of that, every wrong input returned a server error instead of a clear message. Now I also test what happens with wrong input, not only with correct input.
+- Time zones are tricky. The server runs in UTC but the app uses German time, and Germany changes between summer and winter time. I wrote small tests with Node's built-in test runner (`node:test`) to check the conversion, also on the days the clocks change.
 
 ## Known limitations
 
 - The rate limiter keeps its counts in memory. On Vercel every server instance has its own memory, so the limit is not reliable there. A shared store like Redis would fix this.
 - All times use German time (Europe/Berlin). There is no timezone setting per user yet.
 - Emails are sent with Resend's test sender, so they only reach the email address of the Resend account.
-- There are no automated tests yet.
+- Only the time and text helpers have automated tests. The API routes and pages are still tested by hand.
+- The database is on Neon's free plan, which goes to sleep after a few minutes without use. The first request after that can take a few seconds, and Prisma prints a "connection closed" message in the console before it reconnects.
 
 ## Next steps
 
 - [ ] Move the project to TypeScript
-- [ ] Add tests with Jest and React Testing Library
+- [ ] Add tests for the API routes and the pages
 - [ ] Let students rate their mentors
 - [ ] Add a calendar view for interviews
 
