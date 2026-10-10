@@ -104,3 +104,28 @@ a {
   outline: 2px solid var(--primary);
   outline-offset: 2px;
 }
+
+.status-pending {
+  background: var(--pending-bg);
+  color: var(--pending-text);
+}
+
+.status-accepted {
+  background: var(--accepted-bg);
+  color: var(--accepted-text);
+}
+
+.status-completed {
+  background: var(--completed-bg);
+  color: var(--completed-text);
+}
+
+.status-rejected {
+  background: var(--rejected-bg);
+  color: var(--rejected-text);
+}
+
+.status-cancelled {
+  background: var(--cancelled-bg);
+  color: var(--cancelled-text);
+}
