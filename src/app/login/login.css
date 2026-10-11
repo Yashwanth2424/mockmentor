@@ -160,7 +160,6 @@
 
 @media (max-width: 640px) {
       .login-page {
-            align-items: flex-start;
             padding: 24px 16px;
       }
 

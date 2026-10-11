@@ -101,7 +101,6 @@ export default function UsersPanel({ currentUserId }) {
             <div className="users-panel">
 
                   <div className="users-header">
-                        <h2>Users Management</h2>
                         <input
                               placeholder="Search users..."
                               value={search}
