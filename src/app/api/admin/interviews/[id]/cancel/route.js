@@ -34,6 +34,13 @@ export async function PATCH(req, { params }) {
                   );
             }
 
+            if (!["PENDING", "ACCEPTED"].includes(interview.status)) {
+                  return NextResponse.json(
+                        { success: false, error: "Only pending or accepted interviews can be cancelled" },
+                        { status: 400 }
+                  );
+            }
+
             const updated = await prisma.interview.update({
                   where: { id },
                   data: { status: "CANCELLED" },
