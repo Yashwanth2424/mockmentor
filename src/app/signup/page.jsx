@@ -55,7 +55,7 @@ export default function SignupPage() {
                         return;
                   }
 
-                  toast.success("Account created successfully");
+                  toast.success("Account created, please log in");
 
                   setTimeout(() => router.push("/login"), 500);
 

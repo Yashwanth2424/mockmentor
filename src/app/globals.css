@@ -129,3 +129,27 @@ a {
   background: var(--cancelled-bg);
   color: var(--cancelled-text);
 }
+
+.Toastify__toast-container {
+  --toastify-color-light: var(--card);
+  --toastify-text-color-light: var(--text);
+  --toastify-color-info: var(--primary);
+  --toastify-color-success: var(--accepted-text);
+  --toastify-color-warning: var(--pending-text);
+  --toastify-color-error: var(--danger);
+  --toastify-toast-bd-radius: var(--radius);
+  --toastify-toast-min-height: 52px;
+  --toastify-toast-padding: 12px 14px;
+  --toastify-toast-shadow: 0 8px 24px rgba(15, 23, 42, 0.12);
+  --toastify-font-family: inherit;
+}
+
+.Toastify__toast {
+  border: 1px solid var(--border);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.Toastify__close-button {
+  color: var(--text-secondary);
+}

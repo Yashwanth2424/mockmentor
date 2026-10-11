@@ -77,8 +77,6 @@ export default function LoginPage() {
 
                   const role = json.data.role;
 
-                  toast.success("Login successful");
-
                   setTimeout(() => {
                         if (role === "ADMIN" || role === "SUPER_ADMIN") {
                               router.push("/admin");

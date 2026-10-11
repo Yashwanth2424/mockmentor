@@ -36,9 +36,9 @@ export default function RootLayout({ children }) {
       <body className={inter.className}>
         {children}
         <ToastContainer
-          position="top-center"
+          position="bottom-right"
           autoClose={3000}
-          theme="colored"
+          theme="light"
         />
       </body>
     </html>
