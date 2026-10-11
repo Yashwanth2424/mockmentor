@@ -1,15 +1,14 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { mutate } from "swr";
 import ThemeToggle from "@/components/ThemeToggle";
 import "./header.css";
 
 export default function Header({ user }) {
-      const router = useRouter();
-
       async function handleLogout() {
             await fetch("/api/auth/logout", { method: "POST" });
-            router.push("/login");
+            await mutate(() => true, undefined, { revalidate: false });
+            window.location.href = "/login";
       }
 
       return (
