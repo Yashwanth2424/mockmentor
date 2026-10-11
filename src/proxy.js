@@ -76,7 +76,7 @@ export async function proxy(req) {
             }
       }
 
-      // Only the mentor management APIs need the MENTOR role; the public mentor list (/api/mentor) does not
+      // Only the mentor management APIs need the MENTOR role; the mentor list (/api/mentor) is open to every logged-in user
       if (
             pathname.startsWith("/api/mentor/interviews") ||
             pathname.startsWith("/api/mentor/availability")

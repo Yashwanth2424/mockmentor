@@ -1,13 +1,15 @@
 import { prisma } from "@/lib/prisma";
+import { requireAuth } from "@/lib/auth";
 
 import {
       successResponse,
       errorResponse,
 } from "@/lib/apiResponse";
 
-export async function GET() {
+export async function GET(req) {
 
       try {
+            requireAuth(req);
 
             const mentors =
                   await prisma.user.findMany({
@@ -18,7 +20,6 @@ export async function GET() {
                         select: {
                               id: true,
                               name: true,
-                              email: true,
 
                               availability: {
                                     select: {
@@ -36,6 +37,7 @@ export async function GET() {
             );
 
       } catch (err) {
+            if (err.message === "Unauthorized") return errorResponse("Unauthorized", 401);
 
             console.error(
                   "MENTOR FETCH ERROR:",
