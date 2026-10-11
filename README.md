@@ -22,7 +22,7 @@ There are three roles: student, mentor and admin.
 
 **Admins can:**
 - see all users, change their role or delete them
-- see all interviews and update or cancel them
+- see all interviews with the student and the mentor, and cancel one if needed
 - see simple counts of total, pending and completed interviews
 
 ## Screenshots
@@ -39,7 +39,19 @@ There are three roles: student, mentor and admin.
 
 ![My Interviews](screenshots/my-interviews.png)
 
-More: [landing page](screenshots/landing.png), [login page](screenshots/login.png)
+**Mentor dashboard**
+
+![Mentor Dashboard](screenshots/mentor-dashboard.png)
+
+**Admin dashboard**
+
+![Admin Dashboard](screenshots/admin-dashboard.png)
+
+**Phone view in dark mode**
+
+<img src="screenshots/mobile-dark.png" alt="My Interviews on a phone in dark mode" width="300">
+
+More: [landing page](screenshots/landing.png), [login page](screenshots/login.png), [signup page](screenshots/signup.png), [admin users panel](screenshots/admin-users-panel.png)
 
 ## Tech stack
 
