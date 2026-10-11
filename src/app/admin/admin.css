@@ -316,25 +316,6 @@
       letter-spacing: 0.3px;
 }
 
-.admin-layout .complete-btn {
-      width: 100%;
-      height: 36px;
-      margin-top: auto;
-      border: none;
-      border-radius: var(--radius-sm);
-      background: var(--primary-soft);
-      color: var(--primary);
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background 0.15s ease, color 0.15s ease;
-}
-
-.admin-layout .complete-btn:hover {
-      background: var(--primary);
-      color: var(--on-primary);
-}
-
 
 /* EMPTY */
 

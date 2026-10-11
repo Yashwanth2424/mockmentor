@@ -1,7 +1,7 @@
 "use client";
 
 import SkeletonDetails from "@/components/skeletons/SkeletonDetails";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import useSWR from "swr";
 import { toast } from "react-toastify";
@@ -26,45 +26,30 @@ export default function InterviewDetails() {
             { revalidateOnFocus: false }
       );
 
-      const [feedback, setFeedback] = useState("");
-      const [date, setDate] = useState("");
-      const [loadingAction, setLoadingAction] = useState(false);
+      const [cancelling, setCancelling] = useState(false);
 
-      useEffect(() => {
-            if (interview) {
-                  setFeedback(interview.feedback || "");
-                  setDate(interview.date ? interview.date.slice(0, 16) : "");
-            }
-      }, [interview]);
+      async function cancelInterview() {
+            if (cancelling) return;
+            if (!confirm("Cancel this interview?")) return;
 
-      async function updateInterview(fields) {
-            if (loadingAction) return;
-
-            setLoadingAction(true);
+            setCancelling(true);
 
             try {
-                  const res = await fetch(`/api/admin/interviews/${id}`, {
-                        method: "PATCH",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify(fields),
-                  });
-
+                  const res = await fetch(`/api/admin/interviews/${id}/cancel`, { method: "PATCH" });
                   const json = await res.json();
 
                   if (!res.ok || !json.success) {
-                        toast.error(json.error || "Update failed");
+                        toast.error(json.error || "Could not cancel");
                         return;
                   }
 
-                  toast.success("Updated successfully");
+                  toast.success("Interview cancelled");
                   mutate();
-
-                  setTimeout(() => router.push("/admin"), 800);
 
             } catch {
                   toast.error("Server error");
             } finally {
-                  setLoadingAction(false);
+                  setCancelling(false);
             }
       }
 
@@ -72,16 +57,18 @@ export default function InterviewDetails() {
 
       if (error || !interview) {
             return (
-                  <div style={{ padding: 40 }}>
-                        <h2>Interview not found</h2>
-                        <button onClick={() => router.push("/admin")}>
-                              Back to Admin
+                  <div className="admin-details">
+                        <button className="back-btn" onClick={() => router.push("/admin")}>
+                              ← Back to Admin
                         </button>
+                        <div className="details-card">
+                              <h2>Interview not found</h2>
+                        </div>
                   </div>
             );
       }
 
-      const isCompleted = interview.status === "COMPLETED";
+      const canCancel = ["PENDING", "ACCEPTED"].includes(interview.status);
 
       return (
             <div className="admin-details">
@@ -104,68 +91,54 @@ export default function InterviewDetails() {
                         </p>
 
                         <p>
+                              <strong>Date:</strong>{" "}
+                              {interview.date ? formatDateTime(interview.date) : "N/A"} (German time)
+                        </p>
+
+                        <p>
                               <strong>Student:</strong>{" "}
                               {interview.user?.name} ({interview.user?.email})
                         </p>
 
                         <p>
-                              <strong>Scheduled Date:</strong>{" "}
-                              {interview.date ? formatDateTime(interview.date) : "N/A"}
+                              <strong>Mentor:</strong>{" "}
+                              {interview.mentor
+                                    ? `${interview.mentor.name} (${interview.mentor.email})`
+                                    : "Not assigned"}
                         </p>
 
-                        <div className="field">
-                              <label>Reschedule</label>
-                              <input
-                                    type="datetime-local"
-                                    value={date}
-                                    disabled={isCompleted || loadingAction}
-                                    onChange={(e) => setDate(e.target.value)}
-                              />
-                              <button
-                                    disabled={isCompleted || loadingAction || !date}
-                                    onClick={() => updateInterview({ date })}
-                              >
-                                    {loadingAction ? "Updating..." : "Update Date"}
-                              </button>
-                        </div>
+                        <div className="feedback">
+                              <h3>Mentor Feedback</h3>
 
-                        <div className="field">
-                              <label>Feedback</label>
-                              <textarea
-                                    rows={4}
-                                    value={feedback}
-                                    disabled={loadingAction}
-                                    onChange={(e) => setFeedback(e.target.value)}
-                              />
-                              <button
-                                    disabled={loadingAction || feedback.trim() === ""}
-                                    onClick={() => updateInterview({ feedback })}
-                              >
-                                    {loadingAction ? "Saving..." : "Save Feedback"}
-                              </button>
-                        </div>
-
-                        <div className="actions">
-                              {!isCompleted && (
-                                    <button
-                                          className="complete"
-                                          disabled={loadingAction}
-                                          onClick={() => updateInterview({ status: "COMPLETED" })}
-                                    >
-                                          {loadingAction ? "Updating..." : "Mark Completed"}
-                                    </button>
+                              {interview.status === "COMPLETED" && interview.feedback ? (
+                                    <>
+                                          {interview.rating && (
+                                                <p><strong>Rating:</strong> {interview.rating} / 5</p>
+                                          )}
+                                          {interview.strengths && (
+                                                <p><strong>Strengths:</strong> {interview.strengths}</p>
+                                          )}
+                                          {interview.improvements && (
+                                                <p><strong>Areas to improve:</strong> {interview.improvements}</p>
+                                          )}
+                                          <p><strong>Overall:</strong> {interview.feedback}</p>
+                                    </>
+                              ) : (
+                                    <p>The mentor adds feedback after completing the interview.</p>
                               )}
+                        </div>
 
-                              {!isCompleted && (
+                        {canCancel && (
+                              <div className="actions">
                                     <button
                                           className="cancel"
-                                          disabled={loadingAction}
-                                          onClick={() => updateInterview({ status: "CANCELLED" })}
+                                          disabled={cancelling}
+                                          onClick={cancelInterview}
                                     >
-                                          {loadingAction ? "Updating..." : "Cancel Interview"}
+                                          {cancelling ? "Cancelling..." : "Cancel Interview"}
                                     </button>
-                              )}
-                        </div>
+                              </div>
+                        )}
 
                   </div>
             </div>

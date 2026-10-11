@@ -16,13 +16,8 @@ export async function GET(req) {
       try {
             const interviews = await prisma.interview.findMany({
                   include: {
-                        user: {
-                              select: {
-                                    name: true,
-                                    email: true,
-                                    role: true,
-                              },
-                        },
+                        user: { select: { id: true, name: true, email: true } },
+                        mentor: { select: { id: true, name: true, email: true } },
                   },
                   orderBy: { date: "desc" },
             });

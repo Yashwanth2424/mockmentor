@@ -6,7 +6,6 @@ import { useEffect, useState, useSyncExternalStore } from "react";
 import { useRouter } from "next/navigation";
 import useSWR, { mutate } from "swr";
 import UsersPanel from "./UsersPanel";
-import { toast } from "react-toastify";
 import { FiGrid, FiUsers, FiMenu, FiX } from "react-icons/fi";
 import { formatDateTime } from "@/lib/time";
 import "./admin.css";
@@ -76,7 +75,6 @@ export default function AdminPage() {
       const {
             data: interviews,
             isLoading: loadingInterviews,
-            mutate: mutateInterviews,
       } = useSWR(user ? "/api/admin/interviews" : null, fetcher);
 
       async function handleLogout() {
@@ -90,35 +88,11 @@ export default function AdminPage() {
             window.location.href = "/login";
       }
 
-      const markCompleted = async (id, e) => {
-            e.stopPropagation();
-            try {
-                  const res = await fetch(`/api/admin/interviews/${id}`, {
-                        method: "PATCH",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ status: "COMPLETED" }),
-                  });
-
-                  const json = await res.json();
-
-                  if (!res.ok || !json.success) {
-                        toast.error(json.error || "Failed to update");
-                        return;
-                  }
-
-                  toast.success("Interview marked as completed");
-                  mutateInterviews();
-
-            } catch {
-                  toast.error("Server error");
-            }
-      };
-
       const safeInterviews = Array.isArray(interviews) ? interviews : [];
 
       const filteredInterviews = safeInterviews
             .filter(i => {
-                  const text = `${i.topic} ${i.user?.name} ${i.user?.email}`.toLowerCase();
+                  const text = `${i.topic} ${i.user?.name} ${i.user?.email} ${i.mentor?.name} ${i.mentor?.email}`.toLowerCase();
                   return (
                         text.includes(search.toLowerCase()) &&
                         (statusFilter === "ALL" || i.status === statusFilter)
@@ -237,7 +211,7 @@ export default function AdminPage() {
                                           <div className="controls">
                                                 <input
                                                       type="text"
-                                                      placeholder="Search interviews..."
+                                                      placeholder="Search by topic, student or mentor..."
                                                       value={search}
                                                       onChange={(e) => setSearch(e.target.value)}
                                                       className="search-input"
@@ -292,21 +266,12 @@ export default function AdminPage() {
                                                                   </span>
                                                             </div>
 
-                                                            <p><strong>User:</strong> {i.user?.name}</p>
-                                                            <p><strong>Email:</strong> {i.user?.email}</p>
+                                                            <p><strong>Student:</strong> {i.user?.name}</p>
+                                                            <p><strong>Mentor:</strong> {i.mentor?.name || "Not assigned"}</p>
                                                             <p>
                                                                   <strong>Date:</strong>{" "}
                                                                   {formatDateTime(i.date)}
                                                             </p>
-
-                                                            {i.status === "PENDING" && (
-                                                                  <button
-                                                                        className="complete-btn"
-                                                                        onClick={(e) => markCompleted(i.id, e)}
-                                                                  >
-                                                                        Mark as Completed
-                                                                  </button>
-                                                            )}
                                                       </div>
                                                 ))}
                                                 </div>
