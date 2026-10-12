@@ -15,7 +15,14 @@ const fetcher = async (url) => {
       return json.data;
 };
 
-export default function UsersPanel({ currentUserId }) {
+function blockedReason(user, currentUserId, currentUserRole) {
+      if (user.id === currentUserId) return "You cannot change your own account";
+      if (user.role === "SUPER_ADMIN") return "The Super Admin cannot be changed here";
+      if (user.role === "ADMIN" && currentUserRole !== "SUPER_ADMIN") return "Only the Super Admin can manage admins";
+      return null;
+}
+
+export default function UsersPanel({ currentUserId, currentUserRole }) {
 
       const { data: users, isLoading: loading, mutate } = useSWR("/api/admin/users", fetcher);
 
@@ -131,13 +138,15 @@ export default function UsersPanel({ currentUserId }) {
                                                 <select
                                                       className="role-select"
                                                       value={u.role}
-                                                      disabled={actionLoading || u.id === currentUserId}
-                                                      title={u.id === currentUserId ? "You cannot change your own role" : "Change role"}
+                                                      disabled={actionLoading || Boolean(blockedReason(u, currentUserId, currentUserRole))}
+                                                      title={blockedReason(u, currentUserId, currentUserRole) || "Change role"}
                                                       onChange={(e) => changeRole(u, e.target.value)}
                                                 >
                                                       <option value="STUDENT">Student</option>
                                                       <option value="MENTOR">Mentor</option>
-                                                      <option value="ADMIN">Admin</option>
+                                                      {(currentUserRole === "SUPER_ADMIN" || u.role === "ADMIN") && (
+                                                            <option value="ADMIN">Admin</option>
+                                                      )}
                                                       {u.role === "SUPER_ADMIN" && (
                                                             <option value="SUPER_ADMIN" disabled>Super Admin</option>
                                                       )}
@@ -145,7 +154,8 @@ export default function UsersPanel({ currentUserId }) {
 
                                                 <button
                                                       className="delete-btn"
-                                                      disabled={actionLoading}
+                                                      disabled={actionLoading || Boolean(blockedReason(u, currentUserId, currentUserRole))}
+                                                      title={blockedReason(u, currentUserId, currentUserRole) || "Delete user"}
                                                       onClick={() => deleteUser(u.id)}
                                                 >
                                                       <FiTrash2 style={{ marginRight: 6 }} />

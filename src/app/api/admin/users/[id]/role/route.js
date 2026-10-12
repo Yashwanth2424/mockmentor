@@ -9,7 +9,7 @@ export async function PATCH(req, { params }) {
       let admin;
 
       try {
-            admin = requireAdmin(req);
+            admin = await requireAdmin(req);
       } catch (err) {
             return errorResponse(
                   err.message,
@@ -34,6 +34,23 @@ export async function PATCH(req, { params }) {
             }
 
             const { role } = parsed.data;
+
+            const target = await prisma.user.findUnique({
+                  where: { id },
+                  select: { role: true },
+            });
+
+            if (!target) {
+                  return errorResponse("User not found", 404);
+            }
+
+            if (target.role === "SUPER_ADMIN") {
+                  return errorResponse("The Super Admin cannot be changed here", 403);
+            }
+
+            if (admin.role !== "SUPER_ADMIN" && (target.role === "ADMIN" || role === "ADMIN")) {
+                  return errorResponse("Only the Super Admin can manage admins", 403);
+            }
 
             const updated = await prisma.user.update({
                   where: { id },

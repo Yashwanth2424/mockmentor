@@ -280,7 +280,7 @@ export default function AdminPage() {
                               </>
                         )}
 
-                        {activeTab === "users" && <UsersPanel currentUserId={user?.id} />}
+                        {activeTab === "users" && <UsersPanel currentUserId={user?.id} currentUserRole={user?.role} />}
 
                   </main>
             </div>

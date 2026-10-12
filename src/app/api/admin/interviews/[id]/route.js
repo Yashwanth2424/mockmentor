@@ -7,7 +7,7 @@ const publicUser = { select: { id: true, name: true, email: true } };
 export async function GET(req, { params }) {
 
       try {
-            requireAdmin(req);
+            await requireAdmin(req);
       } catch (err) {
             return NextResponse.json(
                   { success: false, error: err.message },

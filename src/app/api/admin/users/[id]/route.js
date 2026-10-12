@@ -7,7 +7,7 @@ export async function DELETE(req, { params }) {
       let admin;
 
       try {
-            admin = requireAdmin(req);
+            admin = await requireAdmin(req);
       } catch (err) {
             return NextResponse.json(
                   { success: false, error: err.message },
@@ -22,6 +22,32 @@ export async function DELETE(req, { params }) {
                   return NextResponse.json(
                         { success: false, error: "You cannot delete your own account" },
                         { status: 400 }
+                  );
+            }
+
+            const target = await prisma.user.findUnique({
+                  where: { id },
+                  select: { role: true },
+            });
+
+            if (!target) {
+                  return NextResponse.json(
+                        { success: false, error: "User not found" },
+                        { status: 404 }
+                  );
+            }
+
+            if (target.role === "SUPER_ADMIN") {
+                  return NextResponse.json(
+                        { success: false, error: "The Super Admin cannot be deleted" },
+                        { status: 403 }
+                  );
+            }
+
+            if (target.role === "ADMIN" && admin.role !== "SUPER_ADMIN") {
+                  return NextResponse.json(
+                        { success: false, error: "Only the Super Admin can delete admins" },
+                        { status: 403 }
                   );
             }
 

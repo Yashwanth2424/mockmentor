@@ -5,7 +5,7 @@ import { requireAdmin } from "@/lib/adminAuth";
 export async function PATCH(req, { params }) {
 
       try {
-            requireAdmin(req);
+            await requireAdmin(req);
       } catch (err) {
             return NextResponse.json(
                   { success: false, error: err.message },
