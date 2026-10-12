@@ -6,7 +6,7 @@ const prisma = new PrismaClient();
 const DEMO_PASSWORD = "123456";
 
 const STUDENT = { name: "Yashwanth", email: "yashwanththalka.example@gmail.com" };
-const MENTOR = { name: "Akshay", email: "akshay123@gmail.com" };
+const MENTOR = { name: "Akshay", email: "akshay.mentor@example.com" };
 
 const WEEKDAYS = [1, 2, 3, 4, 5];
 const START_HOUR = 9;

@@ -85,7 +85,7 @@ You can try the app with these accounts:
 | Role | Email | Password |
 |---|---|---|
 | Student | yashwanththalka.example@gmail.com | 123456 |
-| Mentor | akshay123@gmail.com | 123456 |
+| Mentor | akshay.mentor@example.com | 123456 |
 
 The admin panel is not public. The admin features are listed above.
 
