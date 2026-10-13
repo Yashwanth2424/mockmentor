@@ -7,6 +7,8 @@
     "build": "prisma generate && next build",
     "start": "next start",
     "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "test": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test tests/*.test.mjs"
   },
   "dependencies": {
@@ -28,7 +30,8 @@
   "devDependencies": {
     "babel-plugin-react-compiler": "1.0.0",
     "eslint": "^9",
-    "eslint-config-next": "16.1.6"
+    "eslint-config-next": "16.1.6",
+    "prettier": "3.9.10"
   },
   "prisma": {
     "seed": "node prisma/seed.js"
