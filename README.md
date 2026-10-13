@@ -21,7 +21,7 @@ There are three roles: student, mentor and admin.
 - mark an interview as completed and give feedback (rating, strengths, things to improve)
 
 **Admins can:**
-- see all users, change their role or delete them
+- see all users, change a user between student and mentor, or delete them. Only the super admin can make someone an admin or remove an admin.
 - see all interviews with the student and the mentor, and cancel one if needed
 - see simple counts of total, pending and completed interviews
 
@@ -66,7 +66,7 @@ More: [landing page](screenshots/landing.png), [login page](screenshots/login.pn
 
 ## How some things work
 
-**Roles and access.** `src/proxy.js` checks the login cookie and the role before a page or API route is opened. Each API route also checks the user again, so the API is protected even without the proxy.
+**Roles and access.** `src/proxy.js` checks the login cookie and the role before a page or API route is opened. Each API route also checks the user again, so the API is protected even without the proxy. For admin routes the server also reads the user's current role from the database, so a removed admin loses access right away and not only when the login token expires.
 
 **No double booking.** A mentor or a student should never have two active interviews at the same time. The API first checks for a conflict to show a clear error message. But two requests can arrive at the same moment and both pass that check, so the real protection is in the database: two partial unique indexes on `(mentorId, date)` and `(userId, date)`, only for interviews that are PENDING or ACCEPTED. If two bookings for the same slot come in together, PostgreSQL accepts the first one and rejects the second, and the API returns a 409 error. Cancelled or rejected interviews do not block the slot.
 
