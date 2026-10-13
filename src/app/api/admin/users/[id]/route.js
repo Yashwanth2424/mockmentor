@@ -3,64 +3,56 @@ import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/adminAuth";
 
 export async function DELETE(req, { params }) {
+  let admin;
 
-      let admin;
+  try {
+    admin = await requireAdmin(req);
+  } catch (err) {
+    return NextResponse.json(
+      { success: false, error: err.message },
+      { status: err.message === "Forbidden" ? 403 : 401 },
+    );
+  }
 
-      try {
-            admin = await requireAdmin(req);
-      } catch (err) {
-            return NextResponse.json(
-                  { success: false, error: err.message },
-                  { status: err.message === "Forbidden" ? 403 : 401 }
-            );
-      }
+  try {
+    const { id } = await params;
 
-      try {
-            const { id } = await params;
+    if (admin.id === id) {
+      return NextResponse.json(
+        { success: false, error: "You cannot delete your own account" },
+        { status: 400 },
+      );
+    }
 
-            if (admin.id === id) {
-                  return NextResponse.json(
-                        { success: false, error: "You cannot delete your own account" },
-                        { status: 400 }
-                  );
-            }
+    const target = await prisma.user.findUnique({
+      where: { id },
+      select: { role: true },
+    });
 
-            const target = await prisma.user.findUnique({
-                  where: { id },
-                  select: { role: true },
-            });
+    if (!target) {
+      return NextResponse.json({ success: false, error: "User not found" }, { status: 404 });
+    }
 
-            if (!target) {
-                  return NextResponse.json(
-                        { success: false, error: "User not found" },
-                        { status: 404 }
-                  );
-            }
+    if (target.role === "SUPER_ADMIN") {
+      return NextResponse.json(
+        { success: false, error: "The Super Admin cannot be deleted" },
+        { status: 403 },
+      );
+    }
 
-            if (target.role === "SUPER_ADMIN") {
-                  return NextResponse.json(
-                        { success: false, error: "The Super Admin cannot be deleted" },
-                        { status: 403 }
-                  );
-            }
+    if (target.role === "ADMIN" && admin.role !== "SUPER_ADMIN") {
+      return NextResponse.json(
+        { success: false, error: "Only the Super Admin can delete admins" },
+        { status: 403 },
+      );
+    }
 
-            if (target.role === "ADMIN" && admin.role !== "SUPER_ADMIN") {
-                  return NextResponse.json(
-                        { success: false, error: "Only the Super Admin can delete admins" },
-                        { status: 403 }
-                  );
-            }
+    await prisma.user.delete({
+      where: { id },
+    });
 
-            await prisma.user.delete({
-                  where: { id },
-            });
-
-            return NextResponse.json({ success: true, data: { message: "User deleted" } });
-
-      } catch (err) {
-            return NextResponse.json(
-                  { success: false, error: "Delete failed" },
-                  { status: 500 }
-            );
-      }
+    return NextResponse.json({ success: true, data: { message: "User deleted" } });
+  } catch (err) {
+    return NextResponse.json({ success: false, error: "Delete failed" }, { status: 500 });
+  }
 }

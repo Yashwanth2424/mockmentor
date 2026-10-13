@@ -3,47 +3,46 @@ import { requireAuth } from "@/lib/auth";
 import { successResponse, errorResponse } from "@/lib/apiResponse";
 
 export async function PATCH(req, { params }) {
-      try {
-            const user = requireAuth(req);
+  try {
+    const user = requireAuth(req);
 
-            const { id } = await params;
+    const { id } = await params;
 
-            const interview = await prisma.interview.findUnique({
-                  where: { id },
-            });
+    const interview = await prisma.interview.findUnique({
+      where: { id },
+    });
 
-            if (!interview) {
-                  return errorResponse("Interview not found", 404);
-            }
+    if (!interview) {
+      return errorResponse("Interview not found", 404);
+    }
 
-            if (interview.userId !== user.id) {
-                  return errorResponse("Forbidden", 403);
-            }
+    if (interview.userId !== user.id) {
+      return errorResponse("Forbidden", 403);
+    }
 
-            if (interview.status === "CANCELLED") {
-                  return errorResponse("Interview already cancelled", 400);
-            }
+    if (interview.status === "CANCELLED") {
+      return errorResponse("Interview already cancelled", 400);
+    }
 
-            if (interview.status === "COMPLETED") {
-                  return errorResponse("Completed interviews cannot be cancelled", 400);
-            }
+    if (interview.status === "COMPLETED") {
+      return errorResponse("Completed interviews cannot be cancelled", 400);
+    }
 
-            if (interview.status === "REJECTED") {
-                  return errorResponse("Rejected interviews cannot be cancelled", 400);
-            }
+    if (interview.status === "REJECTED") {
+      return errorResponse("Rejected interviews cannot be cancelled", 400);
+    }
 
-            const updated = await prisma.interview.update({
-                  where: { id },
-                  data: { status: "CANCELLED" },
-            });
+    const updated = await prisma.interview.update({
+      where: { id },
+      data: { status: "CANCELLED" },
+    });
 
-            return successResponse(updated);
+    return successResponse(updated);
+  } catch (err) {
+    console.error("CANCEL ERROR:", err);
 
-      } catch (err) {
-            console.error("CANCEL ERROR:", err);
+    if (err.message === "Unauthorized") return errorResponse("Unauthorized", 401);
 
-            if (err.message === "Unauthorized") return errorResponse("Unauthorized", 401);
-
-            return errorResponse("Server error", 500);
-      }
+    return errorResponse("Server error", 500);
+  }
 }

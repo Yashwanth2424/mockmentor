@@ -2,9 +2,7 @@
 import SkeletonInterviewCard from "@/components/skeletons/SkeletonInterviewCard";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import useSWR, {
-      mutate as globalMutate,
-} from "swr";
+import useSWR, { mutate as globalMutate } from "swr";
 
 import { toast } from "react-toastify";
 import { capitalizeWords } from "@/lib/format";
@@ -15,649 +13,416 @@ const TOPIC_MIN = 3;
 const TOPIC_MAX = 100;
 
 const TOPIC_SUGGESTIONS = [
-      "React",
-      "JavaScript",
-      "TypeScript",
-      "Node.js",
-      "Next.js",
-      "Python",
-      "Java",
-      "System Design",
-      "Data Structures & Algorithms",
-      "SQL & Databases",
-      "HTML & CSS",
-      "REST APIs",
-      "Git & GitHub",
-      "Frontend Development",
-      "Behavioral Interview",
+  "React",
+  "JavaScript",
+  "TypeScript",
+  "Node.js",
+  "Next.js",
+  "Python",
+  "Java",
+  "System Design",
+  "Data Structures & Algorithms",
+  "SQL & Databases",
+  "HTML & CSS",
+  "REST APIs",
+  "Git & GitHub",
+  "Frontend Development",
+  "Behavioral Interview",
 ];
 
 export default function BookPage() {
+  const router = useRouter();
 
-      const router = useRouter();
+  const [selectedDate, setSelectedDate] = useState("");
+  const [selectedTime, setSelectedTime] = useState("");
+  const [selectedMentor, setSelectedMentor] = useState("");
+  const [topic, setTopic] = useState("");
+  const [booking, setBooking] = useState(false);
+  const [topicError, setTopicError] = useState("");
 
-      const [selectedDate, setSelectedDate] = useState("");
-      const [selectedTime, setSelectedTime] = useState("");
-      const [selectedMentor, setSelectedMentor] = useState("");
-      const [topic, setTopic] = useState("");
-      const [booking, setBooking] = useState(false);
-      const [topicError, setTopicError] = useState("");
+  const topicLength = topic.trim().length;
+  const topicValid = topicLength >= TOPIC_MIN && topicLength <= TOPIC_MAX;
 
-      const topicLength = topic.trim().length;
-      const topicValid = topicLength >= TOPIC_MIN && topicLength <= TOPIC_MAX;
+  const fetcher = async (url) => {
+    const res = await fetch(url);
 
-      const fetcher = async (url) => {
+    const json = await res.json();
 
-            const res =
-                  await fetch(url);
+    if (!res.ok || !json.success) {
+      throw new Error(json.error || "Request failed");
+    }
 
-            const json =
-                  await res.json();
+    return json.data;
+  };
+  const { data: mentors = [], isLoading: mentorsLoading } = useSWR("/api/mentor", fetcher, {
+    revalidateOnFocus: false,
+  });
 
-            if (
-                  !res.ok ||
-                  !json.success
-            ) {
+  const { data: interviews, isLoading: interviewsLoading } = useSWR("/api/interviews", fetcher);
 
-                  throw new Error(
-                        json.error ||
-                        "Request failed"
-                  );
-            }
+  const mentorSlotsKey = selectedMentor ? `/api/mentor/${selectedMentor}/booked-slots` : null;
 
-            return json.data;
-      };
-      const {
-            data: mentors = [],
-            isLoading: mentorsLoading,
-      } = useSWR(
-            "/api/mentor",
-            fetcher,
-            {
-                  revalidateOnFocus: false,
-            }
-      );
+  const { data: mentorBooked } = useSWR(mentorSlotsKey, fetcher);
 
-      const {
-            data: interviews,
-            isLoading: interviewsLoading,
-      } = useSWR("/api/interviews", fetcher);
+  const { data: userData, isLoading: userLoading } = useSWR("/api/me", fetcher);
 
-      const mentorSlotsKey = selectedMentor
-            ? `/api/mentor/${selectedMentor}/booked-slots`
-            : null;
+  const user = userData || null;
 
-      const { data: mentorBooked } = useSWR(mentorSlotsKey, fetcher);
+  const safeInterviews = Array.isArray(interviews) ? interviews : [];
 
-      const {
-            data: userData,
-            isLoading: userLoading,
-      } = useSWR(
-            "/api/me",
-            fetcher
-      );
+  const safeMentors = Array.isArray(mentors) ? mentors : [];
 
-      const user =
-            userData || null;
+  useEffect(() => {
+    if (userLoading) {
+      return;
+    }
 
-      const safeInterviews = Array.isArray(interviews)
-            ? interviews
-            : [];
+    if (!user) {
+      router.replace("/login");
 
-      const safeMentors = Array.isArray(mentors)
-            ? mentors
-            : [];
+      return;
+    }
 
-      useEffect(() => {
+    if (user.role === "MENTOR") {
+      router.replace("/mentor");
 
-            if (userLoading) {
-                  return;
-            }
+      return;
+    }
 
-            if (!user) {
+    if (user.role === "ADMIN" || user.role === "SUPER_ADMIN") {
+      router.replace("/admin");
 
-                  router.replace("/login");
+      return;
+    }
+  }, [user, userLoading, router]);
 
-                  return;
-            }
+  useEffect(() => {
+    setSelectedMentor("");
+    setSelectedTime("");
+  }, [selectedDate]);
 
-            if (user.role === "MENTOR") {
+  function getMinDate() {
+    return addDays(getZonedParts(new Date()).dateString, 1);
+  }
 
-                  router.replace("/mentor");
+  function formatTime(time) {
+    const [hour, minute] = time.split(":");
+    let h = parseInt(hour);
+    const ampm = h >= 12 ? "PM" : "AM";
+    h = h % 12 || 12;
 
-                  return;
-            }
+    return `${h.toString().padStart(2, "0")}:${minute} ${ampm}`;
+  }
 
-            if (
-                  user.role === "ADMIN" ||
-                  user.role === "SUPER_ADMIN"
-            ) {
+  function formatAvailability(availability) {
+    if (!availability?.length) {
+      return "No availability";
+    }
 
-                  router.replace("/admin");
+    const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    return (
+      availability
+        .slice(0, 2)
+        .map((a) => `${dayNames[a.dayOfWeek]} ${a.startHour}-${a.endHour}`)
+        .join(", ") + (availability.length > 2 ? "..." : "")
+    );
+  }
 
-                  return;
-            }
+  function generateTimeSlots() {
+    const mentor = safeMentors.find((m) => m.id === selectedMentor);
 
-      }, [
-            user,
-            userLoading,
-            router,
-      ]);
+    if (!mentor || !selectedDate) {
+      return [];
+    }
 
-      useEffect(() => {
-            setSelectedMentor("");
-            setSelectedTime("");
-      }, [selectedDate]);
+    const day = getSelectedDay(selectedDate);
 
+    const dayAvailability = mentor.availability?.find((a) => a.dayOfWeek === day);
 
+    if (!dayAvailability) {
+      return [];
+    }
 
-      function getMinDate() {
-            return addDays(getZonedParts(new Date()).dateString, 1);
+    const slots = [];
+
+    for (let hour = dayAvailability.startHour; hour < dayAvailability.endHour; hour++) {
+      slots.push(`${hour.toString().padStart(2, "0")}:00`);
+
+      slots.push(`${hour.toString().padStart(2, "0")}:30`);
+    }
+    return slots;
+  }
+
+  function getBookedSlots() {
+    if (!selectedDate || !selectedMentor) {
+      return [];
+    }
+
+    const myActive = safeInterviews
+      .filter((i) => ["PENDING", "ACCEPTED"].includes(i.status))
+      .map((i) => i.date);
+
+    const taken = [...(Array.isArray(mentorBooked) ? mentorBooked : []), ...myActive];
+
+    return taken
+      .map((date) => getZonedParts(new Date(date)))
+      .filter((p) => p.dateString === selectedDate)
+      .map((p) => p.time);
+  }
+
+  function getAvailableSlots() {
+    const allSlots = generateTimeSlots();
+
+    const bookedSlots = getBookedSlots();
+
+    return allSlots.filter((slot) => !bookedSlots.includes(slot));
+  }
+
+  function getSelectedDay(dateString) {
+    const [year, month, day] = dateString.split("-").map(Number);
+
+    return new Date(year, month - 1, day).getDay();
+  }
+
+  function getAvailableMentors() {
+    if (!selectedDate) {
+      return safeMentors;
+    }
+
+    const selectedDay = new Date(`${selectedDate}T12:00:00`).getDay();
+
+    return safeMentors.filter((mentor) =>
+      mentor.availability?.some((availability) => Number(availability.dayOfWeek) === selectedDay),
+    );
+  }
+  function groupSlots(slots) {
+    const groups = {
+      Morning: [],
+      Afternoon: [],
+      Evening: [],
+    };
+
+    slots.forEach((slot) => {
+      const hour = parseInt(slot.split(":")[0]);
+
+      if (hour < 12) {
+        groups.Morning.push(slot);
+      } else if (hour < 17) {
+        groups.Afternoon.push(slot);
+      } else {
+        groups.Evening.push(slot);
+      }
+    });
+
+    return groups;
+  }
+
+  async function bookInterview() {
+    if (!topic.trim()) {
+      setTopicError("Please enter interview topic");
+      return;
+    }
+
+    if (!selectedDate) {
+      toast.error("Please select a date");
+      return;
+    }
+
+    if (!selectedMentor) {
+      toast.error("Please select a mentor");
+      return;
+    }
+
+    if (!selectedTime) {
+      toast.error("Please select a time slot");
+      return;
+    }
+
+    if (booking) return;
+
+    setBooking(true);
+
+    try {
+      const fullDateTime = zonedTimeToUtc(selectedDate, selectedTime);
+
+      const res = await fetch("/api/interviews/book", {
+        method: "POST",
+
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          topic: topic.trim(),
+          date: fullDateTime,
+          mentorId: selectedMentor,
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        toast.error(data.error || "Booking failed");
+        return;
       }
 
-      function formatTime(time) {
-            const [hour, minute] = time.split(":");
-            let h = parseInt(hour);
-            const ampm = h >= 12 ? "PM" : "AM";
-            h = h % 12 || 12;
+      toast.success("Interview booked successfully");
 
-            return `${h
-                  .toString()
-                  .padStart(2, "0")}:${minute} ${ampm}`;
-      }
+      globalMutate("/api/interviews");
+      globalMutate(mentorSlotsKey);
 
-      function formatAvailability(availability) {
-            if (!availability?.length) {
-                  return "No availability";
-            }
+      setTopic("");
+      setSelectedDate("");
+      setSelectedMentor("");
+      setSelectedTime("");
+      setTopicError("");
+    } catch (err) {
+      toast.error("Something went wrong");
+    } finally {
+      setBooking(false);
+    }
+  }
 
-            const dayNames = [
-                  "Sun",
-                  "Mon",
-                  "Tue",
-                  "Wed",
-                  "Thu",
-                  "Fri",
-                  "Sat",
-            ];
-            return (
-                  availability
-                        .slice(0, 2)
-                        .map(
-                              (a) =>
-                                    `${dayNames[a.dayOfWeek]} ${a.startHour}-${a.endHour}`
-                        )
-                        .join(", ") +
-                  (availability.length > 2 ? "..." : "")
-            );
-      }
+  if (userLoading || interviewsLoading) {
+    return <SkeletonInterviewCard />;
+  }
 
-      function generateTimeSlots() {
-            const mentor = safeMentors.find(
-                  (m) => m.id === selectedMentor
-            );
+  const availableSlots = getAvailableSlots();
+  const groupedSlots = groupSlots(availableSlots);
 
-            if (!mentor || !selectedDate) {
-                  return [];
-            }
+  return (
+    <section>
+      <div className="book-page">
+        <div className="booking-page-title">
+          <h1>Book Interview</h1>
+          <p>Schedule your next mock interview session</p>
+        </div>
 
-            const day = getSelectedDay(selectedDate);
+        <div className="booking-card">
+          <div className="booking-layout">
+            <div className="booking-left">
+              <div className="input-group">
+                <label>Interview Topic</label>
 
-            const dayAvailability =
-                  mentor.availability?.find(
-                        (a) => a.dayOfWeek === day
-                  );
+                <input
+                  type="text"
+                  placeholder="Frontend Development, React, DSA..."
+                  list="topic-suggestions"
+                  maxLength={TOPIC_MAX}
+                  value={topic}
+                  onChange={(e) => {
+                    const input = e.target;
+                    const cursor = input.selectionStart;
+                    setTopic(capitalizeWords(input.value));
+                    setTopicError("");
+                    requestAnimationFrame(() => input.setSelectionRange(cursor, cursor));
+                  }}
+                />
+                <datalist id="topic-suggestions">
+                  {TOPIC_SUGGESTIONS.map((t) => (
+                    <option key={t} value={t} />
+                  ))}
+                </datalist>
 
-            if (!dayAvailability) {
-                  return [];
-            }
-
-            const slots = [];
-
-            for (
-                  let hour = dayAvailability.startHour;
-                  hour < dayAvailability.endHour;
-                  hour++
-            ) {
-                  slots.push(
-                        `${hour
-                              .toString()
-                              .padStart(2, "0")}:00`
-                  );
-
-                  slots.push(
-                        `${hour
-                              .toString()
-                              .padStart(2, "0")}:30`
-                  );
-            }
-            return slots;
-      }
-
-      function getBookedSlots() {
-
-            if (
-                  !selectedDate ||
-                  !selectedMentor
-            ) {
-                  return [];
-            }
-
-            const myActive = safeInterviews
-                  .filter((i) => ["PENDING", "ACCEPTED"].includes(i.status))
-                  .map((i) => i.date);
-
-            const taken = [...(Array.isArray(mentorBooked) ? mentorBooked : []), ...myActive];
-
-            return taken
-                  .map((date) => getZonedParts(new Date(date)))
-                  .filter((p) => p.dateString === selectedDate)
-                  .map((p) => p.time);
-      }
-
-      function getAvailableSlots() {
-
-            const allSlots = generateTimeSlots();
-
-            const bookedSlots = getBookedSlots();
-
-            return allSlots.filter(
-                  (slot) =>
-                        !bookedSlots.includes(slot)
-            );
-      }
-
-      function getSelectedDay(dateString) {
-
-            const [
-                  year,
-                  month,
-                  day,
-            ] = dateString
-                  .split("-")
-                  .map(Number);
-
-            return new Date(
-                  year,
-                  month - 1,
-                  day
-            ).getDay();
-      }
-
-      function getAvailableMentors() {
-            if (!selectedDate) {
-                  return safeMentors;
-            }
-
-            const selectedDay = new Date(`${selectedDate}T12:00:00`).getDay();
-
-            return safeMentors.filter((mentor) =>
-                  mentor.availability?.some(
-                        (availability) =>
-                              Number(availability.dayOfWeek) === selectedDay
+                {topicError ? (
+                  <p className="error-text">{topicError}</p>
+                ) : (
+                  !topicValid && (
+                    <p className="topic-hint">
+                      At least {TOPIC_MIN} characters ({Math.min(topicLength, TOPIC_MIN)}/
+                      {TOPIC_MIN})
+                    </p>
                   )
-            );
-      }
-      function groupSlots(slots) {
-            const groups = {
-                  Morning: [],
-                  Afternoon: [],
-                  Evening: [],
-            };
+                )}
+              </div>
+              <div className="input-group">
+                <label>Select Date</label>
+                <input
+                  type="date"
+                  value={selectedDate}
+                  min={getMinDate()}
+                  onChange={(e) => setSelectedDate(e.target.value)}
+                />
+              </div>
+              <div className="input-group">
+                <label>Select Mentor</label>
+                <select
+                  disabled={!selectedDate}
+                  value={selectedMentor}
+                  onChange={(e) => {
+                    setSelectedMentor(e.target.value);
 
-            slots.forEach((slot) => {
+                    setSelectedTime("");
+                  }}
+                >
+                  <option value="">
+                    {mentorsLoading ? "Loading mentors..." : "Select Mentor"}
+                  </option>
 
-                  const hour = parseInt(
-                        slot.split(":")[0]
-                  );
+                  {getAvailableMentors().map((m) => (
+                    <option key={m.id} value={m.id}>
+                      {m.name} ({formatAvailability(m.availability)})
+                    </option>
+                  ))}
+                </select>
+              </div>
 
-                  if (hour < 12) {
-                        groups.Morning.push(slot);
-                  } else if (hour < 17) {
-                        groups.Afternoon.push(slot);
-                  } else {
-                        groups.Evening.push(slot);
-                  }
-            });
+              {selectedTime && (
+                <div className="selected-slot">
+                  Selected: {formatDate(zonedTimeToUtc(selectedDate, "12:00"))}
+                  {" • "}
+                  {formatTime(selectedTime)}
+                </div>
+              )}
+              <button
+                onClick={bookInterview}
+                disabled={
+                  booking || !topicValid || !selectedDate || !selectedMentor || !selectedTime
+                }
+              >
+                {booking ? "Booking..." : "Book Interview"}
+              </button>
+            </div>
 
-            return groups;
-      }
+            <div className="booking-right">
+              <h3 className="booking-right-title">Available Time Slots</h3>
+              <p className="timezone-note">Times are in German time (Berlin)</p>
 
-      async function bookInterview() {
-
-            if (!topic.trim()) {
-                  setTopicError(
-                        "Please enter interview topic"
-                  );
-                  return;
-            }
-
-            if (!selectedDate) {
-                  toast.error("Please select a date");
-                  return;
-            }
-
-            if (!selectedMentor) {
-                  toast.error("Please select a mentor");
-                  return;
-            }
-
-            if (!selectedTime) {
-                  toast.error("Please select a time slot");
-                  return;
-            }
-
-            if (booking) return;
-
-            setBooking(true);
-
-            try {
-
-                  const fullDateTime = zonedTimeToUtc(selectedDate, selectedTime);
-
-                  const res = await fetch(
-                        "/api/interviews/book",
-                        {
-                              method: "POST",
-
-                              headers: {
-                                    "Content-Type":
-                                          "application/json",
-                              },
-                              body: JSON.stringify({
-                                    topic: topic.trim(),
-                                    date: fullDateTime,
-                                    mentorId: selectedMentor,
-                              }),
-                        }
-                  );
-
-                  const data = await res.json();
-                  if (!res.ok) {
-
-                        toast.error(
-                              data.error ||
-                              "Booking failed"
-                        );
-                        return;
+              {!selectedDate ? (
+                <div className="empty-slots">Select a date to view mentors and slots</div>
+              ) : !selectedMentor ? (
+                <div className="empty-slots">Select a mentor to view available slots</div>
+              ) : availableSlots.length === 0 ? (
+                <div className="empty-slots">
+                  No slots available for this mentor on selected date
+                </div>
+              ) : (
+                Object.entries(groupedSlots).map(([label, slots]) => {
+                  if (!slots.length) {
+                    return null;
                   }
 
-                  toast.success(
-                        "Interview booked successfully"
+                  return (
+                    <div key={label} className="slot-group">
+                      <p className="slot-group-title">{label}</p>
+                      <div className="slots-grid">
+                        {slots.map((time) => (
+                          <button
+                            key={time}
+                            type="button"
+                            className={`slot ${selectedTime === time ? "active" : ""}`}
+                            onClick={() => setSelectedTime(time)}
+                          >
+                            {formatTime(time)}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
                   );
-
-                  globalMutate("/api/interviews");
-                  globalMutate(mentorSlotsKey);
-
-                  setTopic("");
-                  setSelectedDate("");
-                  setSelectedMentor("");
-                  setSelectedTime("");
-                  setTopicError("");
-
-            } catch (err) {
-                  toast.error(
-                        "Something went wrong"
-                  );
-
-            } finally {
-                  setBooking(false);
-            }
-      }
-
-      if (userLoading || interviewsLoading) {
-            return <SkeletonInterviewCard />;
-      }
-
-      const availableSlots =
-            getAvailableSlots();
-      const groupedSlots =
-            groupSlots(availableSlots);
-
-      return (
-            <section>
-                  <div className="book-page">
-                        <div className="booking-page-title">
-                              <h1>
-                                    Book Interview
-                              </h1>
-                              <p>
-                                    Schedule your next mock
-                                    interview session
-                              </p>
-                        </div>
-
-                        <div className="booking-card">
-                              <div className="booking-layout">
-                                    <div className="booking-left">
-                                          <div className="input-group">
-                                                <label>
-                                                      Interview Topic
-                                                </label>
-
-                                                <input
-                                                      type="text"
-                                                      placeholder="Frontend Development, React, DSA..."
-                                                      list="topic-suggestions"
-                                                      maxLength={TOPIC_MAX}
-                                                      value={topic}
-                                                      onChange={(e) => {
-                                                            const input = e.target;
-                                                            const cursor = input.selectionStart;
-                                                            setTopic(capitalizeWords(input.value));
-                                                            setTopicError("");
-                                                            requestAnimationFrame(() => input.setSelectionRange(cursor, cursor));
-                                                      }}
-                                                />
-                                                <datalist id="topic-suggestions">
-                                                      {TOPIC_SUGGESTIONS.map((t) => (
-                                                            <option key={t} value={t} />
-                                                      ))}
-                                                </datalist>
-
-                                                {topicError ? (
-                                                      <p className="error-text">
-                                                            {topicError}
-                                                      </p>
-                                                ) : !topicValid && (
-                                                      <p className="topic-hint">
-                                                            At least {TOPIC_MIN} characters ({Math.min(topicLength, TOPIC_MIN)}/{TOPIC_MIN})
-                                                      </p>
-                                                )}
-
-                                          </div>
-                                          <div className="input-group">
-                                                <label>
-                                                      Select Date
-                                                </label>
-                                                <input
-                                                      type="date"
-                                                      value={selectedDate}
-                                                      min={getMinDate()}
-                                                      onChange={(e) =>
-                                                            setSelectedDate(
-                                                                  e.target.value
-                                                            )
-                                                      }
-                                                />
-
-                                          </div>
-                                          <div className="input-group">
-                                                <label>
-                                                      Select Mentor
-                                                </label>
-                                                <select
-                                                      disabled={!selectedDate}
-                                                      value={
-                                                            selectedMentor
-                                                      }
-                                                      onChange={(e) => {
-
-                                                            setSelectedMentor(
-                                                                  e.target.value
-                                                            );
-
-                                                            setSelectedTime("");
-                                                      }}
-                                                >
-                                                      <option value="">
-                                                            {mentorsLoading
-                                                                  ? "Loading mentors..."
-                                                                  : "Select Mentor"}
-                                                      </option>
-
-                                                      {getAvailableMentors().map(
-                                                            (m) => (
-                                                                  <option
-                                                                        key={
-                                                                              m.id
-                                                                        }
-                                                                        value={
-                                                                              m.id
-                                                                        }
-                                                                  >
-                                                                        {m.name} (
-                                                                        {formatAvailability(
-                                                                              m.availability
-                                                                        )}
-                                                                        )
-                                                                  </option>
-                                                            )
-                                                      )}
-
-                                                </select>
-                                          </div>
-
-                                          {selectedTime && (
-                                                <div className="selected-slot">
-
-                                                      Selected:
-                                                      {" "}
-                                                      {formatDate(zonedTimeToUtc(selectedDate, "12:00"))}
-                                                      {" • "}
-                                                      {formatTime(
-                                                            selectedTime
-                                                      )}
-
-                                                </div>
-                                          )}
-                                          <button
-                                                onClick={bookInterview}
-                                                disabled={
-                                                      booking ||
-                                                      !topicValid ||
-                                                      !selectedDate ||
-                                                      !selectedMentor ||
-                                                      !selectedTime
-                                                }
-                                          >
-                                                {booking
-                                                      ? "Booking..."
-                                                      : "Book Interview"}
-
-                                          </button>
-                                    </div>
-
-                                    <div className="booking-right">
-                                          <h3 className="booking-right-title">
-                                                Available Time Slots
-                                          </h3>
-                                          <p className="timezone-note">
-                                                Times are in German time (Berlin)
-                                          </p>
-
-                                          {!selectedDate ? (
-
-                                                <div className="empty-slots">
-                                                      Select a date to
-                                                      view mentors and
-                                                      slots
-                                                </div>
-
-                                          ) : !selectedMentor ? (
-
-                                                <div className="empty-slots">
-                                                      Select a mentor to
-                                                      view available
-                                                      slots
-                                                </div>
-
-                                          ) : availableSlots.length === 0 ? (
-
-                                                <div className="empty-slots">
-                                                      No slots available
-                                                      for this mentor on
-                                                      selected date
-                                                </div>
-
-                                          ) : (
-
-                                                Object.entries(
-                                                      groupedSlots
-                                                ).map(
-                                                      ([label, slots]) => {
-
-                                                            if (
-                                                                  !slots.length
-                                                            ) {
-                                                                  return null;
-                                                            }
-
-                                                            return (
-                                                                  <div
-                                                                        key={
-                                                                              label
-                                                                        }
-                                                                        className="slot-group"
-                                                                  >
-                                                                        <p className="slot-group-title">
-                                                                              {
-                                                                                    label
-                                                                              }
-                                                                        </p>
-                                                                        <div className="slots-grid">
-
-                                                                              {slots.map(
-                                                                                    (
-                                                                                          time
-                                                                                    ) => (
-                                                                                          <button
-                                                                                                key={
-                                                                                                      time
-                                                                                                }
-                                                                                                type="button"
-                                                                                                className={`slot ${selectedTime === time
-                                                                                                      ? "active"
-                                                                                                      : ""
-                                                                                                      }`}
-                                                                                                onClick={() =>
-                                                                                                      setSelectedTime(
-                                                                                                            time
-                                                                                                      )
-                                                                                                }
-                                                                                          >
-                                                                                                {formatTime(
-                                                                                                      time
-                                                                                                )}
-                                                                                          </button>
-                                                                                    )
-                                                                              )}
-
-                                                                        </div>
-
-                                                                  </div>
-                                                            );
-                                                      }
-                                                )
-                                          )}
-
-                                    </div>
-
-                              </div>
-
-                        </div>
-                  </div>
-
-            </section>
-      );
+                })
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
 }

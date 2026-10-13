@@ -6,14 +6,7 @@ import styles from "./page.module.css";
 
 import ThemeToggle from "@/components/ThemeToggle";
 
-import {
-  FiCalendar,
-  FiMessageCircle,
-  FiTrendingUp,
-  FiHeart,
-  FiMenu,
-  FiX
-} from "react-icons/fi";
+import { FiCalendar, FiMessageCircle, FiTrendingUp, FiHeart, FiMenu, FiX } from "react-icons/fi";
 
 export default function Home() {
   const router = useRouter();
@@ -44,41 +37,27 @@ export default function Home() {
 
   return (
     <main className={styles.homeContainer}>
-
       <nav className={styles.navbar}>
         <h2 className={styles.logo}>MockMentor</h2>
 
         <div className={styles.navButtons}>
           <button onClick={() => router.push("/login")}>Login</button>
 
-          <button
-            className={styles.signup}
-            onClick={() => router.push("/signup")}
-          >
+          <button className={styles.signup} onClick={() => router.push("/signup")}>
             Signup
           </button>
 
           <ThemeToggle />
         </div>
 
-        <button
-          className={styles.menuBtn}
-          onClick={handleMenuOpen}
-          aria-label="Open menu"
-        >
+        <button className={styles.menuBtn} onClick={handleMenuOpen} aria-label="Open menu">
           <FiMenu />
         </button>
       </nav>
 
-      {menuOpen && (
-        <div
-          className={styles.overlay}
-          onClick={() => setMenuOpen(false)}
-        />
-      )}
+      {menuOpen && <div className={styles.overlay} onClick={() => setMenuOpen(false)} />}
 
       <div className={`${styles.mobileMenu} ${menuOpen ? styles.open : ""}`}>
-
         <div className={styles.mobileHeader}>
           <span>Menu</span>
 
@@ -91,19 +70,14 @@ export default function Home() {
           </button>
         </div>
 
-        <button onClick={() => handleNavigate("/login")}>
-          Login
-        </button>
+        <button onClick={() => handleNavigate("/login")}>Login</button>
 
-        <button onClick={() => handleNavigate("/signup")}>
-          Signup
-        </button>
+        <button onClick={() => handleNavigate("/signup")}>Signup</button>
 
         <div className={styles.themeBtn}>
           <span>Theme</span>
           <ThemeToggle />
         </div>
-
       </div>
 
       <section className={styles.hero}>
@@ -112,26 +86,18 @@ export default function Home() {
           <span>with Confidence</span>
         </h1>
 
-        <p>
-          Practice real interview scenarios, get expert feedback, and improve faster.
-        </p>
+        <p>Practice real interview scenarios, get expert feedback, and improve faster.</p>
 
         <div className={styles.ctaButtons}>
-          <button onClick={() => router.push("/signup")}>
-            Get Started
-          </button>
+          <button onClick={() => router.push("/signup")}>Get Started</button>
 
-          <button
-            className={styles.secondary}
-            onClick={() => router.push("/login")}
-          >
+          <button className={styles.secondary} onClick={() => router.push("/login")}>
             Already have account?
           </button>
         </div>
       </section>
 
       <section className={styles.features}>
-
         <div className={styles.featureCard}>
           <FiCalendar className={styles.icon} />
           <h3>Smart Scheduling</h3>
@@ -149,14 +115,12 @@ export default function Home() {
           <h3>Track Growth</h3>
           <p>Monitor your progress and become interview-ready.</p>
         </div>
-
       </section>
 
       <footer className={styles.footer}>
         © {new Date().getFullYear()} MockMentor • Built with{" "}
         <FiHeart className={styles.heartIcon} />
       </footer>
-
     </main>
   );
 }

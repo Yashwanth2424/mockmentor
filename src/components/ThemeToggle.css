@@ -1,22 +1,22 @@
 .themeToggleBtn {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 36px;
-      height: 36px;
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      background: var(--card);
-      color: var(--text);
-      cursor: pointer;
-      transition: background 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--card);
+  color: var(--text);
+  cursor: pointer;
+  transition: background 0.15s ease;
 }
 
 .themeToggleBtn:hover {
-      background: var(--secondary);
+  background: var(--secondary);
 }
 
 .themeToggleBtn svg {
-      width: 18px;
-      height: 18px;
+  width: 18px;
+  height: 18px;
 }

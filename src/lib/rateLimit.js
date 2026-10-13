@@ -8,39 +8,36 @@ const store = new Map();
  * @param {string} options.key - unique key for this route (e.g. "login")
  */
 export function rateLimit(req, { limit, windowMs, key }) {
+  const ip =
+    req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+    req.headers.get("x-real-ip") ||
+    "unknown";
 
-      const ip =
-            req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
-            req.headers.get("x-real-ip") ||
-            "unknown";
+  const storeKey = `${key}:${ip}`;
+  const now = Date.now();
 
-      const storeKey = `${key}:${ip}`;
-      const now = Date.now();
+  const record = store.get(storeKey);
 
-      const record = store.get(storeKey);
+  if (!record) {
+    store.set(storeKey, { count: 1, start: now });
+    return null;
+  }
 
-      if (!record) {
-            store.set(storeKey, { count: 1, start: now });
-            return null;
-      }
+  if (now - record.start > windowMs) {
+    store.set(storeKey, { count: 1, start: now });
+    return null;
+  }
 
-      if (now - record.start > windowMs) {
-            store.set(storeKey, { count: 1, start: now });
-            return null;
-      }
+  record.count += 1;
 
-      record.count += 1;
+  if (record.count > limit) {
+    const retryAfter = Math.ceil((record.start + windowMs - now) / 1000);
 
-      if (record.count > limit) {
-            const retryAfter = Math.ceil(
-                  (record.start + windowMs - now) / 1000
-            );
+    return {
+      limited: true,
+      retryAfter,
+    };
+  }
 
-            return {
-                  limited: true,
-                  retryAfter,
-            };
-      }
-
-      return null;
+  return null;
 }

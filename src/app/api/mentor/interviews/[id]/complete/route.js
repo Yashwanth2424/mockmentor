@@ -3,69 +3,68 @@ import { requireRole } from "@/lib/auth";
 import { successResponse, errorResponse } from "@/lib/apiResponse";
 
 export async function PATCH(req, { params }) {
-      try {
-            const mentor = requireRole(req, ["MENTOR"]);
+  try {
+    const mentor = requireRole(req, ["MENTOR"]);
 
-            const { id } = await params;
+    const { id } = await params;
 
-            const { rating, feedback, strengths, improvements } = await req.json();
+    const { rating, feedback, strengths, improvements } = await req.json();
 
-            if (!rating || rating < 1 || rating > 5) {
-                  return errorResponse("Rating must be between 1 and 5", 400);
-            }
+    if (!rating || rating < 1 || rating > 5) {
+      return errorResponse("Rating must be between 1 and 5", 400);
+    }
 
-            const cleanFeedback = feedback?.trim();
-            const cleanStrengths = strengths?.trim();
-            const cleanImprovements = improvements?.trim();
+    const cleanFeedback = feedback?.trim();
+    const cleanStrengths = strengths?.trim();
+    const cleanImprovements = improvements?.trim();
 
-            if (!cleanFeedback || cleanFeedback.length < 5) {
-                  return errorResponse("Feedback must be at least 5 characters", 400);
-            }
+    if (!cleanFeedback || cleanFeedback.length < 5) {
+      return errorResponse("Feedback must be at least 5 characters", 400);
+    }
 
-            if (cleanFeedback.length > 1000) {
-                  return errorResponse("Feedback too long", 400);
-            }
+    if (cleanFeedback.length > 1000) {
+      return errorResponse("Feedback too long", 400);
+    }
 
-            const interview = await prisma.interview.findUnique({
-                  where: { id },
-            });
+    const interview = await prisma.interview.findUnique({
+      where: { id },
+    });
 
-            if (!interview) {
-                  return errorResponse("Interview not found", 404);
-            }
+    if (!interview) {
+      return errorResponse("Interview not found", 404);
+    }
 
-            if (interview.mentorId !== mentor.id) {
-                  return errorResponse("Forbidden", 403);
-            }
+    if (interview.mentorId !== mentor.id) {
+      return errorResponse("Forbidden", 403);
+    }
 
-            if (interview.status === "COMPLETED") {
-                  return errorResponse("Interview already completed", 400);
-            }
+    if (interview.status === "COMPLETED") {
+      return errorResponse("Interview already completed", 400);
+    }
 
-            if (interview.status !== "ACCEPTED") {
-                  return errorResponse("Only accepted interviews can be completed", 400);
-            }
+    if (interview.status !== "ACCEPTED") {
+      return errorResponse("Only accepted interviews can be completed", 400);
+    }
 
-            const updated = await prisma.interview.update({
-                  where: { id },
-                  data: {
-                        status: "COMPLETED",
-                        rating,
-                        feedback: cleanFeedback,
-                        strengths: cleanStrengths,
-                        improvements: cleanImprovements,
-                        completedAt: new Date(),
-                  },
-            });
+    const updated = await prisma.interview.update({
+      where: { id },
+      data: {
+        status: "COMPLETED",
+        rating,
+        feedback: cleanFeedback,
+        strengths: cleanStrengths,
+        improvements: cleanImprovements,
+        completedAt: new Date(),
+      },
+    });
 
-            return successResponse(updated);
+    return successResponse(updated);
+  } catch (err) {
+    console.error("COMPLETE ERROR:", err);
 
-      } catch (err) {
-            console.error("COMPLETE ERROR:", err);
+    if (err.message === "Unauthorized") return errorResponse("Unauthorized", 401);
+    if (err.message === "Forbidden") return errorResponse("Forbidden", 403);
 
-            if (err.message === "Unauthorized") return errorResponse("Unauthorized", 401);
-            if (err.message === "Forbidden") return errorResponse("Forbidden", 403);
-
-            return errorResponse("Server error", 500);
-      }
+    return errorResponse("Server error", 500);
+  }
 }

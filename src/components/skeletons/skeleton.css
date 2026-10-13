@@ -1,260 +1,252 @@
 /* BASE */
 
 .skeleton {
-      position: relative;
+  position: relative;
 
-      overflow: hidden;
+  overflow: hidden;
 
-      border-radius: 12px;
+  border-radius: 12px;
 
-      background:
-            linear-gradient(90deg,
-                  var(--secondary) 25%,
-                  var(--border) 50%,
-                  var(--secondary) 75%);
+  background: linear-gradient(90deg, var(--secondary) 25%, var(--border) 50%, var(--secondary) 75%);
 
-      background-size: 200% 100%;
+  background-size: 200% 100%;
 
-      animation:
-            skeletonShimmer 1.4s infinite linear;
+  animation: skeletonShimmer 1.4s infinite linear;
 }
 
 @keyframes skeletonShimmer {
+  0% {
+    background-position: 200% 0;
+  }
 
-      0% {
-            background-position: 200% 0;
-      }
-
-      100% {
-            background-position: -200% 0;
-      }
+  100% {
+    background-position: -200% 0;
+  }
 }
 
 /* DASHBOARD */
 
 .skeleton-title {
-      width: 220px;
-      height: 38px;
+  width: 220px;
+  height: 38px;
 
-      margin-bottom: 10px;
+  margin-bottom: 10px;
 }
 
 .skeleton-subtitle {
-      width: 260px;
-      height: 16px;
+  width: 260px;
+  height: 16px;
 }
 
 .skeleton-button {
-      width: 170px;
-      height: 48px;
+  width: 170px;
+  height: 48px;
 }
 
 .skeleton-icon {
-      width: 54px;
-      height: 54px;
+  width: 54px;
+  height: 54px;
 
-      border-radius: 14px;
+  border-radius: 14px;
 }
 
 .skeleton-stats-content {
-      flex: 1;
+  flex: 1;
 }
 
 .skeleton-label {
-      width: 110px;
-      height: 14px;
+  width: 110px;
+  height: 14px;
 
-      margin-bottom: 10px;
+  margin-bottom: 10px;
 }
 
 .skeleton-number {
-      width: 70px;
-      height: 32px;
+  width: 70px;
+  height: 32px;
 }
 
 .skeleton-section-title {
-      width: 180px;
-      height: 28px;
+  width: 180px;
+  height: 28px;
 }
 
 .skeleton-link {
-      width: 90px;
-      height: 18px;
+  width: 90px;
+  height: 18px;
 }
 
 .skeleton-card-title {
-      width: 180px;
-      height: 18px;
+  width: 180px;
+  height: 18px;
 
-      margin-bottom: 10px;
+  margin-bottom: 10px;
 }
 
 .skeleton-card-text {
-      width: 240px;
-      height: 14px;
+  width: 240px;
+  height: 14px;
 
-      margin-bottom: 12px;
+  margin-bottom: 12px;
 }
 
 .skeleton-status {
-      width: 90px;
-      height: 26px;
+  width: 90px;
+  height: 26px;
 
-      border-radius: 999px;
+  border-radius: 999px;
 }
 
 .skeleton-details {
-      width: 70px;
-      height: 16px;
+  width: 70px;
+  height: 16px;
 }
 
 /* MOBILE */
 
 @media (max-width: 768px) {
+  .skeleton-button {
+    width: 100%;
+  }
 
-      .skeleton-button {
-            width: 100%;
-      }
-
-      .skeleton-card-text {
-            width: 180px;
-      }
+  .skeleton-card-text {
+    width: 180px;
+  }
 }
 
 /* MENTOR */
 
 .skeleton-mentor-page {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-      width: 100%;
-      max-width: 1200px;
-      margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .skeleton-mentor-header {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .skeleton-mentor-title {
-      width: 200px;
-      height: 28px;
+  width: 200px;
+  height: 28px;
 }
 
 .skeleton-mentor-subtitle {
-      width: 160px;
-      height: 16px;
+  width: 160px;
+  height: 16px;
 }
 
 .skeleton-availability-box {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 18px;
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
 }
 
 .skeleton-availability-title {
-      width: 180px;
-      height: 20px;
+  width: 180px;
+  height: 20px;
 }
 
 .skeleton-availability-row {
-      display: flex;
-      align-items: center;
-      gap: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
 .skeleton-day-label {
-      width: 90px;
-      height: 16px;
-      flex-shrink: 0;
+  width: 90px;
+  height: 16px;
+  flex-shrink: 0;
 }
 
 .skeleton-day-select {
-      width: 100px;
-      height: 36px;
-      border-radius: 8px;
+  width: 100px;
+  height: 36px;
+  border-radius: 8px;
 }
 
 .skeleton-save-btn {
-      width: 140px;
-      height: 38px;
-      border-radius: 8px;
-      margin-top: 4px;
+  width: 140px;
+  height: 38px;
+  border-radius: 8px;
+  margin-top: 4px;
 }
 
 .skeleton-filter-tabs {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
 .skeleton-tab {
-      width: 80px;
-      height: 34px;
-      border-radius: 8px;
+  width: 80px;
+  height: 34px;
+  border-radius: 8px;
 }
 
 .skeleton-mentor-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-      gap: 14px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 14px;
 }
 
 .skeleton-mentor-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .skeleton-mentor-card-title {
-      width: 70%;
-      height: 18px;
+  width: 70%;
+  height: 18px;
 }
 
 .skeleton-mentor-card-line {
-      width: 90%;
-      height: 14px;
+  width: 90%;
+  height: 14px;
 }
 
 .skeleton-mentor-card-line.short {
-      width: 60%;
+  width: 60%;
 }
 
 .skeleton-mentor-status {
-      width: 80px;
-      height: 24px;
-      border-radius: 999px;
+  width: 80px;
+  height: 24px;
+  border-radius: 999px;
 }
 
 .skeleton-mentor-btn {
-      width: 100%;
-      height: 36px;
-      border-radius: 8px;
-      margin-top: 4px;
+  width: 100%;
+  height: 36px;
+  border-radius: 8px;
+  margin-top: 4px;
 }
 
 /* MOBILE */
 @media (max-width: 768px) {
+  .skeleton-mentor-grid {
+    grid-template-columns: 1fr;
+  }
 
-      .skeleton-mentor-grid {
-            grid-template-columns: 1fr;
-      }
+  .skeleton-day-select {
+    width: 80px;
+  }
 
-      .skeleton-day-select {
-            width: 80px;
-      }
-
-      .skeleton-mentor-title {
-            width: 160px;
-      }
+  .skeleton-mentor-title {
+    width: 160px;
+  }
 }

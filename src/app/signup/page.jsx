@@ -9,142 +9,132 @@ import { Home, Mail, Lock, User, Eye, EyeOff } from "lucide-react";
 import { toast } from "react-toastify";
 
 export default function SignupPage() {
+  const router = useRouter();
 
-      const router = useRouter();
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    password: "",
+  });
 
-      const [form, setForm] = useState({
-            name: "",
-            email: "",
-            password: "",
+  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  function handleChange(e) {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  }
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+
+    if (loading) return;
+
+    if (!form.name.trim() || !form.email.trim() || !form.password.trim()) {
+      toast.error("All fields are required");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const res = await fetch("/api/auth/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: form.name.trim(),
+          email: form.email.trim(),
+          password: form.password,
+        }),
       });
 
-      const [showPassword, setShowPassword] = useState(false);
-      const [loading, setLoading] = useState(false);
+      const json = await res.json();
 
-      function handleChange(e) {
-            setForm({ ...form, [e.target.name]: e.target.value });
+      if (!res.ok || !json.success) {
+        toast.error(json.error || "Signup failed");
+        return;
       }
 
-      async function handleSubmit(e) {
-            e.preventDefault();
+      toast.success("Account created, please log in");
 
-            if (loading) return;
+      setTimeout(() => router.push("/login"), 500);
+    } catch {
+      toast.error("Something went wrong");
+    } finally {
+      setLoading(false);
+    }
+  }
 
-            if (!form.name.trim() || !form.email.trim() || !form.password.trim()) {
-                  toast.error("All fields are required");
-                  return;
-            }
+  return (
+    <div className="signup-page">
+      <div className="signup-right">
+        <form className="signup-card" onSubmit={handleSubmit}>
+          <Link href="/" className="home-link">
+            <Home size={16} />
+            Home
+          </Link>
 
-            setLoading(true);
+          <h1>Create Account</h1>
 
-            try {
-                  const res = await fetch("/api/auth/signup", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                              name: form.name.trim(),
-                              email: form.email.trim(),
-                              password: form.password,
-                        }),
-                  });
+          <div className="input-group">
+            <User size={18} className="input-icon" />
+            <input
+              type="text"
+              name="name"
+              placeholder="Full Name"
+              value={form.name}
+              onChange={handleChange}
+            />
+          </div>
 
-                  const json = await res.json();
+          <div className="input-group">
+            <Mail size={18} className="input-icon" />
+            <input
+              type="email"
+              name="email"
+              placeholder="Email"
+              value={form.email}
+              onChange={handleChange}
+            />
+          </div>
 
-                  if (!res.ok || !json.success) {
-                        toast.error(json.error || "Signup failed");
-                        return;
-                  }
+          <div className="input-group">
+            <Lock size={18} className="input-icon" />
+            <input
+              type={showPassword ? "text" : "password"}
+              name="password"
+              placeholder="Password"
+              value={form.password}
+              onChange={handleChange}
+            />
+            <button
+              type="button"
+              className="eye-btn"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+            </button>
+          </div>
 
-                  toast.success("Account created, please log in");
+          <button type="submit" className="signup-btn" disabled={loading}>
+            {loading ? "Creating Account..." : "Sign Up"}
+          </button>
 
-                  setTimeout(() => router.push("/login"), 500);
+          <p className="bottom-text">
+            Already have an account? <Link href="/login">Login Here</Link>
+          </p>
+        </form>
+      </div>
 
-            } catch {
-                  toast.error("Something went wrong");
-            } finally {
-                  setLoading(false);
-            }
-      }
-
-      return (
-            <div className="signup-page">
-
-                  <div className="signup-right">
-                        <form className="signup-card" onSubmit={handleSubmit}>
-
-                              <Link href="/" className="home-link">
-                                    <Home size={16} />
-                                    Home
-                              </Link>
-
-                              <h1>Create Account</h1>
-
-                              <div className="input-group">
-                                    <User size={18} className="input-icon" />
-                                    <input
-                                          type="text"
-                                          name="name"
-                                          placeholder="Full Name"
-                                          value={form.name}
-                                          onChange={handleChange}
-                                    />
-                              </div>
-
-                              <div className="input-group">
-                                    <Mail size={18} className="input-icon" />
-                                    <input
-                                          type="email"
-                                          name="email"
-                                          placeholder="Email"
-                                          value={form.email}
-                                          onChange={handleChange}
-                                    />
-                              </div>
-
-                              <div className="input-group">
-                                    <Lock size={18} className="input-icon" />
-                                    <input
-                                          type={showPassword ? "text" : "password"}
-                                          name="password"
-                                          placeholder="Password"
-                                          value={form.password}
-                                          onChange={handleChange}
-                                    />
-                                    <button
-                                          type="button"
-                                          className="eye-btn"
-                                          onClick={() => setShowPassword(!showPassword)}
-                                    >
-                                          {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                                    </button>
-                              </div>
-
-                              <button
-                                    type="submit"
-                                    className="signup-btn"
-                                    disabled={loading}
-                              >
-                                    {loading ? "Creating Account..." : "Sign Up"}
-                              </button>
-
-                              <p className="bottom-text">
-                                    Already have an account?{" "}
-                                    <Link href="/login">Login Here</Link>
-                              </p>
-
-                        </form>
-                  </div>
-
-                  <div className="signup-left">
-                        <Image
-                              src="/sign_page_image.webp"
-                              alt="Signup Illustration"
-                              width={420}
-                              height={420}
-                              className="signup-image"
-                              loading="eager"
-                        />
-                  </div>
-            </div>
-      );
+      <div className="signup-left">
+        <Image
+          src="/sign_page_image.webp"
+          alt="Signup Illustration"
+          width={420}
+          height={420}
+          className="signup-image"
+          loading="eager"
+        />
+      </div>
+    </div>
+  );
 }

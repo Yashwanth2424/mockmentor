@@ -1,98 +1,80 @@
 "use client";
 
-import {
-      LayoutDashboard,
-      CalendarPlus,
-      ClipboardList,
-      LogOut,
-      X,
-} from "lucide-react";
+import { LayoutDashboard, CalendarPlus, ClipboardList, LogOut, X } from "lucide-react";
 
 import { useRouter, usePathname } from "next/navigation";
 import { mutate } from "swr";
 import "./sidebar.css";
 
 export default function Sidebar({ open, setOpen }) {
+  const router = useRouter();
+  const pathname = usePathname();
 
-      const router = useRouter();
-      const pathname = usePathname();
+  function nav(path) {
+    if (pathname === path) {
+      setOpen(false);
+      return;
+    }
+    router.push(path);
+    setOpen(false);
+  }
 
-      function nav(path) {
-            if (pathname === path) {
-                  setOpen(false);
-                  return;
-            }
-            router.push(path);
-            setOpen(false);
-      }
+  async function handleLogout() {
+    await fetch("/api/auth/logout", { method: "POST" });
 
-      async function handleLogout() {
-            await fetch("/api/auth/logout", { method: "POST" });
+    // Clear entire SWR cache so next user
+    // does not see previous user's data
+    await mutate(() => true, undefined, { revalidate: false });
 
-            // Clear entire SWR cache so next user
-            // does not see previous user's data
-            await mutate(() => true, undefined, { revalidate: false });
+    window.location.href = "/login";
+  }
 
-            window.location.href = "/login";
-      }
+  return (
+    <aside className={`sidebar ${open ? "open" : ""}`}>
+      <button className="close-btn" onClick={() => setOpen(false)} aria-label="Close menu">
+        <X size={20} />
+      </button>
 
-      return (
-            <aside className={`sidebar ${open ? "open" : ""}`}>
+      <h2 className="logo">MockMentor</h2>
 
-                  <button
-                        className="close-btn"
-                        onClick={() => setOpen(false)}
-                        aria-label="Close menu"
-                  >
-                        <X size={20} />
-                  </button>
+      <div className="menu">
+        <button
+          className={
+            pathname === "/dashboard" &&
+            !pathname.includes("/dashboard/book") &&
+            !pathname.includes("/dashboard/interviews")
+              ? "active"
+              : ""
+          }
+          onClick={() => nav("/dashboard")}
+        >
+          <LayoutDashboard size={18} />
+          Dashboard
+        </button>
 
-                  <h2 className="logo">MockMentor</h2>
+        <button
+          className={pathname.includes("/dashboard/book") ? "active" : ""}
+          onClick={() => nav("/dashboard/book")}
+        >
+          <CalendarPlus size={18} />
+          Book Interview
+        </button>
 
-                  <div className="menu">
+        <button
+          className={pathname.includes("/dashboard/interviews") ? "active" : ""}
+          onClick={() => nav("/dashboard/interviews")}
+        >
+          <ClipboardList size={18} />
+          My Interviews
+        </button>
+      </div>
 
-                        <button
-                              className={
-                                    pathname === "/dashboard" &&
-                                          !pathname.includes("/dashboard/book") &&
-                                          !pathname.includes("/dashboard/interviews")
-                                          ? "active" : ""
-                              }
-                              onClick={() => nav("/dashboard")}
-                        >
-                              <LayoutDashboard size={18} />
-                              Dashboard
-                        </button>
-
-                        <button
-                              className={
-                                    pathname.includes("/dashboard/book")
-                                          ? "active" : ""
-                              }
-                              onClick={() => nav("/dashboard/book")}
-                        >
-                              <CalendarPlus size={18} />
-                              Book Interview
-                        </button>
-
-                        <button
-                              className={
-                                    pathname.includes("/dashboard/interviews")
-                                          ? "active" : ""
-                              }
-                              onClick={() => nav("/dashboard/interviews")}
-                        >
-                              <ClipboardList size={18} />
-                              My Interviews
-                        </button>
-                  </div>
-
-                  <div className="sidebar-footer">
-                        <button onClick={handleLogout}>
-                              <LogOut size={18} />
-                              Logout
-                        </button>
-                  </div>
-            </aside>
-      );
+      <div className="sidebar-footer">
+        <button onClick={handleLogout}>
+          <LogOut size={18} />
+          Logout
+        </button>
+      </div>
+    </aside>
+  );
 }

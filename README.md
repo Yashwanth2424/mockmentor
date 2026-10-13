@@ -11,6 +11,7 @@ Live demo: https://mockmentor-flame.vercel.app
 There are three roles: student, mentor and admin.
 
 **Students can:**
+
 - book an interview by choosing a topic, a date, a mentor and a time slot
 - see their interviews and the status (pending, accepted, rejected, completed, cancelled)
 - reschedule or cancel an interview
@@ -18,11 +19,13 @@ There are three roles: student, mentor and admin.
 - get a confirmation email when they book
 
 **Mentors can:**
+
 - set the hours they are available for each day of the week
 - accept or reject booking requests
 - mark an interview as completed and give feedback (rating, strengths, things to improve)
 
 **Admins can:**
+
 - see all users, change a user between student and mentor, or delete them. Only the super admin can make someone an admin or remove an admin.
 - see all interviews with the student and the mentor, and cancel one if needed
 - see simple counts of total, pending and completed interviews
@@ -75,6 +78,7 @@ More: [landing page](screenshots/landing.png), [login page](screenshots/login.pn
 Note: Prisma 5 cannot describe partial indexes in `schema.prisma`, so they only exist in the migration file. If a future `prisma migrate dev` tries to drop them, remove those `DROP INDEX` lines from the new migration.
 
 **Other details:**
+
 - passwords are hashed with bcrypt
 - API responses always look like `{ success, data }` or `{ success, error }`
 - simple rate limiting on login, signup and booking
@@ -84,10 +88,10 @@ Note: Prisma 5 cannot describe partial indexes in `schema.prisma`, so they only 
 
 You can try the app with these accounts:
 
-| Role | Email | Password |
-|---|---|---|
-| Student | yashwanth.student@example.com | 123456 |
-| Mentor | akshay.mentor@example.com | 123456 |
+| Role    | Email                         | Password |
+| ------- | ----------------------------- | -------- |
+| Student | yashwanth.student@example.com | 123456   |
+| Mentor  | akshay.mentor@example.com     | 123456   |
 
 The admin panel is not public. The admin features are listed above.
 

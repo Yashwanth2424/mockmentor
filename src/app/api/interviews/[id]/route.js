@@ -1,85 +1,44 @@
 import { prisma } from "@/lib/prisma";
 
-import {
-      requireAuth,
-} from "@/lib/auth";
+import { requireAuth } from "@/lib/auth";
 
-import {
-      successResponse,
-      errorResponse,
-} from "@/lib/apiResponse";
+import { successResponse, errorResponse } from "@/lib/apiResponse";
 
 const publicUser = { select: { id: true, name: true, email: true } };
 
-export async function GET(
-      req,
-      { params }
-) {
+export async function GET(req, { params }) {
+  try {
+    const user = requireAuth(req);
 
-      try {
+    const { id } = await params;
 
-            const user =
-                  requireAuth(req);
+    const interview = await prisma.interview.findUnique({
+      where: {
+        id,
+      },
 
-            const { id } =
-                  await params;
+      include: {
+        user: publicUser,
+        mentor: publicUser,
+      },
+    });
 
-            const interview =
-                  await prisma.interview.findUnique({
-                        where: {
-                              id,
-                        },
+    if (!interview) {
+      return errorResponse("Interview not found", 404);
+    }
 
-                        include: {
-                              user: publicUser,
-                              mentor: publicUser,
-                        },
-                  });
+    if (interview.userId !== user.id) {
+      return errorResponse("Forbidden", 403);
+    }
 
-            if (!interview) {
+    return successResponse(interview);
+  } catch (err) {
+    console.error("INTERVIEW DETAILS ERROR:", err);
 
-                  return errorResponse(
-                        "Interview not found",
-                        404
-                  );
-            }
+    if (err.message === "Unauthorized") {
+      return errorResponse("Unauthorized", 401);
+    }
 
-            if (
-                  interview.userId !==
-                  user.id
-            ) {
-
-                  return errorResponse(
-                        "Forbidden",
-                        403
-                  );
-            }
-
-            return successResponse(
-                  interview
-            );
-
-      } catch (err) {
-
-            console.error(
-                  "INTERVIEW DETAILS ERROR:",
-                  err
-            );
-
-            if (
-                  err.message ===
-                  "Unauthorized"
-            ) {
-
-                  return errorResponse(
-                        "Unauthorized",
-                        401
-                  );
-            }
-
-            return errorResponse(
-                  "Server error",
-                  500
-            );
-      }
+    return errorResponse("Server error", 500);
+  }
 }

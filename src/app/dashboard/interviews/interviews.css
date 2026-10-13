@@ -1,320 +1,327 @@
 /* PAGE */
 
 .interviews-page {
-      display: flex;
-      flex-direction: column;
-      gap: 24px;
-      width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
 }
 
 .interviews-header h1 {
-      font-size: 24px;
-      font-weight: 700;
-      line-height: 1.3;
-      margin-bottom: 4px;
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.3;
+  margin-bottom: 4px;
 }
 
 .interviews-header p {
-      color: var(--text-secondary);
-      font-size: 14px;
+  color: var(--text-secondary);
+  font-size: 14px;
 }
 
 /* CARDS */
 
 .interview-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-      gap: 16px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 16px;
 }
 
 .interview-card {
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      gap: 16px;
-      padding: 20px;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      cursor: pointer;
-      transition: box-shadow 0.15s ease, border-color 0.15s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition:
+    box-shadow 0.15s ease,
+    border-color 0.15s ease;
 }
 
 .interview-card:hover {
-      box-shadow: var(--shadow);
-      border-color: var(--text-secondary);
+  box-shadow: var(--shadow);
+  border-color: var(--text-secondary);
 }
 
 .card-top {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 12px;
-      margin-bottom: 12px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
 }
 
 .card-title {
-      font-size: 16px;
-      font-weight: 600;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
+  font-size: 16px;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .card-body {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .card-text {
-      font-size: 14px;
-      color: var(--text-secondary);
-      word-break: break-word;
+  font-size: 14px;
+  color: var(--text-secondary);
+  word-break: break-word;
 }
 
 .card-text strong {
-      color: var(--text);
-      font-weight: 500;
+  color: var(--text);
+  font-weight: 500;
 }
 
 .status-badge {
-      flex-shrink: 0;
-      padding: 2px 10px;
-      border-radius: 999px;
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.3px;
+  flex-shrink: 0;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
 }
 
 /* CARD BUTTONS */
 
 .card-actions {
-      display: flex;
-      gap: 8px;
+  display: flex;
+  gap: 8px;
 }
 
 .card-actions button {
-      flex: 1;
-      height: 36px;
-      padding: 0 12px;
-      border: 1px solid transparent;
-      border-radius: var(--radius-sm);
-      font-size: 13px;
-      font-weight: 500;
-      white-space: nowrap;
-      cursor: pointer;
-      transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  flex: 1;
+  height: 36px;
+  padding: 0 12px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease,
+    border-color 0.15s ease;
 }
 
 .card-actions button:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .card-actions .cancel-btn {
-      background: transparent;
-      color: var(--danger);
+  background: transparent;
+  color: var(--danger);
 }
 
 .card-actions .cancel-btn:hover {
-      background: var(--danger-soft);
+  background: var(--danger-soft);
 }
 
 .card-actions .reschedule-btn {
-      background: var(--primary-soft);
-      color: var(--primary);
+  background: var(--primary-soft);
+  color: var(--primary);
 }
 
 .card-actions .reschedule-btn:hover {
-      border-color: var(--primary);
+  border-color: var(--primary);
 }
 
 .card-actions .view-btn {
-      background: transparent;
-      border-color: var(--border);
-      color: var(--text);
+  background: transparent;
+  border-color: var(--border);
+  color: var(--text);
 }
 
 .card-actions .view-btn:hover {
-      background: var(--secondary);
+  background: var(--secondary);
 }
 
 /* EMPTY STATE */
 
 .empty-state {
-      padding: 48px 20px;
-      text-align: center;
-      background: var(--card);
-      border: 1px dashed var(--border);
-      border-radius: var(--radius);
+  padding: 48px 20px;
+  text-align: center;
+  background: var(--card);
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
 }
 
 .empty-state h3 {
-      font-size: 17px;
-      margin-bottom: 6px;
+  font-size: 17px;
+  margin-bottom: 6px;
 }
 
 .empty-state p {
-      color: var(--text-secondary);
-      font-size: 14px;
+  color: var(--text-secondary);
+  font-size: 14px;
 }
 
 /* RESCHEDULE MODAL */
 
 .modal-overlay {
-      position: fixed;
-      inset: 0;
-      z-index: 5000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 16px;
-      background: var(--overlay);
+  position: fixed;
+  inset: 0;
+  z-index: 5000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: var(--overlay);
 }
 
 .reschedule-modal {
-      width: 100%;
-      max-width: 500px;
-      max-height: calc(100vh - 32px);
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 18px;
-      padding: 24px;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  max-width: 500px;
+  max-height: calc(100vh - 32px);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 24px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
 }
 
 .reschedule-modal h2 {
-      font-size: 20px;
-      font-weight: 700;
+  font-size: 20px;
+  font-weight: 700;
 }
 
 .modal-group {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
 .modal-group label {
-      font-size: 13px;
-      font-weight: 600;
+  font-size: 13px;
+  font-weight: 600;
 }
 
 .modal-group input,
 .modal-group select {
-      width: 100%;
-      height: 44px;
-      padding: 0 12px;
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      background: var(--background);
-      color: var(--text);
-      font-size: 14px;
+  width: 100%;
+  height: 44px;
+  padding: 0 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--background);
+  color: var(--text);
+  font-size: 14px;
 }
 
 .modal-group input:focus,
 .modal-group select:focus {
-      outline: none;
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px var(--primary-soft);
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-soft);
 }
 
 .slots-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(76px, 1fr));
-      gap: 8px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(76px, 1fr));
+  gap: 8px;
 }
 
 .slot-btn {
-      height: 36px;
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      background: var(--background);
-      color: var(--text);
-      font-size: 13px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: border-color 0.15s ease, background 0.15s ease;
+  height: 36px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--background);
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    background 0.15s ease;
 }
 
 .slot-btn:hover {
-      border-color: var(--primary);
+  border-color: var(--primary);
 }
 
 .slot-btn.active-slot {
-      background: var(--primary);
-      border-color: var(--primary);
-      color: var(--on-primary);
+  background: var(--primary);
+  border-color: var(--primary);
+  color: var(--on-primary);
 }
 
 .no-slots {
-      grid-column: 1 / -1;
-      color: var(--text-secondary);
-      font-size: 14px;
+  grid-column: 1 / -1;
+  color: var(--text-secondary);
+  font-size: 14px;
 }
 
 .modal-selected {
-      color: var(--primary);
-      font-size: 14px;
-      font-weight: 600;
+  color: var(--primary);
+  font-size: 14px;
+  font-weight: 600;
 }
 
 .modal-actions {
-      display: flex;
-      gap: 10px;
+  display: flex;
+  gap: 10px;
 }
 
 .modal-actions button {
-      flex: 1;
-      height: 42px;
-      border-radius: var(--radius-sm);
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background 0.15s ease;
+  flex: 1;
+  height: 42px;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease;
 }
 
 .modal-cancel {
-      background: transparent;
-      border: 1px solid var(--border);
-      color: var(--text);
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text);
 }
 
 .modal-cancel:hover {
-      background: var(--secondary);
+  background: var(--secondary);
 }
 
 .modal-save {
-      background: var(--primary);
-      border: 1px solid var(--primary);
-      color: var(--on-primary);
+  background: var(--primary);
+  border: 1px solid var(--primary);
+  color: var(--on-primary);
 }
 
 .modal-save:hover {
-      background: var(--primary-hover);
+  background: var(--primary-hover);
 }
 
 .modal-save:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 /* PHONE */
 
 @media (max-width: 640px) {
-      .interview-grid {
-            grid-template-columns: 1fr;
-      }
+  .interview-grid {
+    grid-template-columns: 1fr;
+  }
 
-      .interview-card {
-            padding: 16px;
-      }
+  .interview-card {
+    padding: 16px;
+  }
 
-      .reschedule-modal {
-            padding: 20px;
-      }
+  .reschedule-modal {
+    padding: 20px;
+  }
 }

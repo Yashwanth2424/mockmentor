@@ -1,71 +1,45 @@
 import { prisma } from "@/lib/prisma";
 
-import {
-      requireAuth,
-} from "@/lib/auth";
+import { requireAuth } from "@/lib/auth";
 
-import {
-      successResponse,
-      errorResponse,
-} from "@/lib/apiResponse";
+import { successResponse, errorResponse } from "@/lib/apiResponse";
 
 const publicUser = { select: { id: true, name: true, email: true } };
 
 const HIDE_AFTER_DAYS = 7;
 
 export async function GET(req) {
+  try {
+    const user = requireAuth(req);
 
-      try {
+    const cutoff = new Date(Date.now() - HIDE_AFTER_DAYS * 24 * 60 * 60 * 1000);
 
-            const user =
-                  requireAuth(req);
+    const interviews = await prisma.interview.findMany({
+      where: {
+        userId: user.id,
+        NOT: {
+          status: { in: ["CANCELLED", "REJECTED"] },
+          updatedAt: { lt: cutoff },
+        },
+      },
 
-            const cutoff = new Date(Date.now() - HIDE_AFTER_DAYS * 24 * 60 * 60 * 1000);
+      include: {
+        mentor: publicUser,
+      },
 
-            const interviews =
-                  await prisma.interview.findMany({
-                        where: {
-                              userId: user.id,
-                              NOT: {
-                                    status: { in: ["CANCELLED", "REJECTED"] },
-                                    updatedAt: { lt: cutoff },
-                              },
-                        },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
 
-                        include: {
-                              mentor: publicUser,
-                        },
+    return successResponse(interviews);
+  } catch (err) {
+    console.error("INTERVIEWS ERROR:", err);
 
-                        orderBy: {
-                              createdAt: "desc",
-                        },
-                  });
+    if (err.message === "Unauthorized") {
+      return errorResponse("Unauthorized", 401);
+    }
 
-            return successResponse(
-                  interviews
-            );
-
-      } catch (err) {
-
-            console.error(
-                  "INTERVIEWS ERROR:",
-                  err
-            );
-
-            if (
-                  err.message ===
-                  "Unauthorized"
-            ) {
-
-                  return errorResponse(
-                        "Unauthorized",
-                        401
-                  );
-            }
-
-            return errorResponse(
-                  "Server error",
-                  500
-            );
-      }
+    return errorResponse("Server error", 500);
+  }
 }

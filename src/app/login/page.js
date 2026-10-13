@@ -11,157 +11,146 @@ import { Home, Mail, Lock, Eye, EyeOff } from "lucide-react";
 import { toast } from "react-toastify";
 
 export default function LoginPage() {
+  const router = useRouter();
 
-      const router = useRouter();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-      const [email, setEmail] = useState("");
-      const [password, setPassword] = useState("");
-      const [showPassword, setShowPassword] = useState(false);
-      const [loading, setLoading] = useState(false);
+  useEffect(() => {
+    async function checkUser() {
+      try {
+        const res = await fetch("/api/me");
+        const json = await res.json();
 
-      useEffect(() => {
-            async function checkUser() {
-                  try {
-                        const res = await fetch("/api/me");
-                        const json = await res.json();
+        if (!res.ok || !json.success) return;
 
-                        if (!res.ok || !json.success) return;
+        const role = json.data.role;
 
-                        const role = json.data.role;
+        if (role === "ADMIN" || role === "SUPER_ADMIN") {
+          router.replace("/admin");
+        } else if (role === "MENTOR") {
+          router.replace("/mentor");
+        } else {
+          router.replace("/dashboard");
+        }
+      } catch {
+        // not logged in, stay on login page
+      }
+    }
 
-                        if (role === "ADMIN" || role === "SUPER_ADMIN") {
-                              router.replace("/admin");
-                        } else if (role === "MENTOR") {
-                              router.replace("/mentor");
-                        } else {
-                              router.replace("/dashboard");
-                        }
+    checkUser();
+  }, [router]);
 
-                  } catch {
-                        // not logged in, stay on login page
-                  }
-            }
+  async function handleSubmit(e) {
+    e.preventDefault();
 
-            checkUser();
-      }, [router]);
+    if (loading) return;
 
-      async function handleSubmit(e) {
-            e.preventDefault();
+    if (!email.trim() || !password.trim()) {
+      toast.error("Please enter email and password");
+      return;
+    }
 
-            if (loading) return;
+    setLoading(true);
 
-            if (!email.trim() || !password.trim()) {
-                  toast.error("Please enter email and password");
-                  return;
-            }
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          email: email.trim(),
+          password,
+        }),
+      });
 
-            setLoading(true);
+      const json = await res.json();
 
-            try {
-                  const res = await fetch("/api/auth/login", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        credentials: "include",
-                        body: JSON.stringify({
-                              email: email.trim(),
-                              password,
-                        }),
-                  });
-
-                  const json = await res.json();
-
-                  if (!res.ok || !json.success) {
-                        toast.error(json.error || "Invalid credentials");
-                        return;
-                  }
-
-                  const role = json.data.role;
-
-                  setTimeout(() => {
-                        if (role === "ADMIN" || role === "SUPER_ADMIN") {
-                              router.push("/admin");
-                        } else if (role === "MENTOR") {
-                              router.push("/mentor");
-                        } else {
-                              router.push("/dashboard");
-                        }
-                  }, 500);
-
-            } catch {
-                  toast.error("Something went wrong");
-            } finally {
-                  setLoading(false);
-            }
+      if (!res.ok || !json.success) {
+        toast.error(json.error || "Invalid credentials");
+        return;
       }
 
-      return (
-            <div className="login-page">
+      const role = json.data.role;
 
-                  <div className="login-left">
-                        <Image
-                              src="/login_page_img_mock_mentor.webp"
-                              alt="Login Illustration"
-                              width={420}
-                              height={420}
-                              className="login-image"
-                              loading="eager"
-                        />
-                  </div>
+      setTimeout(() => {
+        if (role === "ADMIN" || role === "SUPER_ADMIN") {
+          router.push("/admin");
+        } else if (role === "MENTOR") {
+          router.push("/mentor");
+        } else {
+          router.push("/dashboard");
+        }
+      }, 500);
+    } catch {
+      toast.error("Something went wrong");
+    } finally {
+      setLoading(false);
+    }
+  }
 
-                  <div className="login-right">
-                        <form className="login-card" onSubmit={handleSubmit}>
+  return (
+    <div className="login-page">
+      <div className="login-left">
+        <Image
+          src="/login_page_img_mock_mentor.webp"
+          alt="Login Illustration"
+          width={420}
+          height={420}
+          className="login-image"
+          loading="eager"
+        />
+      </div>
 
-                              <Link href="/" className="home-link">
-                                    <Home size={16} />
-                                    Home
-                              </Link>
+      <div className="login-right">
+        <form className="login-card" onSubmit={handleSubmit}>
+          <Link href="/" className="home-link">
+            <Home size={16} />
+            Home
+          </Link>
 
-                              <h1>Login</h1>
+          <h1>Login</h1>
 
-                              <div className="input-group">
-                                    <Mail size={18} className="input-icon" />
-                                    <input
-                                          type="email"
-                                          placeholder="Email"
-                                          autoComplete="email"
-                                          value={email}
-                                          onChange={(e) => setEmail(e.target.value)}
-                                    />
-                              </div>
+          <div className="input-group">
+            <Mail size={18} className="input-icon" />
+            <input
+              type="email"
+              placeholder="Email"
+              autoComplete="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </div>
 
-                              <div className="input-group">
-                                    <Lock size={18} className="input-icon" />
-                                    <input
-                                          type={showPassword ? "text" : "password"}
-                                          placeholder="Password"
-                                          autoComplete="current-password"
-                                          value={password}
-                                          onChange={(e) => setPassword(e.target.value)}
-                                    />
-                                    <button
-                                          type="button"
-                                          className="eye-btn"
-                                          onClick={() => setShowPassword(!showPassword)}
-                                    >
-                                          {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                                    </button>
-                              </div>
+          <div className="input-group">
+            <Lock size={18} className="input-icon" />
+            <input
+              type={showPassword ? "text" : "password"}
+              placeholder="Password"
+              autoComplete="current-password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <button
+              type="button"
+              className="eye-btn"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+            </button>
+          </div>
 
-                              <button
-                                    type="submit"
-                                    className="login-btn"
-                                    disabled={loading}
-                              >
-                                    {loading ? "Logging in..." : "Log In"}
-                              </button>
+          <button type="submit" className="login-btn" disabled={loading}>
+            {loading ? "Logging in..." : "Log In"}
+          </button>
 
-                              <p className="bottom-text">
-                                    Don&apos;t have an account?{" "}
-                                    <Link href="/signup">Register Here</Link>
-                              </p>
-
-                        </form>
-                  </div>
-            </div>
-      );
+          <p className="bottom-text">
+            Don&apos;t have an account? <Link href="/signup">Register Here</Link>
+          </p>
+        </form>
+      </div>
+    </div>
+  );
 }
