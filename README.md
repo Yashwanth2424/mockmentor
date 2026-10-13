@@ -1,5 +1,7 @@
 # MockMentor
 
+[![CI](https://github.com/Yashwanth2424/mockmentor/actions/workflows/ci.yml/badge.svg)](https://github.com/Yashwanth2424/mockmentor/actions/workflows/ci.yml)
+
 MockMentor is a web app where students can book mock interviews with mentors. I built it to practice full-stack development with Next.js, Prisma and PostgreSQL.
 
 Live demo: https://mockmentor-flame.vercel.app
@@ -111,6 +113,8 @@ npm run dev
 ```
 
 Then open http://localhost:3000.
+
+GitHub Actions also runs the linter, the tests and a production build on every push (see `.github/workflows/ci.yml`).
 
 To run the tests and the linter:
 
