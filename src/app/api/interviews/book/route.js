@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { requireAuth } from "@/lib/auth";
 import { successResponse, errorResponse } from "@/lib/apiResponse";
 import { sendEmail } from "@/lib/email";
+import { bookingConfirmationEmail } from "@/lib/emailTemplates";
 import { rateLimit } from "@/lib/rateLimit";
 import { bookingSchema } from "@/lib/validators";
 import { NextResponse } from "next/server";
@@ -130,34 +131,12 @@ export async function POST(req) {
       await sendEmail({
         to: interview.user.email,
         subject: "Interview Scheduled - MockMentor",
-        html: `
-                              <div style="font-family: Arial, sans-serif; background:#f9fafb; padding:20px;">
-                                    <div style="max-width:600px; margin:auto; background:white; border-radius:12px; overflow:hidden; border:1px solid #e5e7eb;">
-                                          <div style="background:linear-gradient(135deg,#4f46e5,#7c3aed); padding:20px; text-align:center; color:white;">
-                                                <h1 style="margin:0;">MockMentor</h1>
-                                                <p style="margin:5px 0 0; font-size:14px;">Interview Practice Platform</p>
-                                          </div>
-                                          <div style="padding:24px;">
-                                                <h2 style="margin-top:0;">Interview Confirmed</h2>
-                                                <p style="color:#374151;">Your interview has been successfully scheduled.</p>
-                                                <div style="background:#f3f4f6; padding:16px; border-radius:8px; margin:20px 0;">
-                                                      <p><strong>Topic:</strong> ${interview.topic}</p>
-                                                      <p><strong>Date:</strong> ${formatDateTime(interview.date)} (German time)</p>
-                                                      <p><strong>Mentor:</strong> ${interview.mentor.name}</p>
-                                                </div>
-                                                <div style="text-align:center; margin-top:20px;">
-                                                      <a href="${process.env.NEXT_PUBLIC_APP_URL}/dashboard"
-                                                            style="display:inline-block; padding:12px 20px; background:#4f46e5; color:white; border-radius:8px; text-decoration:none;">
-                                                            Go to Dashboard
-                                                      </a>
-                                                </div>
-                                          </div>
-                                          <div style="padding:16px; text-align:center; font-size:12px; color:#9ca3af;">
-                                                © ${new Date().getFullYear()} MockMentor
-                                          </div>
-                                    </div>
-                              </div>
-                        `,
+        html: bookingConfirmationEmail({
+          topic: interview.topic,
+          date: formatDateTime(interview.date),
+          mentorName: interview.mentor.name,
+          appUrl: process.env.NEXT_PUBLIC_APP_URL,
+        }),
       });
     } catch (emailErr) {
       console.error("EMAIL ERROR:", emailErr);
