@@ -73,7 +73,7 @@ More: [landing page](screenshots/landing.png), [login page](screenshots/login.pn
 
 **Roles and access.** `src/proxy.js` checks the login cookie and the role before a page or API route is opened. Each API route also checks the user again, so the API is protected even without the proxy. For admin routes the server also reads the user's current role from the database, so a removed admin loses access right away and not only when the login token expires.
 
-**No double booking.** A mentor or a student should never have two active interviews at the same time. The API first checks for a conflict to show a clear error message. But two requests can arrive at the same moment and both pass that check, so the real protection is in the database: two partial unique indexes on `(mentorId, date)` and `(userId, date)`, only for interviews that are PENDING or ACCEPTED. If two bookings for the same slot come in together, PostgreSQL accepts the first one and rejects the second, and the API returns a 409 error. Cancelled or rejected interviews do not block the slot.
+**No double booking.** A mentor or a student should never have two active interviews at the same time. The API first checks for a conflict to show a clear error message. But two requests can arrive at the same moment and both pass that check, so the real protection is in the database: two partial unique indexes on `(mentorId, date)` and `(userId, date)`, only for interviews that are PENDING or ACCEPTED. If two bookings for the same slot come in together, PostgreSQL accepts the first one and rejects the second, and the API returns a 409 error. Cancelled or rejected interviews do not block the slot. This is tested in [`tests/api/booking.test.mjs`](tests/api/booking.test.mjs): two students book the same slot at the same moment, and the test expects exactly one 201 and one 409.
 
 Note: Prisma 5 cannot describe partial indexes in `schema.prisma`, so they only exist in the migration file. If a future `prisma migrate dev` tries to drop them, remove those `DROP INDEX` lines from the new migration.
 
@@ -118,14 +118,29 @@ npm run dev
 
 Then open http://localhost:3000.
 
-GitHub Actions also runs the linter, the tests and a production build on every push (see `.github/workflows/ci.yml`).
-
-To run the tests and the linter:
+To run the unit tests and the linter:
 
 ```bash
 npm test
 npm run lint
 ```
+
+The API tests in `tests/api/` call the running app with real HTTP requests. They create test users, so run them against a test database, not production:
+
+```bash
+npm run build && npm start   # in one terminal
+npm run test:api             # in another terminal
+```
+
+GitHub Actions runs everything on every push (see `.github/workflows/ci.yml`): format check, lint, unit tests, then it starts a PostgreSQL 16 database, runs the migrations and the seed, builds and starts the app, and runs the API tests against it.
+
+The API tests check:
+
+- double booking: two bookings for the same slot at the same moment give one 201 and one 409
+- a cancelled slot can be booked again
+- access control: no login gives 401, a student on an admin route gets 403, and a student cannot read another student's interview
+- validation: a topic that is too short gives 400 with a clear message
+- no `password` field in the interview and mentor responses
 
 The `.env` file needs these values:
 
@@ -161,12 +176,13 @@ src/
 │   ├── env.js         # checks the environment variables
 │   └── email.js       # sending emails with Resend
 └── proxy.js           # checks login and role before a route is opened
-tests/                 # small tests with Node's built-in test runner
+tests/                 # unit tests (Node's built-in test runner)
+tests/api/             # API tests against the running app
 ```
 
 ## What I learned
 
-- A check in the code is not enough to stop double bookings. Two requests can pass the check at the same time, so I added unique indexes in the database and tested it by sending two bookings at once.
+- A check in the code is not enough to stop double bookings. Two requests can pass the check at the same time, so I added unique indexes in the database. An automated test sends two bookings at the same moment and checks that only one gets through.
 - How Prisma migrations work, and why I test a migration on a copy of the database (a Neon branch) before running it on production.
 - How login with JWT and HTTP-only cookies works, and why the API routes check the user again and do not only trust the proxy.
 - To only send the data the page needs. At first some API responses included the password hash of users, and I changed them to return only id, name and email.
@@ -178,13 +194,13 @@ tests/                 # small tests with Node's built-in test runner
 - The rate limiter keeps its counts in memory. On Vercel every server instance has its own memory, so the limit is not reliable there. A shared store like Redis would fix this.
 - All times use German time (Europe/Berlin). There is no timezone setting per user yet.
 - Emails are sent with Resend's test sender, so they only reach the email address of the Resend account.
-- Only the time and text helpers have automated tests. The API routes and pages are still tested by hand.
+- The API has automated tests for the main rules, but the pages (the React UI) are still tested by hand.
 - The database is on Neon's free plan, which goes to sleep after a few minutes without use. The first request after that can take a few seconds, and Prisma prints a "connection closed" message in the console before it reconnects.
 
 ## Next steps
 
 - [ ] Move the project to TypeScript
-- [ ] Add tests for the API routes and the pages
+- [ ] Add tests for the pages
 - [ ] Let students rate their mentors
 - [ ] Add a calendar view for interviews
 
