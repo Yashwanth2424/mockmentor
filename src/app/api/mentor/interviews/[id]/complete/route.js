@@ -1,6 +1,6 @@
-import { prisma } from "@/lib/prisma";
 import { requireRole } from "@/lib/auth";
 import { successResponse, errorResponse } from "@/lib/apiResponse";
+import { changeInterviewStatus } from "@/lib/changeInterviewStatus";
 
 export async function PATCH(req, { params }) {
   try {
@@ -26,30 +26,11 @@ export async function PATCH(req, { params }) {
       return errorResponse("Feedback too long", 400);
     }
 
-    const interview = await prisma.interview.findUnique({
-      where: { id },
-    });
-
-    if (!interview) {
-      return errorResponse("Interview not found", 404);
-    }
-
-    if (interview.mentorId !== mentor.id) {
-      return errorResponse("Forbidden", 403);
-    }
-
-    if (interview.status === "COMPLETED") {
-      return errorResponse("Interview already completed", 400);
-    }
-
-    if (interview.status !== "ACCEPTED") {
-      return errorResponse("Only accepted interviews can be completed", 400);
-    }
-
-    const updated = await prisma.interview.update({
-      where: { id },
+    const result = await changeInterviewStatus({
+      id,
+      action: "complete",
+      owner: { mentorId: mentor.id },
       data: {
-        status: "COMPLETED",
         rating,
         feedback: cleanFeedback,
         strengths: cleanStrengths,
@@ -58,7 +39,11 @@ export async function PATCH(req, { params }) {
       },
     });
 
-    return successResponse(updated);
+    if (result.error) {
+      return errorResponse(result.error, result.status);
+    }
+
+    return successResponse(result.interview);
   } catch (err) {
     console.error("COMPLETE ERROR:", err);
 

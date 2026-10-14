@@ -3,6 +3,8 @@ import { requireAuth } from "@/lib/auth";
 import { successResponse, errorResponse } from "@/lib/apiResponse";
 import { rescheduleSchema } from "@/lib/validators";
 import { getZonedParts } from "@/lib/time";
+import { canTransition } from "@/lib/interviewStatus";
+import { ALREADY_CHANGED, changeInterviewStatus } from "@/lib/changeInterviewStatus";
 
 const publicUser = { select: { id: true, name: true, email: true } };
 
@@ -53,8 +55,8 @@ export async function PATCH(req, { params }) {
       return errorResponse("Forbidden", 403);
     }
 
-    if (!["PENDING", "ACCEPTED"].includes(interview.status)) {
-      return errorResponse("Cannot reschedule this interview", 400);
+    if (!canTransition("reschedule", interview.status)) {
+      return errorResponse(ALREADY_CHANGED, 409);
     }
 
     const mentor = await prisma.user.findUnique({
@@ -102,15 +104,13 @@ export async function PATCH(req, { params }) {
       return errorResponse("You already have another interview at this time", 409);
     }
 
-    let updatedInterview;
+    let result;
     try {
-      updatedInterview = await prisma.interview.update({
-        where: { id },
-        data: {
-          date: selectedDate,
-          mentorId,
-          status: "PENDING",
-        },
+      result = await changeInterviewStatus({
+        id,
+        action: "reschedule",
+        owner: { userId: user.id },
+        data: { date: selectedDate, mentorId },
         include: { mentor: publicUser },
       });
     } catch (err) {
@@ -120,7 +120,11 @@ export async function PATCH(req, { params }) {
       throw err;
     }
 
-    return successResponse(updatedInterview);
+    if (result.error) {
+      return errorResponse(result.error, result.status);
+    }
+
+    return successResponse(result.interview);
   } catch (err) {
     console.error("RESCHEDULE ERROR:", err);
 

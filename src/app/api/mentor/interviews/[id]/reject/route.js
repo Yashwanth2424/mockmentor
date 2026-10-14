@@ -1,47 +1,23 @@
-import { prisma } from "@/lib/prisma";
 import { requireRole } from "@/lib/auth";
 import { successResponse, errorResponse } from "@/lib/apiResponse";
+import { changeInterviewStatus } from "@/lib/changeInterviewStatus";
 
 export async function PATCH(req, { params }) {
   try {
     const mentor = requireRole(req, ["MENTOR"]);
-
     const { id } = await params;
 
-    const interview = await prisma.interview.findUnique({
-      where: { id },
+    const result = await changeInterviewStatus({
+      id,
+      action: "reject",
+      owner: { mentorId: mentor.id },
     });
 
-    if (!interview) {
-      return errorResponse("Interview not found", 404);
+    if (result.error) {
+      return errorResponse(result.error, result.status);
     }
 
-    if (interview.mentorId !== mentor.id) {
-      return errorResponse("Forbidden", 403);
-    }
-
-    if (interview.status === "REJECTED") {
-      return errorResponse("Interview already rejected", 400);
-    }
-
-    if (interview.status === "COMPLETED") {
-      return errorResponse("Completed interviews cannot be rejected", 400);
-    }
-
-    if (interview.status === "CANCELLED") {
-      return errorResponse("Cancelled interviews cannot be rejected", 400);
-    }
-
-    if (interview.status === "ACCEPTED") {
-      return errorResponse("Accepted interviews cannot be rejected", 400);
-    }
-
-    const updated = await prisma.interview.update({
-      where: { id },
-      data: { status: "REJECTED" },
-    });
-
-    return successResponse(updated);
+    return successResponse(result.interview);
   } catch (err) {
     console.error("REJECT ERROR:", err);
 

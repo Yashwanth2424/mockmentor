@@ -1,49 +1,26 @@
-import { prisma } from "@/lib/prisma";
-import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/adminAuth";
+import { successResponse, errorResponse } from "@/lib/apiResponse";
+import { changeInterviewStatus } from "@/lib/changeInterviewStatus";
 
 export async function PATCH(req, { params }) {
   try {
     await requireAdmin(req);
   } catch (err) {
-    return NextResponse.json(
-      { success: false, error: err.message },
-      { status: err.message === "Forbidden" ? 403 : 401 },
-    );
+    return errorResponse(err.message, err.message === "Forbidden" ? 403 : 401);
   }
 
   try {
     const { id } = await params;
 
-    const interview = await prisma.interview.findUnique({
-      where: { id },
-    });
+    const result = await changeInterviewStatus({ id, action: "cancel" });
 
-    if (!interview) {
-      return NextResponse.json({ success: false, error: "Interview not found" }, { status: 404 });
+    if (result.error) {
+      return errorResponse(result.error, result.status);
     }
 
-    if (interview.status === "CANCELLED") {
-      return NextResponse.json(
-        { success: false, error: "Interview is already cancelled" },
-        { status: 400 },
-      );
-    }
-
-    if (!["PENDING", "ACCEPTED"].includes(interview.status)) {
-      return NextResponse.json(
-        { success: false, error: "Only pending or accepted interviews can be cancelled" },
-        { status: 400 },
-      );
-    }
-
-    const updated = await prisma.interview.update({
-      where: { id },
-      data: { status: "CANCELLED" },
-    });
-
-    return NextResponse.json({ success: true, data: updated });
+    return successResponse(result.interview);
   } catch (err) {
-    return NextResponse.json({ success: false, error: "Failed to cancel" }, { status: 500 });
+    console.error("ADMIN CANCEL ERROR:", err);
+    return errorResponse("Failed to cancel", 500);
   }
 }
