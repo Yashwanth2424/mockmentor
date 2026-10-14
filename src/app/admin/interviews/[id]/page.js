@@ -6,14 +6,8 @@ import { useParams, useRouter } from "next/navigation";
 import useSWR from "swr";
 import { toast } from "react-toastify";
 import { formatDateTime } from "@/lib/time";
+import { fetcher } from "@/lib/fetcher";
 import "./details.css";
-
-const fetcher = async (url) => {
-  const res = await fetch(url);
-  const json = await res.json();
-  if (!res.ok || !json.success) throw new Error(json.error || "Failed");
-  return json.data;
-};
 
 export default function InterviewDetails() {
   const { id } = useParams();

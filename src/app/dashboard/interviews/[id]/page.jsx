@@ -8,24 +8,14 @@ import { ArrowLeft, Calendar, CheckCircle, Clock, User, Mail, XCircle } from "lu
 
 import { formatDateTime } from "@/lib/time";
 
+import { fetcher } from "@/lib/fetcher";
+
 import "./details.css";
 
 export default function InterviewDetailsPage() {
   const { id } = useParams();
 
   const router = useRouter();
-
-  const fetcher = async (url) => {
-    const res = await fetch(url);
-
-    const json = await res.json();
-
-    if (!res.ok || !json.success) {
-      throw new Error(json.error || "Failed to fetch interview");
-    }
-
-    return json.data;
-  };
 
   const { data, isLoading, error } = useSWR(id ? `/api/interviews/${id}` : null, fetcher, {
     revalidateOnFocus: false,

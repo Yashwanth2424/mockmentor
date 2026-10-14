@@ -8,14 +8,8 @@ import useSWR, { mutate } from "swr";
 import UsersPanel from "./UsersPanel";
 import { FiGrid, FiUsers, FiMenu, FiX } from "react-icons/fi";
 import { formatDateTime } from "@/lib/time";
+import { fetcher } from "@/lib/fetcher";
 import "./admin.css";
-
-const fetcher = async (url) => {
-  const res = await fetch(url);
-  const json = await res.json();
-  if (!res.ok || !json.success) throw new Error(json.error || "Failed");
-  return json.data;
-};
 
 function subscribeToTab(callback) {
   window.addEventListener("admintab", callback);

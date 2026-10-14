@@ -7,6 +7,7 @@ import useSWR, { mutate as globalMutate } from "swr";
 import { toast } from "react-toastify";
 import { capitalizeWords } from "@/lib/format";
 import { addDays, formatDate, getZonedParts, zonedTimeToUtc } from "@/lib/time";
+import { fetcher } from "@/lib/fetcher";
 import "./book.css";
 
 const TOPIC_MIN = 3;
@@ -43,17 +44,6 @@ export default function BookPage() {
   const topicLength = topic.trim().length;
   const topicValid = topicLength >= TOPIC_MIN && topicLength <= TOPIC_MAX;
 
-  const fetcher = async (url) => {
-    const res = await fetch(url);
-
-    const json = await res.json();
-
-    if (!res.ok || !json.success) {
-      throw new Error(json.error || "Request failed");
-    }
-
-    return json.data;
-  };
   const { data: mentors = [], isLoading: mentorsLoading } = useSWR("/api/mentor", fetcher, {
     revalidateOnFocus: false,
   });

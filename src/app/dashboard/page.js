@@ -10,21 +10,11 @@ import SkeletonDashboard from "@/components/skeletons/SkeletonDashboard";
 
 import { formatDateTime } from "@/lib/time";
 
+import { fetcher } from "@/lib/fetcher";
+
 import "./dashboard.css";
 
 export default function DashboardPage() {
-  const fetcher = async (url) => {
-    const res = await fetch(url);
-
-    const json = await res.json();
-
-    if (!res.ok || !json.success) {
-      throw new Error(json.error || "Failed to fetch dashboard data");
-    }
-
-    return Array.isArray(json.data) ? json.data : [];
-  };
-
   const {
     data: interviews = [],
     isLoading,

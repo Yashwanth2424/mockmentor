@@ -6,14 +6,8 @@ import { useState } from "react";
 import useSWR from "swr";
 import { toast } from "react-toastify";
 import { formatDate } from "@/lib/time";
+import { fetcher } from "@/lib/fetcher";
 import "./UsersPanel.css";
-
-const fetcher = async (url) => {
-  const res = await fetch(url);
-  const json = await res.json();
-  if (!res.ok || !json.success) throw new Error(json.error || "Failed");
-  return json.data;
-};
 
 function blockedReason(user, currentUserId, currentUserRole) {
   if (user.id === currentUserId) return "You cannot change your own account";

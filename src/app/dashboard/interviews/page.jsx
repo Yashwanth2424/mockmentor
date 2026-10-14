@@ -8,6 +8,8 @@ import { addDays, formatDateTime, getZonedParts, zonedTimeToUtc } from "@/lib/ti
 
 import SkeletonInterviewCard from "@/components/skeletons/SkeletonInterviewCard";
 
+import { fetcher } from "@/lib/fetcher";
+
 import "./interviews.css";
 
 export default function InterviewsPage() {
@@ -26,18 +28,6 @@ export default function InterviewsPage() {
   const [selectedTime, setSelectedTime] = useState("");
 
   const [rescheduling, setRescheduling] = useState(false);
-
-  const fetcher = async (url) => {
-    const res = await fetch(url);
-
-    const json = await res.json();
-
-    if (!res.ok || !json.success) {
-      throw new Error(json.error || "Request failed");
-    }
-
-    return Array.isArray(json.data) ? json.data : [];
-  };
 
   const { data: interviews = [], isLoading, error, mutate } = useSWR("/api/interviews", fetcher);
 

@@ -7,14 +7,8 @@ import useSWR from "swr";
 import Header from "@/components/Header";
 import SkeletonMentor from "@/components/skeletons/SkeletonMentor";
 import { formatDateTime } from "@/lib/time";
+import { fetcher } from "@/lib/fetcher";
 import "./mentor.css";
-
-const fetcher = async (url) => {
-  const res = await fetch(url);
-  const json = await res.json();
-  if (!res.ok || !json.success) throw new Error(json.error || "Failed");
-  return json.data;
-};
 
 export default function MentorPage() {
   const router = useRouter();

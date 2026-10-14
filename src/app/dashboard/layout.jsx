@@ -5,14 +5,8 @@ import ThemeToggle from "@/components/ThemeToggle";
 import Sidebar from "@/components/Sidebar";
 import useSWR from "swr";
 import { Menu } from "lucide-react";
+import { fetcher } from "@/lib/fetcher";
 import "./layout.css";
-
-const fetcher = async (url) => {
-  const res = await fetch(url);
-  const json = await res.json();
-  if (!res.ok || !json.success) throw new Error(json.error || "Request failed");
-  return json.data;
-};
 
 export default function DashboardLayout({ children }) {
   const [open, setOpen] = useState(false);
