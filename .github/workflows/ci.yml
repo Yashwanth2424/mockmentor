@@ -10,11 +10,27 @@ jobs:
   check:
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: ci
+          POSTGRES_PASSWORD: ci
+          POSTGRES_DB: ci
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U ci"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
     env:
       DATABASE_URL: postgresql://ci:ci@localhost:5432/ci
       JWT_SECRET: ci-only-placeholder-secret-not-used-anywhere
       RESEND_API_KEY: re_ci_placeholder
       NEXT_PUBLIC_APP_URL: http://localhost:3000
+      RATE_LIMIT_MULTIPLIER: "100"
 
     steps:
       - uses: actions/checkout@v4
@@ -28,4 +44,24 @@ jobs:
       - run: npm run format:check
       - run: npm run lint
       - run: npm test
+      - run: npx prisma migrate deploy
+      - run: npx prisma db seed
       - run: npm run build
+
+      - name: Start the app
+        run: npm start > app.log 2>&1 &
+
+      - name: Wait for the app
+        run: |
+          for i in $(seq 1 30); do
+            curl -s -o /dev/null http://localhost:3000 && exit 0
+            sleep 2
+          done
+          echo "App did not start"
+          exit 1
+
+      - run: npm run test:api
+
+      - name: Show app log
+        if: failure()
+        run: cat app.log
