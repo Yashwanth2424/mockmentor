@@ -4,15 +4,15 @@ import useSWR from "swr";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "react-toastify";
-import { addDays, formatDateTime, getZonedParts, zonedTimeToUtc } from "@/lib/time";
+import { formatDateTime } from "@/lib/time";
 
 import SkeletonInterviewCard from "@/components/skeletons/SkeletonInterviewCard";
 
 import { fetcher } from "@/lib/fetcher";
 import StatusBadge from "@/components/StatusBadge";
-import { ACTIVE_STATUSES, canTransition } from "@/lib/interviewStatus";
-import { freeSlots, mentorsAvailableOn, takenTimes, timeSlotsFor } from "@/lib/slots";
+import { canTransition } from "@/lib/interviewStatus";
 
+import RescheduleModal from "./RescheduleModal";
 import "./interviews.css";
 
 export default function InterviewsPage() {
@@ -20,25 +20,11 @@ export default function InterviewsPage() {
 
   const [loadingId, setLoadingId] = useState(null);
 
-  const [showModal, setShowModal] = useState(false);
-
-  const [selectedInterview, setSelectedInterview] = useState(null);
-
-  const [selectedDate, setSelectedDate] = useState("");
-
-  const [selectedMentor, setSelectedMentor] = useState("");
-
-  const [selectedTime, setSelectedTime] = useState("");
-
-  const [rescheduling, setRescheduling] = useState(false);
+  const [rescheduleTarget, setRescheduleTarget] = useState(null);
 
   const { data: interviews = [], isLoading, error, mutate } = useSWR("/api/interviews", fetcher);
 
   const { data: mentors = [] } = useSWR("/api/mentor", fetcher);
-
-  const mentorSlotsKey = selectedMentor ? `/api/mentor/${selectedMentor}/booked-slots` : null;
-
-  const { data: mentorBooked = [], mutate: mutateMentorBooked } = useSWR(mentorSlotsKey, fetcher);
 
   const safeInterviews = Array.isArray(interviews) ? interviews : [];
 
@@ -73,106 +59,6 @@ export default function InterviewsPage() {
       setLoadingId(null);
     }
   }
-
-  function openRescheduleModal(interview) {
-    setSelectedInterview(interview);
-
-    const current = getZonedParts(new Date(interview.date));
-    const tomorrow = addDays(getZonedParts(new Date()).dateString, 1);
-    const canKeepDate = current.dateString >= tomorrow;
-
-    setSelectedDate(canKeepDate ? current.dateString : "");
-
-    setSelectedMentor(interview.mentorId || "");
-
-    setSelectedTime(canKeepDate ? current.time : "");
-
-    setShowModal(true);
-  }
-
-  function closeModal() {
-    setShowModal(false);
-
-    setSelectedInterview(null);
-
-    setSelectedDate("");
-
-    setSelectedMentor("");
-
-    setSelectedTime("");
-  }
-
-  function getAvailableSlots() {
-    if (!selectedMentor) {
-      return [];
-    }
-
-    const mentor = mentors.find((m) => m.id === selectedMentor);
-
-    const mentorTaken = [...mentorBooked];
-    const ownIndex = mentorTaken.indexOf(selectedInterview?.date);
-    if (ownIndex !== -1 && selectedInterview?.mentorId === selectedMentor) {
-      mentorTaken.splice(ownIndex, 1);
-    }
-
-    const myActive = safeInterviews
-      .filter((i) => i.id !== selectedInterview?.id && ACTIVE_STATUSES.includes(i.status))
-      .map((i) => i.date);
-
-    const taken = takenTimes([...mentorTaken, ...myActive], selectedDate);
-
-    return freeSlots(timeSlotsFor(mentor, selectedDate), taken);
-  }
-
-  async function handleReschedule() {
-    if (!selectedDate || !selectedMentor || !selectedTime) {
-      toast.error("Please complete all fields");
-
-      return;
-    }
-
-    try {
-      setRescheduling(true);
-
-      const fullDate = zonedTimeToUtc(selectedDate, selectedTime);
-
-      const res = await fetch(`/api/interviews/${selectedInterview.id}/reschedule`, {
-        method: "PATCH",
-
-        headers: {
-          "Content-Type": "application/json",
-        },
-
-        body: JSON.stringify({
-          date: fullDate,
-
-          mentorId: selectedMentor,
-        }),
-      });
-
-      const json = await res.json();
-
-      if (!res.ok || !json.success) {
-        toast.error(json.error || "Failed to reschedule");
-
-        return;
-      }
-
-      toast.success("Interview rescheduled");
-
-      mutateMentorBooked();
-
-      closeModal();
-
-      mutate();
-    } catch {
-      toast.error("Something went wrong");
-    } finally {
-      setRescheduling(false);
-    }
-  }
-
-  const availableSlots = getAvailableSlots();
 
   return (
     <section className="interviews-page">
@@ -252,7 +138,7 @@ export default function InterviewsPage() {
                       onClick={(e) => {
                         e.stopPropagation();
 
-                        openRescheduleModal(i);
+                        setRescheduleTarget(i);
                       }}
                     >
                       Reschedule
@@ -276,82 +162,17 @@ export default function InterviewsPage() {
         </div>
       )}
 
-      {showModal && (
-        <div className="modal-overlay">
-          <div className="reschedule-modal">
-            <h2>Reschedule Interview</h2>
-
-            <div className="modal-group">
-              <label>Select Date</label>
-
-              <input
-                type="date"
-                min={addDays(getZonedParts(new Date()).dateString, 1)}
-                value={selectedDate}
-                onChange={(e) => setSelectedDate(e.target.value)}
-              />
-            </div>
-
-            <div className="modal-group">
-              <label>Select Mentor</label>
-
-              <select
-                value={selectedMentor}
-                onChange={(e) => {
-                  setSelectedMentor(e.target.value);
-
-                  setSelectedTime("");
-                }}
-              >
-                <option value="">Select Mentor</option>
-
-                {mentorsAvailableOn(mentors, selectedDate).map((mentor) => (
-                  <option key={mentor.id} value={mentor.id}>
-                    {mentor.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="modal-group">
-              <label>Select Time</label>
-
-              <div className="slots-grid">
-                {availableSlots.length === 0 ? (
-                  <p className="no-slots">No slots available</p>
-                ) : (
-                  availableSlots.map((slot) => (
-                    <button
-                      key={slot}
-                      type="button"
-                      className={`slot-btn ${selectedTime === slot ? "active-slot" : ""}`}
-                      onClick={() => setSelectedTime(slot)}
-                    >
-                      {slot}
-                    </button>
-                  ))
-                )}
-              </div>
-            </div>
-
-            {selectedDate && selectedTime && (
-              <p className="modal-selected">
-                Selected:{" "}
-                {formatDateTime(zonedTimeToUtc(selectedDate, selectedTime)).replace(", ", " • ")}
-              </p>
-            )}
-
-            <div className="modal-actions">
-              <button className="modal-cancel" onClick={closeModal}>
-                Close
-              </button>
-
-              <button className="modal-save" disabled={rescheduling} onClick={handleReschedule}>
-                {rescheduling ? "Saving..." : "Save Changes"}
-              </button>
-            </div>
-          </div>
-        </div>
+      {rescheduleTarget && (
+        <RescheduleModal
+          interview={rescheduleTarget}
+          interviews={safeInterviews}
+          mentors={mentors}
+          onClose={() => setRescheduleTarget(null)}
+          onRescheduled={() => {
+            setRescheduleTarget(null);
+            mutate();
+          }}
+        />
       )}
     </section>
   );
