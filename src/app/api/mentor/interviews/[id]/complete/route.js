@@ -30,6 +30,7 @@ export async function PATCH(req, { params }) {
       id,
       action: "complete",
       owner: { mentorId: mentor.id },
+      where: { date: { lte: new Date() } },
       data: {
         rating,
         feedback: cleanFeedback,
@@ -38,6 +39,10 @@ export async function PATCH(req, { params }) {
         completedAt: new Date(),
       },
     });
+
+    if (result.interview?.status === "ACCEPTED" && result.interview.date > new Date()) {
+      return errorResponse("You can complete an interview only after it has started", 400);
+    }
 
     if (result.error) {
       return errorResponse(result.error, result.status);

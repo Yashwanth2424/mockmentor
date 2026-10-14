@@ -77,6 +77,8 @@ More: [landing page](screenshots/landing.png), [login page](screenshots/login.pn
 
 Note: Prisma 5 cannot describe partial indexes in `schema.prisma`, so they only exist in the migration file. If a future `prisma migrate dev` tries to drop them, remove those `DROP INDEX` lines from the new migration.
 
+**Status changes.** The allowed changes are listed in one place, [`src/lib/interviewStatus.js`](src/lib/interviewStatus.js): for example, only a PENDING interview can be accepted or rejected, and only an ACCEPTED one can be completed. Each change is one database update with the expected status inside the `where`, so the status check and the write happen together. If a student cancels while the mentor accepts at the same moment, only the first request changes the row, and the second gets a 409 ("This interview was already changed"). A mentor can complete an interview only after its start time.
+
 **Other details:**
 
 - passwords are hashed with bcrypt
@@ -92,6 +94,8 @@ You can try the app with these accounts:
 | ------- | ----------------------------- | -------- |
 | Student | yashwanth.student@example.com | 123456   |
 | Mentor  | akshay.mentor@example.com     | 123456   |
+
+The seed also creates one accepted interview from yesterday, so you can try "Complete" with the mentor account. If it was already completed, run `npx prisma db seed` again to get a new one.
 
 The admin panel is not public. The admin features are listed above.
 
@@ -110,7 +114,7 @@ cp .env.example .env
 # create the tables
 npx prisma migrate deploy
 
-# create the two demo accounts
+# create the demo accounts and one past demo interview
 npx prisma db seed
 
 npm run dev
