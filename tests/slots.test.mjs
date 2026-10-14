@@ -2,7 +2,9 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import {
   dayOfWeek,
+  formatSlotTime,
   freeSlots,
+  groupSlots,
   mentorsAvailableOn,
   takenTimes,
   timeSlotsFor,
@@ -37,4 +39,18 @@ test("reads booked times in Berlin time, only for the chosen day", () => {
 
 test("removes taken slots", () => {
   assert.deepEqual(freeSlots(["09:00", "09:30", "10:00"], ["09:30"]), ["09:00", "10:00"]);
+});
+
+test("shows slot times in 12-hour format", () => {
+  assert.equal(formatSlotTime("09:30"), "09:30 AM");
+  assert.equal(formatSlotTime("12:00"), "12:00 PM");
+  assert.equal(formatSlotTime("16:30"), "04:30 PM");
+});
+
+test("groups slots into morning, afternoon and evening", () => {
+  assert.deepEqual(groupSlots(["09:00", "12:00", "16:30", "17:00"]), {
+    Morning: ["09:00"],
+    Afternoon: ["12:00", "16:30"],
+    Evening: ["17:00"],
+  });
 });

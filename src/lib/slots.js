@@ -46,3 +46,29 @@ export function takenTimes(dates, dateString) {
 export function freeSlots(slots, taken) {
   return slots.filter((slot) => !taken.includes(slot));
 }
+
+export function formatSlotTime(time) {
+  const [hour, minute] = time.split(":");
+  const h = Number(hour);
+  const ampm = h >= 12 ? "PM" : "AM";
+
+  return `${String(h % 12 || 12).padStart(2, "0")}:${minute} ${ampm}`;
+}
+
+export function groupSlots(slots) {
+  const groups = { Morning: [], Afternoon: [], Evening: [] };
+
+  slots.forEach((slot) => {
+    const hour = Number(slot.split(":")[0]);
+
+    if (hour < 12) {
+      groups.Morning.push(slot);
+    } else if (hour < 17) {
+      groups.Afternoon.push(slot);
+    } else {
+      groups.Evening.push(slot);
+    }
+  });
+
+  return groups;
+}

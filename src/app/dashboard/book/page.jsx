@@ -9,7 +9,14 @@ import { capitalizeWords } from "@/lib/format";
 import { addDays, formatDate, getZonedParts, zonedTimeToUtc } from "@/lib/time";
 import { fetcher } from "@/lib/fetcher";
 import { ACTIVE_STATUSES } from "@/lib/interviewStatus";
-import { freeSlots, mentorsAvailableOn, takenTimes, timeSlotsFor } from "@/lib/slots";
+import {
+  formatSlotTime,
+  freeSlots,
+  mentorsAvailableOn,
+  takenTimes,
+  timeSlotsFor,
+} from "@/lib/slots";
+import SlotPicker from "./SlotPicker";
 import "./book.css";
 
 const TOPIC_MIN = 3;
@@ -97,15 +104,6 @@ export default function BookPage() {
     return addDays(getZonedParts(new Date()).dateString, 1);
   }
 
-  function formatTime(time) {
-    const [hour, minute] = time.split(":");
-    let h = parseInt(hour);
-    const ampm = h >= 12 ? "PM" : "AM";
-    h = h % 12 || 12;
-
-    return `${h.toString().padStart(2, "0")}:${minute} ${ampm}`;
-  }
-
   function formatAvailability(availability) {
     if (!availability?.length) {
       return "No availability";
@@ -134,28 +132,6 @@ export default function BookPage() {
     const taken = [...(Array.isArray(mentorBooked) ? mentorBooked : []), ...myActive];
 
     return freeSlots(timeSlotsFor(mentor, selectedDate), takenTimes(taken, selectedDate));
-  }
-
-  function groupSlots(slots) {
-    const groups = {
-      Morning: [],
-      Afternoon: [],
-      Evening: [],
-    };
-
-    slots.forEach((slot) => {
-      const hour = parseInt(slot.split(":")[0]);
-
-      if (hour < 12) {
-        groups.Morning.push(slot);
-      } else if (hour < 17) {
-        groups.Afternoon.push(slot);
-      } else {
-        groups.Evening.push(slot);
-      }
-    });
-
-    return groups;
   }
 
   async function bookInterview() {
@@ -227,7 +203,6 @@ export default function BookPage() {
   }
 
   const availableSlots = getAvailableSlots();
-  const groupedSlots = groupSlots(availableSlots);
 
   return (
     <section>
@@ -310,7 +285,7 @@ export default function BookPage() {
                 <div className="selected-slot">
                   Selected: {formatDate(zonedTimeToUtc(selectedDate, "12:00"))}
                   {" • "}
-                  {formatTime(selectedTime)}
+                  {formatSlotTime(selectedTime)}
                 </div>
               )}
               <button
@@ -323,44 +298,13 @@ export default function BookPage() {
               </button>
             </div>
 
-            <div className="booking-right">
-              <h3 className="booking-right-title">Available Time Slots</h3>
-              <p className="timezone-note">Times are in German time (Berlin)</p>
-
-              {!selectedDate ? (
-                <div className="empty-slots">Select a date to view mentors and slots</div>
-              ) : !selectedMentor ? (
-                <div className="empty-slots">Select a mentor to view available slots</div>
-              ) : availableSlots.length === 0 ? (
-                <div className="empty-slots">
-                  No slots available for this mentor on selected date
-                </div>
-              ) : (
-                Object.entries(groupedSlots).map(([label, slots]) => {
-                  if (!slots.length) {
-                    return null;
-                  }
-
-                  return (
-                    <div key={label} className="slot-group">
-                      <p className="slot-group-title">{label}</p>
-                      <div className="slots-grid">
-                        {slots.map((time) => (
-                          <button
-                            key={time}
-                            type="button"
-                            className={`slot ${selectedTime === time ? "active" : ""}`}
-                            onClick={() => setSelectedTime(time)}
-                          >
-                            {formatTime(time)}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  );
-                })
-              )}
-            </div>
+            <SlotPicker
+              selectedDate={selectedDate}
+              selectedMentor={selectedMentor}
+              slots={availableSlots}
+              selectedTime={selectedTime}
+              onSelect={setSelectedTime}
+            />
           </div>
         </div>
       </div>
