@@ -1,12 +1,10 @@
 const store = new Map();
 
-/**
- * @param {Request} req
- * @param {Object} options
- * @param {number} options.limit - max requests allowed
- * @param {number} options.windowMs - time window in milliseconds
- * @param {string} options.key - unique key for this route (e.g. "login")
- */
+function limitMultiplier() {
+  const value = Number(process.env.RATE_LIMIT_MULTIPLIER);
+  return Number.isFinite(value) && value >= 1 ? value : 1;
+}
+
 export function rateLimit(req, { limit, windowMs, key }) {
   const ip =
     req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
@@ -30,7 +28,7 @@ export function rateLimit(req, { limit, windowMs, key }) {
 
   record.count += 1;
 
-  if (record.count > limit) {
+  if (record.count > limit * limitMultiplier()) {
     const retryAfter = Math.ceil((record.start + windowMs - now) / 1000);
 
     return {
