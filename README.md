@@ -146,6 +146,17 @@ The API tests check:
 - validation: a topic that is too short gives 400 with a clear message
 - no `password` field in the interview and mentor responses
 
+The pages themselves are checked by hand. Before a release I click through this list with the demo accounts:
+
+1. Student: book an interview, then try to book the same mentor and time again (expect an error).
+2. Student: reschedule the interview to another slot, then cancel it.
+3. Student: book again. Mentor: accept it.
+4. Mentor: try to complete a future interview (expect an error), then complete the past demo interview with feedback.
+5. Student: open the completed interview and see the rating and feedback.
+6. Mentor: change the weekly availability and check that the Book page shows the new slots.
+7. Admin: filter interviews by status, cancel an interview, and change a user's role.
+8. Log out and open `/dashboard` (expect the login page).
+
 The `.env` file needs these values:
 
 ```env
@@ -166,7 +177,7 @@ src/
 │   ├── admin/        # admin pages
 │   ├── login/
 │   └── signup/
-├── components/       # header, sidebar, skeleton loaders, theme toggle
+├── components/       # header, sidebar, status badge, skeleton loaders, theme toggle
 ├── lib/
 │   ├── prisma.js      # Prisma client
 │   ├── auth.js        # password hashing and login checks
@@ -174,7 +185,12 @@ src/
 │   ├── jwt.js         # create and verify tokens
 │   ├── validators.js  # Zod schemas
 │   ├── time.js        # Berlin time helpers and date format
-│   ├── format.js      # title case for the topic
+│   ├── format.js      # title case and HTML escaping
+│   ├── fetcher.js     # shared data loader for SWR
+│   ├── slots.js       # free time slots for booking and rescheduling
+│   ├── interviewStatus.js       # allowed status changes and labels
+│   ├── changeInterviewStatus.js # safe status update used by the API
+│   ├── emailTemplates.js        # booking email
 │   ├── apiResponse.js # helpers for API responses
 │   ├── rateLimit.js   # rate limiting
 │   ├── env.js         # checks the environment variables
