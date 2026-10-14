@@ -129,7 +129,7 @@ npm test
 npm run lint
 ```
 
-The API tests in `tests/api/` call the running app with real HTTP requests. They create test users, so run them against a test database, not production:
+The API tests in `tests/api/` call the running app with real HTTP requests. They create test users, so run them against a test database, not production. They sign up more users per minute than the normal limit allows, so set `RATE_LIMIT_MULTIPLIER=100` in your `.env` first (CI does the same):
 
 ```bash
 npm run build && npm start   # in one terminal
