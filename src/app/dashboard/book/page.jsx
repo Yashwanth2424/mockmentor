@@ -8,6 +8,7 @@ import { toast } from "react-toastify";
 import { capitalizeWords } from "@/lib/format";
 import { addDays, formatDate, getZonedParts, zonedTimeToUtc } from "@/lib/time";
 import { fetcher } from "@/lib/fetcher";
+import { freeSlots, mentorsAvailableOn, takenTimes, timeSlotsFor } from "@/lib/slots";
 import "./book.css";
 
 const TOPIC_MIN = 3;
@@ -118,35 +119,12 @@ export default function BookPage() {
     );
   }
 
-  function generateTimeSlots() {
+  function getAvailableSlots() {
+    if (!selectedMentor) {
+      return [];
+    }
+
     const mentor = safeMentors.find((m) => m.id === selectedMentor);
-
-    if (!mentor || !selectedDate) {
-      return [];
-    }
-
-    const day = getSelectedDay(selectedDate);
-
-    const dayAvailability = mentor.availability?.find((a) => a.dayOfWeek === day);
-
-    if (!dayAvailability) {
-      return [];
-    }
-
-    const slots = [];
-
-    for (let hour = dayAvailability.startHour; hour < dayAvailability.endHour; hour++) {
-      slots.push(`${hour.toString().padStart(2, "0")}:00`);
-
-      slots.push(`${hour.toString().padStart(2, "0")}:30`);
-    }
-    return slots;
-  }
-
-  function getBookedSlots() {
-    if (!selectedDate || !selectedMentor) {
-      return [];
-    }
 
     const myActive = safeInterviews
       .filter((i) => ["PENDING", "ACCEPTED"].includes(i.status))
@@ -154,37 +132,9 @@ export default function BookPage() {
 
     const taken = [...(Array.isArray(mentorBooked) ? mentorBooked : []), ...myActive];
 
-    return taken
-      .map((date) => getZonedParts(new Date(date)))
-      .filter((p) => p.dateString === selectedDate)
-      .map((p) => p.time);
+    return freeSlots(timeSlotsFor(mentor, selectedDate), takenTimes(taken, selectedDate));
   }
 
-  function getAvailableSlots() {
-    const allSlots = generateTimeSlots();
-
-    const bookedSlots = getBookedSlots();
-
-    return allSlots.filter((slot) => !bookedSlots.includes(slot));
-  }
-
-  function getSelectedDay(dateString) {
-    const [year, month, day] = dateString.split("-").map(Number);
-
-    return new Date(year, month - 1, day).getDay();
-  }
-
-  function getAvailableMentors() {
-    if (!selectedDate) {
-      return safeMentors;
-    }
-
-    const selectedDay = new Date(`${selectedDate}T12:00:00`).getDay();
-
-    return safeMentors.filter((mentor) =>
-      mentor.availability?.some((availability) => Number(availability.dayOfWeek) === selectedDay),
-    );
-  }
   function groupSlots(slots) {
     const groups = {
       Morning: [],
@@ -347,7 +297,7 @@ export default function BookPage() {
                     {mentorsLoading ? "Loading mentors..." : "Select Mentor"}
                   </option>
 
-                  {getAvailableMentors().map((m) => (
+                  {mentorsAvailableOn(safeMentors, selectedDate).map((m) => (
                     <option key={m.id} value={m.id}>
                       {m.name} ({formatAvailability(m.availability)})
                     </option>

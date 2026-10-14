@@ -9,6 +9,7 @@ import { addDays, formatDateTime, getZonedParts, zonedTimeToUtc } from "@/lib/ti
 import SkeletonInterviewCard from "@/components/skeletons/SkeletonInterviewCard";
 
 import { fetcher } from "@/lib/fetcher";
+import { freeSlots, mentorsAvailableOn, takenTimes, timeSlotsFor } from "@/lib/slots";
 
 import "./interviews.css";
 
@@ -99,27 +100,15 @@ export default function InterviewsPage() {
     setSelectedTime("");
   }
 
-  function getAvailableMentors() {
-    if (!selectedDate) {
-      return mentors;
-    }
-
-    const selectedDay = new Date(`${selectedDate}T12:00:00`).getDay();
-
-    return mentors.filter((mentor) =>
-      mentor.availability?.some((availability) => Number(availability.dayOfWeek) === selectedDay),
-    );
-  }
-
-  function getBookedSlots() {
-    if (!selectedDate || !selectedMentor) {
+  function getAvailableSlots() {
+    if (!selectedMentor) {
       return [];
     }
 
-    const ownDate = selectedInterview?.date;
+    const mentor = mentors.find((m) => m.id === selectedMentor);
 
     const mentorTaken = [...mentorBooked];
-    const ownIndex = mentorTaken.indexOf(ownDate);
+    const ownIndex = mentorTaken.indexOf(selectedInterview?.date);
     if (ownIndex !== -1 && selectedInterview?.mentorId === selectedMentor) {
       mentorTaken.splice(ownIndex, 1);
     }
@@ -128,40 +117,9 @@ export default function InterviewsPage() {
       .filter((i) => i.id !== selectedInterview?.id && ["PENDING", "ACCEPTED"].includes(i.status))
       .map((i) => i.date);
 
-    return [...mentorTaken, ...myActive]
-      .map((date) => getZonedParts(new Date(date)))
-      .filter((p) => p.dateString === selectedDate)
-      .map((p) => p.time);
-  }
+    const taken = takenTimes([...mentorTaken, ...myActive], selectedDate);
 
-  function generateTimeSlots() {
-    const mentor = mentors.find((mentor) => mentor.id === selectedMentor);
-
-    if (!mentor || !selectedDate) {
-      return [];
-    }
-
-    const selectedDay = new Date(`${selectedDate}T12:00:00`).getDay();
-
-    const availability = mentor.availability?.find(
-      (availability) => Number(availability.dayOfWeek) === selectedDay,
-    );
-
-    if (!availability) {
-      return [];
-    }
-
-    const allSlots = [];
-
-    for (let hour = availability.startHour; hour < availability.endHour; hour++) {
-      allSlots.push(`${hour.toString().padStart(2, "0")}:00`);
-
-      allSlots.push(`${hour.toString().padStart(2, "0")}:30`);
-    }
-
-    const bookedSlots = getBookedSlots();
-
-    return allSlots.filter((slot) => !bookedSlots.includes(slot));
+    return freeSlots(timeSlotsFor(mentor, selectedDate), taken);
   }
 
   async function handleReschedule() {
@@ -211,6 +169,8 @@ export default function InterviewsPage() {
       setRescheduling(false);
     }
   }
+
+  const availableSlots = getAvailableSlots();
 
   return (
     <section className="interviews-page">
@@ -343,7 +303,7 @@ export default function InterviewsPage() {
               >
                 <option value="">Select Mentor</option>
 
-                {getAvailableMentors().map((mentor) => (
+                {mentorsAvailableOn(mentors, selectedDate).map((mentor) => (
                   <option key={mentor.id} value={mentor.id}>
                     {mentor.name}
                   </option>
@@ -355,10 +315,10 @@ export default function InterviewsPage() {
               <label>Select Time</label>
 
               <div className="slots-grid">
-                {generateTimeSlots().length === 0 ? (
+                {availableSlots.length === 0 ? (
                   <p className="no-slots">No slots available</p>
                 ) : (
-                  generateTimeSlots().map((slot) => (
+                  availableSlots.map((slot) => (
                     <button
                       key={slot}
                       type="button"
