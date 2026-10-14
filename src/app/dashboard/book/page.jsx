@@ -8,6 +8,7 @@ import { toast } from "react-toastify";
 import { capitalizeWords } from "@/lib/format";
 import { addDays, formatDate, getZonedParts, zonedTimeToUtc } from "@/lib/time";
 import { fetcher } from "@/lib/fetcher";
+import { ACTIVE_STATUSES } from "@/lib/interviewStatus";
 import { freeSlots, mentorsAvailableOn, takenTimes, timeSlotsFor } from "@/lib/slots";
 import "./book.css";
 
@@ -127,7 +128,7 @@ export default function BookPage() {
     const mentor = safeMentors.find((m) => m.id === selectedMentor);
 
     const myActive = safeInterviews
-      .filter((i) => ["PENDING", "ACCEPTED"].includes(i.status))
+      .filter((i) => ACTIVE_STATUSES.includes(i.status))
       .map((i) => i.date);
 
     const taken = [...(Array.isArray(mentorBooked) ? mentorBooked : []), ...myActive];

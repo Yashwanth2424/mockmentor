@@ -7,6 +7,8 @@ import useSWR from "swr";
 import { toast } from "react-toastify";
 import { formatDateTime } from "@/lib/time";
 import { fetcher } from "@/lib/fetcher";
+import StatusBadge from "@/components/StatusBadge";
+import { canTransition } from "@/lib/interviewStatus";
 import "./details.css";
 
 export default function InterviewDetails() {
@@ -61,7 +63,7 @@ export default function InterviewDetails() {
     );
   }
 
-  const canCancel = ["PENDING", "ACCEPTED"].includes(interview.status);
+  const canCancel = canTransition("cancel", interview.status);
 
   return (
     <div className="admin-details">
@@ -75,10 +77,7 @@ export default function InterviewDetails() {
         <h2>{interview.topic}</h2>
 
         <p>
-          <strong>Status:</strong>{" "}
-          <span className={`status status-${interview.status.toLowerCase()}`}>
-            {interview.status}
-          </span>
+          <strong>Status:</strong> <StatusBadge status={interview.status} />
         </p>
 
         <p>

@@ -9,6 +9,8 @@ import UsersPanel from "./UsersPanel";
 import { FiGrid, FiUsers, FiMenu, FiX } from "react-icons/fi";
 import { formatDateTime } from "@/lib/time";
 import { fetcher } from "@/lib/fetcher";
+import StatusBadge from "@/components/StatusBadge";
+import { STATUS_LABELS } from "@/lib/interviewStatus";
 import "./admin.css";
 
 function subscribeToTab(callback) {
@@ -189,11 +191,11 @@ export default function AdminPage() {
                   className="filter-select"
                 >
                   <option value="ALL">All</option>
-                  <option value="PENDING">Pending</option>
-                  <option value="ACCEPTED">Accepted</option>
-                  <option value="COMPLETED">Completed</option>
-                  <option value="REJECTED">Rejected</option>
-                  <option value="CANCELLED">Cancelled</option>
+                  {Object.entries(STATUS_LABELS).map(([value, label]) => (
+                    <option key={value} value={value}>
+                      {label}
+                    </option>
+                  ))}
                 </select>
 
                 <select
@@ -229,9 +231,7 @@ export default function AdminPage() {
                     >
                       <div className="interview-header">
                         <h3>{i.topic}</h3>
-                        <span className={`status status-${i.status.toLowerCase()}`}>
-                          {i.status}
-                        </span>
+                        <StatusBadge status={i.status} />
                       </div>
 
                       <p>

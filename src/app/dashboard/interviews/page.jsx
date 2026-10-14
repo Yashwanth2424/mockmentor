@@ -9,6 +9,8 @@ import { addDays, formatDateTime, getZonedParts, zonedTimeToUtc } from "@/lib/ti
 import SkeletonInterviewCard from "@/components/skeletons/SkeletonInterviewCard";
 
 import { fetcher } from "@/lib/fetcher";
+import StatusBadge from "@/components/StatusBadge";
+import { ACTIVE_STATUSES, canTransition } from "@/lib/interviewStatus";
 import { freeSlots, mentorsAvailableOn, takenTimes, timeSlotsFor } from "@/lib/slots";
 
 import "./interviews.css";
@@ -114,7 +116,7 @@ export default function InterviewsPage() {
     }
 
     const myActive = safeInterviews
-      .filter((i) => i.id !== selectedInterview?.id && ["PENDING", "ACCEPTED"].includes(i.status))
+      .filter((i) => i.id !== selectedInterview?.id && ACTIVE_STATUSES.includes(i.status))
       .map((i) => i.date);
 
     const taken = takenTimes([...mentorTaken, ...myActive], selectedDate);
@@ -213,7 +215,7 @@ export default function InterviewsPage() {
               <div className="card-top">
                 <h3 className="card-title">{i.topic}</h3>
 
-                <span className={`status-badge status-${i.status?.toLowerCase()}`}>{i.status}</span>
+                <StatusBadge status={i.status} className="status-badge" />
               </div>
 
               <div className="card-body">
@@ -231,7 +233,7 @@ export default function InterviewsPage() {
               </div>
 
               <div className="card-actions">
-                {["PENDING", "ACCEPTED"].includes(i.status) && (
+                {canTransition("cancel", i.status) && (
                   <>
                     <button
                       className="cancel-btn"

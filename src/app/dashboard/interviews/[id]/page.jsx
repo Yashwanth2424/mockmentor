@@ -9,6 +9,7 @@ import { ArrowLeft, Calendar, CheckCircle, Clock, User, Mail, XCircle } from "lu
 import { formatDateTime } from "@/lib/time";
 
 import { fetcher } from "@/lib/fetcher";
+import StatusBadge from "@/components/StatusBadge";
 
 import "./details.css";
 
@@ -109,9 +110,7 @@ export default function InterviewDetailsPage() {
         <div className="details-header">
           <h1 className="title">{interview.topic}</h1>
 
-          <span className={`status status-${interview.status?.toLowerCase()}`}>
-            {interview.status}
-          </span>
+          <StatusBadge status={interview.status} />
         </div>
 
         <div className="info-grid">

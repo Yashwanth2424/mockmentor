@@ -8,6 +8,8 @@ import Header from "@/components/Header";
 import SkeletonMentor from "@/components/skeletons/SkeletonMentor";
 import { formatDateTime } from "@/lib/time";
 import { fetcher } from "@/lib/fetcher";
+import StatusBadge from "@/components/StatusBadge";
+import { STATUS_LABELS } from "@/lib/interviewStatus";
 import "./mentor.css";
 
 export default function MentorPage() {
@@ -196,17 +198,15 @@ export default function MentorPage() {
         ) : (
           <>
             <div className="filter-tabs">
-              {["ALL", "PENDING", "ACCEPTED", "COMPLETED", "REJECTED", "CANCELLED"].map(
-                (status) => (
-                  <button
-                    key={status}
-                    className={filter === status ? "active" : ""}
-                    onClick={() => setFilter(status)}
-                  >
-                    {status.charAt(0) + status.slice(1).toLowerCase()}
-                  </button>
-                ),
-              )}
+              {["ALL", ...Object.keys(STATUS_LABELS)].map((status) => (
+                <button
+                  key={status}
+                  className={filter === status ? "active" : ""}
+                  onClick={() => setFilter(status)}
+                >
+                  {STATUS_LABELS[status] ?? "All"}
+                </button>
+              ))}
             </div>
 
             <div className="mentor-grid">
@@ -230,9 +230,7 @@ export default function MentorPage() {
                     </p>
                     <p className="mentor-text">
                       <strong>Status:</strong>{" "}
-                      <span className={`status-badge status-${i.status.toLowerCase()}`}>
-                        {i.status}
-                      </span>
+                      <StatusBadge status={i.status} className="status-badge" />
                     </p>
 
                     {i.status === "PENDING" && (
