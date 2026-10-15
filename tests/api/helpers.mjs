@@ -56,6 +56,10 @@ export async function newStudent(name) {
   return login(email, password);
 }
 
+export function loginAsMentor() {
+  return login("akshay.mentor@example.com", "123456");
+}
+
 export async function findMentor(cookie, name = "Akshay") {
   const res = await api("/api/mentor", { cookie });
   const mentor = res.json?.data?.find((m) => m.name === name);
