@@ -10,6 +10,7 @@ import { formatDateTime } from "@/lib/time";
 
 import { fetcher } from "@/lib/fetcher";
 import StatusBadge from "@/components/StatusBadge";
+import { STATUS_LABELS } from "@/lib/interviewStatus";
 
 import "./details.css";
 
@@ -131,7 +132,7 @@ export default function InterviewDetailsPage() {
               Current Status
             </div>
 
-            <div className="info-value">{interview.status}</div>
+            <div className="info-value">{STATUS_LABELS[interview.status] ?? interview.status}</div>
           </div>
 
           <div className="info-card">

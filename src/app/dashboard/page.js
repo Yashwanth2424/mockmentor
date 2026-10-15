@@ -11,6 +11,7 @@ import SkeletonDashboard from "@/components/skeletons/SkeletonDashboard";
 import { formatDateTime } from "@/lib/time";
 
 import { fetcher } from "@/lib/fetcher";
+import StatusBadge from "@/components/StatusBadge";
 
 import "./dashboard.css";
 
@@ -146,9 +147,7 @@ export default function DashboardPage() {
 
                   <p>{formatDateTime(interview.date)}</p>
 
-                  <span className={`dashboard-status status-${interview.status?.toLowerCase()}`}>
-                    {interview.status}
-                  </span>
+                  <StatusBadge status={interview.status} className="dashboard-status" />
                 </div>
 
                 <Link href={`/dashboard/interviews/${interview.id}`} className="details-link">
