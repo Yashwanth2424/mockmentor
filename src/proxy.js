@@ -6,7 +6,7 @@ export async function proxy(req) {
   const token = req.cookies.get("token")?.value;
   const secret = new TextEncoder().encode(process.env.JWT_SECRET);
 
-  if (pathname === "/login" || pathname === "/signup") {
+  if (pathname === "/" || pathname === "/login" || pathname === "/signup") {
     if (!token) return NextResponse.next();
 
     try {
@@ -85,6 +85,7 @@ export async function proxy(req) {
 
 export const config = {
   matcher: [
+    "/",
     "/login",
     "/signup",
     "/dashboard/:path*",
