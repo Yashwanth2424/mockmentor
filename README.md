@@ -4,7 +4,9 @@
 
 MockMentor is a web app where students can book mock interviews with mentors. I built it to practice full-stack development with Next.js, Prisma and PostgreSQL.
 
-Live demo: https://mockmentor-flame.vercel.app
+Live demo: https://mockmentor-flame.vercel.app. On the login page, click "Demo student" or "Demo mentor" to fill in a demo login, no sign-up needed (see [Demo accounts](#demo-accounts)).
+
+The most interesting part: two people can never book the same slot, because the database blocks it, not only the code. This is explained in [How some things work](#how-some-things-work) and tested in CI.
 
 ## What it does
 
@@ -88,7 +90,7 @@ Note: Prisma 5 cannot describe partial indexes in `schema.prisma`, so they only 
 
 ## Demo accounts
 
-You can try the app with these accounts:
+You can try the app with these accounts, or click the demo buttons on the login page:
 
 | Role    | Email                         | Password |
 | ------- | ----------------------------- | -------- |
