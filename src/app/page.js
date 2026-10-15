@@ -6,7 +6,7 @@ import styles from "./page.module.css";
 
 import ThemeToggle from "@/components/ThemeToggle";
 
-import { FiCalendar, FiMessageCircle, FiTrendingUp, FiHeart, FiMenu, FiX } from "react-icons/fi";
+import { FiCalendar, FiMessageCircle, FiList, FiHeart, FiMenu, FiX } from "react-icons/fi";
 
 export default function Home() {
   const router = useRouter();
@@ -91,7 +91,9 @@ export default function Home() {
           <span>with Confidence</span>
         </h1>
 
-        <p>Practice real interview scenarios, get expert feedback, and improve faster.</p>
+        <p>
+          Book mock interviews with mentors, get honest feedback, and improve before the real one.
+        </p>
 
         <div className={styles.ctaButtons}>
           <button onClick={() => router.push("/signup")}>Get Started</button>
@@ -106,19 +108,21 @@ export default function Home() {
         <div className={styles.featureCard}>
           <FiCalendar className={styles.icon} />
           <h3>Smart Scheduling</h3>
-          <p>Book interviews anytime with flexible scheduling.</p>
+          <p>Pick a mentor and a free 30-minute slot within their weekly hours.</p>
         </div>
 
         <div className={styles.featureCard}>
           <FiMessageCircle className={styles.icon} />
           <h3>Real Feedback</h3>
-          <p>Get detailed feedback to improve your performance.</p>
+          <p>
+            After the interview, your mentor gives a rating, your strengths and what to improve.
+          </p>
         </div>
 
         <div className={styles.featureCard}>
-          <FiTrendingUp className={styles.icon} />
-          <h3>Track Growth</h3>
-          <p>Monitor your progress and become interview-ready.</p>
+          <FiList className={styles.icon} />
+          <h3>Track Your Interviews</h3>
+          <p>See every interview, its status and the feedback you got in one place.</p>
         </div>
       </section>
 
