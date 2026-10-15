@@ -45,3 +45,22 @@ test("student cancel and mentor reject at once: only one succeeds", async () => 
   const expected = cancel.status === 200 ? "CANCELLED" : "REJECTED";
   assert.equal(final.json.data.status, expected);
 });
+
+test("a future interview cannot be completed", async () => {
+  const id = await book("15:00");
+
+  const accept = await api(`/api/mentor/interviews/${id}/accept`, {
+    method: "PATCH",
+    cookie: mentorCookie,
+  });
+  assert.equal(accept.status, 200);
+
+  const complete = await api(`/api/mentor/interviews/${id}/complete`, {
+    method: "PATCH",
+    cookie: mentorCookie,
+    body: { rating: 4, feedback: "Good answers overall" },
+  });
+
+  assert.equal(complete.status, 400);
+  assert.match(complete.json.error, /only after it has started/);
+});
