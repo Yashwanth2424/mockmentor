@@ -79,7 +79,7 @@ export default function AdminPage() {
 
     await mutate(() => true, undefined, { revalidate: false });
 
-    window.location.href = "/login";
+    window.location.replace("/login");
   }
 
   const safeInterviews = Array.isArray(interviews) ? interviews : [];

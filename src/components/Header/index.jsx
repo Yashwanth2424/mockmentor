@@ -8,7 +8,7 @@ export default function Header({ user }) {
   async function handleLogout() {
     await fetch("/api/auth/logout", { method: "POST" });
     await mutate(() => true, undefined, { revalidate: false });
-    window.location.href = "/login";
+    window.location.replace("/login");
   }
 
   return (

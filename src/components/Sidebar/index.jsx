@@ -26,7 +26,7 @@ export default function Sidebar({ open, setOpen }) {
     // does not see previous user's data
     await mutate(() => true, undefined, { revalidate: false });
 
-    window.location.href = "/login";
+    window.location.replace("/login");
   }
 
   return (

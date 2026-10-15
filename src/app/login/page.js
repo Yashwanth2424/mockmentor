@@ -83,11 +83,11 @@ export default function LoginPage() {
 
       setTimeout(() => {
         if (role === "ADMIN" || role === "SUPER_ADMIN") {
-          router.push("/admin");
+          router.replace("/admin");
         } else if (role === "MENTOR") {
-          router.push("/mentor");
+          router.replace("/mentor");
         } else {
-          router.push("/dashboard");
+          router.replace("/dashboard");
         }
       }, 500);
     } catch {
