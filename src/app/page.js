@@ -97,7 +97,7 @@ export default function Home() {
           <button onClick={() => router.push("/signup")}>Get Started</button>
 
           <button className={styles.secondary} onClick={() => router.push("/login")}>
-            Already have account?
+            Already have an account?
           </button>
         </div>
       </section>
