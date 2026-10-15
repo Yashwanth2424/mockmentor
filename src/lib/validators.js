@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { capitalizeWords } from "@/lib/format";
+import { capitalizeWords } from "./format.js";
 
 export const loginSchema = z.object({
   email: z
@@ -79,4 +79,22 @@ export const availabilitySchema = z.object({
 
 export const roleSchema = z.object({
   role: z.enum(["STUDENT", "MENTOR", "ADMIN"], { message: "Invalid role" }),
+});
+
+export const completeSchema = z.object({
+  rating: z
+    .number({ message: "Rating must be between 1 and 5" })
+    .int("Rating must be between 1 and 5")
+    .min(1, "Rating must be between 1 and 5")
+    .max(5, "Rating must be between 1 and 5"),
+
+  feedback: z
+    .string({ message: "Feedback must be at least 5 characters" })
+    .trim()
+    .min(5, "Feedback must be at least 5 characters")
+    .max(1000, "Feedback too long"),
+
+  strengths: z.string().trim().max(1000, "Strengths too long").optional(),
+
+  improvements: z.string().trim().max(1000, "Improvements too long").optional(),
 });

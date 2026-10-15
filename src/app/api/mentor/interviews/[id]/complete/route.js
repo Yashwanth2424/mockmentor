@@ -1,6 +1,7 @@
 import { requireRole } from "@/lib/auth";
 import { successResponse, errorResponse } from "@/lib/apiResponse";
 import { changeInterviewStatus } from "@/lib/changeInterviewStatus";
+import { completeSchema } from "@/lib/validators";
 
 export async function PATCH(req, { params }) {
   try {
@@ -8,23 +9,14 @@ export async function PATCH(req, { params }) {
 
     const { id } = await params;
 
-    const { rating, feedback, strengths, improvements } = await req.json();
+    const parsed = completeSchema.safeParse(await req.json());
 
-    if (!rating || rating < 1 || rating > 5) {
-      return errorResponse("Rating must be between 1 and 5", 400);
+    if (!parsed.success) {
+      const message = parsed.error.issues[0]?.message || "Invalid input";
+      return errorResponse(message, 400);
     }
 
-    const cleanFeedback = feedback?.trim();
-    const cleanStrengths = strengths?.trim();
-    const cleanImprovements = improvements?.trim();
-
-    if (!cleanFeedback || cleanFeedback.length < 5) {
-      return errorResponse("Feedback must be at least 5 characters", 400);
-    }
-
-    if (cleanFeedback.length > 1000) {
-      return errorResponse("Feedback too long", 400);
-    }
+    const { rating, feedback, strengths, improvements } = parsed.data;
 
     const result = await changeInterviewStatus({
       id,
@@ -33,9 +25,9 @@ export async function PATCH(req, { params }) {
       where: { date: { lte: new Date() } },
       data: {
         rating,
-        feedback: cleanFeedback,
-        strengths: cleanStrengths,
-        improvements: cleanImprovements,
+        feedback,
+        strengths,
+        improvements,
         completedAt: new Date(),
       },
     });
