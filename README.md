@@ -77,7 +77,7 @@ More: [landing page](screenshots/landing.png), [login page](screenshots/login.pn
 
 Note: Prisma 5 cannot describe partial indexes in `schema.prisma`, so they only exist in the migration file. If a future `prisma migrate dev` tries to drop them, remove those `DROP INDEX` lines from the new migration.
 
-**Status changes.** The allowed changes are listed in one place, [`src/lib/interviewStatus.js`](src/lib/interviewStatus.js): for example, only a PENDING interview can be accepted or rejected, and only an ACCEPTED one can be completed. Each change is one database update with the expected status inside the `where`, so the status check and the write happen together. If a student cancels while the mentor accepts at the same moment, only the first request changes the row, and the second gets a 409 ("This interview was already changed"). A mentor can complete an interview only after its start time.
+**Status changes.** The allowed changes are listed in one place, [`src/lib/interviewStatus.js`](src/lib/interviewStatus.js): for example, only a PENDING interview can be accepted or rejected, and only an ACCEPTED one can be completed. Each change is one database update with the expected status inside the `where`, so the status check and the write happen together. If a student cancels while the mentor rejects at the same moment, only the first request changes the row, and the second gets a 409 ("This interview was already changed"). This is tested in [`tests/api/status.test.mjs`](tests/api/status.test.mjs). A mentor can complete an interview only after its start time.
 
 **Other details:**
 
@@ -144,6 +144,8 @@ The API tests check:
 - a cancelled slot can be booked again
 - access control: no login gives 401, a student on an admin route gets 403, and a student cannot read another student's interview
 - validation: a topic that is too short gives 400 with a clear message
+- status changes: a student cancel and a mentor reject sent at the same moment give one 200 and one 409, and the final status matches the request that won
+- a mentor cannot complete an interview before it has started (400)
 - no `password` field in the interview and mentor responses
 
 The pages themselves are checked by hand. Before a release I click through this list with the demo accounts:
