@@ -95,7 +95,7 @@ You can try the app with these accounts:
 | Student | yashwanth.student@example.com | 123456   |
 | Mentor  | akshay.mentor@example.com     | 123456   |
 
-The seed also creates one accepted interview from yesterday, so you can try "Complete" with the mentor account. If it was already completed, run `npx prisma db seed` again to get a new one.
+The seed also creates a completed interview with feedback, so the student account shows a finished result right away, and one accepted interview from yesterday, so you can try "Complete" with the mentor account. If it was already completed, run `npx prisma db seed` again to get a new one.
 
 The admin panel is not public. The admin features are listed above.
 
@@ -114,7 +114,7 @@ cp .env.example .env
 # create the tables
 npx prisma migrate deploy
 
-# create the demo accounts and one past demo interview
+# create the demo accounts and two demo interviews
 npx prisma db seed
 
 npm run dev

@@ -14,6 +14,15 @@ const END_HOUR = 17;
 
 const PAST_DEMO_TOPIC = "Demo: JavaScript basics";
 
+const COMPLETED_DEMO = {
+  topic: "Demo: React Interview",
+  rating: 4,
+  feedback:
+    "Good understanding of React basics and clear answers. Practise explaining your decisions a bit more before you start coding.",
+  strengths: "Explained useState and useEffect well, and wrote clean components.",
+  improvements: "Talk about trade-offs, for example when to lift state up or use a context.",
+};
+
 async function upsertUser({ name, email }, role, password) {
   return prisma.user.upsert({
     where: { email },
@@ -50,6 +59,27 @@ async function main() {
         topic: PAST_DEMO_TOPIC,
         date: yesterday,
         status: "ACCEPTED",
+        userId: student.id,
+        mentorId: mentor.id,
+      },
+    });
+  }
+
+  const completedDemo = await prisma.interview.findFirst({
+    where: { userId: student.id, topic: COMPLETED_DEMO.topic, status: "COMPLETED" },
+  });
+
+  if (!completedDemo) {
+    const lastWeek = new Date();
+    lastWeek.setUTCDate(lastWeek.getUTCDate() - 7);
+    lastWeek.setUTCHours(9, 0, 0, 0);
+
+    await prisma.interview.create({
+      data: {
+        ...COMPLETED_DEMO,
+        date: lastWeek,
+        status: "COMPLETED",
+        completedAt: lastWeek,
         userId: student.id,
         mentorId: mentor.id,
       },
