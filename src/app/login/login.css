@@ -154,6 +154,37 @@
   text-decoration: underline;
 }
 
+.login-card .demo-box {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.login-card .demo-buttons {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.login-card .demo-buttons button {
+  flex: 1;
+  height: 38px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.login-card .demo-buttons button:hover {
+  background: var(--secondary);
+}
+
 @media (max-width: 1024px) {
   .login-left {
     display: none;

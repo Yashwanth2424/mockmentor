@@ -10,6 +10,12 @@ import { useEffect, useState } from "react";
 import { Home, Mail, Lock, Eye, EyeOff } from "lucide-react";
 import { toast } from "react-toastify";
 
+const DEMO_ACCOUNTS = [
+  { label: "Demo student", email: "yashwanth.student@example.com" },
+  { label: "Demo mentor", email: "akshay.mentor@example.com" },
+];
+const DEMO_PASSWORD = "123456";
+
 export default function LoginPage() {
   const router = useRouter();
 
@@ -149,6 +155,24 @@ export default function LoginPage() {
           <p className="bottom-text">
             Don&apos;t have an account? <Link href="/signup">Register Here</Link>
           </p>
+
+          <div className="demo-box">
+            <p>Just looking? Fill in a demo account:</p>
+            <div className="demo-buttons">
+              {DEMO_ACCOUNTS.map((account) => (
+                <button
+                  key={account.email}
+                  type="button"
+                  onClick={() => {
+                    setEmail(account.email);
+                    setPassword(DEMO_PASSWORD);
+                  }}
+                >
+                  {account.label}
+                </button>
+              ))}
+            </div>
+          </div>
         </form>
       </div>
     </div>
