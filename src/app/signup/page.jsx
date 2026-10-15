@@ -79,6 +79,7 @@ export default function SignupPage() {
             <User size={18} className="input-icon" />
             <input
               type="text"
+              autoComplete="name"
               name="name"
               placeholder="Full Name"
               value={form.name}
@@ -90,6 +91,7 @@ export default function SignupPage() {
             <Mail size={18} className="input-icon" />
             <input
               type="email"
+              autoComplete="email"
               name="email"
               placeholder="Email"
               value={form.email}
@@ -101,6 +103,7 @@ export default function SignupPage() {
             <Lock size={18} className="input-icon" />
             <input
               type={showPassword ? "text" : "password"}
+              autoComplete="new-password"
               name="password"
               placeholder="Password"
               value={form.password}
