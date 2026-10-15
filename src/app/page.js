@@ -41,9 +41,14 @@ export default function Home() {
         <h2 className={styles.logo}>MockMentor</h2>
 
         <div className={styles.navButtons}>
-          <button onClick={() => router.push("/login")}>Login</button>
+          <button className={styles.navBtn} onClick={() => router.push("/login")}>
+            Login
+          </button>
 
-          <button className={styles.signup} onClick={() => router.push("/signup")}>
+          <button
+            className={`${styles.navBtn} ${styles.signup}`}
+            onClick={() => router.push("/signup")}
+          >
             Signup
           </button>
 
@@ -119,7 +124,7 @@ export default function Home() {
 
       <footer className={styles.footer}>
         © {new Date().getFullYear()} MockMentor • Built with{" "}
-        <FiHeart className={styles.heartIcon} />
+        <FiHeart className={styles.heartIcon} role="img" aria-label="love" />
       </footer>
     </main>
   );

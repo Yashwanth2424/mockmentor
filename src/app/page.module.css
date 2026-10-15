@@ -30,7 +30,7 @@
   gap: 10px;
 }
 
-.navButtons button {
+.navBtn {
   height: 36px;
   padding: 0 16px;
   border: 1px solid var(--border);
@@ -43,7 +43,7 @@
   transition: background 0.15s ease;
 }
 
-.navButtons button:hover {
+.navBtn:hover {
   background: var(--secondary);
 }
 

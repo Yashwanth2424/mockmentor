@@ -26,8 +26,13 @@ export default function ThemeToggle() {
   };
 
   return (
-    <div onClick={toggleTheme} className="themeToggleBtn">
+    <button
+      type="button"
+      onClick={toggleTheme}
+      className="themeToggleBtn"
+      aria-label={theme === "dark" ? "Switch to light theme" : "Switch to dark theme"}
+    >
       {theme === "dark" ? <FiSun /> : <FiMoon />}
-    </div>
+    </button>
   );
 }
